@@ -47,8 +47,9 @@ role doesn't allow.
 
 ## Tech stack
 
-- **Frontend:** single self-contained `index.html` (vanilla JS, no build
-  step).
+- **Frontend:** single self-contained `ai_cashflow_copilot_v3_merged.html`
+  (vanilla JS, no build step). This is the exact file uploaded to Cloudflare
+  Pages as `index.html` on deploy.
 - **Backend:** [Supabase](https://supabase.com) — Postgres, Auth, Storage
   (receipts bucket), and Realtime (live transaction sync).
 - **Hosting:** [Cloudflare Pages](https://pages.cloudflare.com) (static,
@@ -58,7 +59,7 @@ role doesn't allow.
 
 | File | Purpose |
 |---|---|
-| `index.html` | The full app — UI + Supabase client logic. This is the file that gets deployed as-is. |
+| `ai_cashflow_copilot_v3_merged.html` | The full app — UI + Supabase client logic. Deployed to Cloudflare Pages as-is (renamed to `index.html` at deploy time). |
 | `supabase_001_schema_and_rls.sql` | Base schema and RLS policies (tables, roles, base security model). |
 | `MIGRATIONS_LOG.md` | Ordered log of every migration applied on top of the base schema, with what each one fixed or added. |
 | `DEVELOPMENT_PLAN.md` | The original stage-by-stage build plan, with each stage's "done when" criterion and completion status. |
@@ -80,11 +81,12 @@ don't assume "it has SELECT so it must be fine".
 
 ## Deployment
 
-The app is a single static `index.html` with no build step. Deploying means
-uploading that one file (as a zip) via Cloudflare Pages' Direct Upload flow
-to the `ai-cashflow-copilot-v2` project. Supabase URL/key are embedded in the
-client as the anon (publishable) key, which is safe to expose — all real
-access control happens via RLS on the server side.
+The app is a single static HTML file with no build step. Deploying means
+zipping `ai_cashflow_copilot_v3_merged.html` as `index.html` and uploading it
+via Cloudflare Pages' Direct Upload flow to the `ai-cashflow-copilot-v2`
+project. Supabase URL/key are embedded in the client as the anon
+(publishable) key, which is safe to expose — all real access control
+happens via RLS on the server side.
 
 ## Status
 
