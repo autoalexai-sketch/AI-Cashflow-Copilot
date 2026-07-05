@@ -1,0 +1,1459 @@
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Cashflow Copilot v3</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    html, body { background:#020617; }
+    .glass { background: rgba(15,23,42,.72); backdrop-filter: blur(12px); }
+    .scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
+    .scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 9999px; }
+    .tab.active { color:#60a5fa; border-color:#60a5fa; }
+    .badge { border:1px solid rgba(96,165,250,.18); background: rgba(59,130,246,.08); }
+    .input, .select, .textarea { background:#111827; border:1px solid #334155; color:#e5e7eb; }
+    .input:focus, .select:focus, .textarea:focus { outline:none; border-color:#60a5fa; box-shadow:0 0 0 3px rgba(59,130,246,.15); }
+    .card { box-shadow: 0 10px 30px rgba(0,0,0,.25); }
+    .lang-pill { cursor:pointer; }
+    .tx-row:hover { background: rgba(15,23,42,.9); }
+    .modal-backdrop { background: rgba(2,6,23,.85); }
+  </style>
+</head>
+<body class="text-slate-100 min-h-screen flex flex-col">
+
+  <div id="auth-screen" class="flex-1 flex items-center justify-center p-4">
+    <div class="glass border border-slate-800 rounded-3xl p-8 max-w-md w-full card space-y-6">
+      <div class="text-center">
+        <h2 class="text-2xl font-black bg-gradient-to-r from-sky-400 via-indigo-400 to-fuchsia-400 bg-clip-text text-transparent" data-i18n="appTitle">AI Cashflow Copilot</h2>
+        <p class="text-slate-400 text-sm mt-2" data-i18n="authSubtitle">Sign in to access your shared workspace</p>
+      </div>
+      <div class="space-y-3">
+        <input id="authEmail" type="email" class="input w-full rounded-2xl px-4 py-3 text-sm" placeholder="your@email.com" />
+        <input id="authPassword" type="password" class="input w-full rounded-2xl px-4 py-3 text-sm" placeholder="Password" />
+        <div id="authError" class="text-xs text-rose-400 hidden"></div>
+        <div class="grid grid-cols-2 gap-3 pt-1">
+          <button id="btnEmailLogin" class="py-3 px-4 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm transition-all" data-i18n="btnLogin">Log In</button>
+          <button id="btnEmailSignup" class="py-3 px-4 rounded-2xl bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-400 border border-indigo-500/30 font-semibold text-sm transition-all" data-i18n="btnSignup">Sign Up</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="main-app" class="max-w-7xl mx-auto p-4 md:p-8 w-full hidden">
+    <header class="glass border border-slate-800 rounded-3xl p-5 md:p-6 mb-6 card">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-3">
+            <div class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></div>
+            <div class="text-sm text-slate-400" id="ui-state" data-i18n="uiState">Local demo · offline</div>
+          </div>
+          <h1 class="text-2xl md:text-4xl font-black mt-2 bg-gradient-to-r from-sky-400 via-indigo-400 to-fuchsia-400 bg-clip-text text-transparent" data-i18n="appTitle">AI Cashflow Copilot</h1>
+          <p class="text-slate-400 mt-2 max-w-3xl" id="subtitle" data-i18n="subtitle">Shared finance control for partners, projects, receipts and monthly closing.</p>
+        </div>
+        <div class="flex flex-wrap gap-2 items-center">
+          <div class="badge px-3 py-2 rounded-2xl text-sm flex items-center gap-2">
+            <span class="text-slate-400" data-i18n="activeUserLabel">Signed in as</span>
+            <span id="user-display" class="text-slate-200 font-semibold">—</span>
+          </div>
+          <button id="btnLogout" class="badge px-3 py-2 rounded-2xl text-sm font-semibold hover:text-rose-400" data-i18n="btnLogout">Sign out</button>
+          <div class="badge px-3 py-2 rounded-2xl text-sm flex items-center gap-2">
+            <span class="text-slate-400">Lang</span>
+            <div class="flex gap-1">
+              <button class="lang-pill px-2 py-1 rounded-lg bg-slate-800" data-lang="en">EN</button>
+              <button class="lang-pill px-2 py-1 rounded-lg bg-slate-800" data-lang="pl">PL</button>
+              <button class="lang-pill px-2 py-1 rounded-lg bg-slate-800" data-lang="uk">UK</button>
+            </div>
+          </div>
+          <button id="btnMonthlyClose" class="px-4 py-2 rounded-2xl bg-indigo-600 hover:bg-indigo-500 font-semibold" data-i18n="monthlyCloseBtn">Monthly Close</button>
+        </div>
+      </div>
+    </header>
+
+    <nav class="glass border border-slate-800 rounded-3xl p-2 mb-6 overflow-x-auto card">
+      <div class="flex gap-2 min-w-max">
+        <button class="tab active px-4 py-2 border-b-2 border-transparent" data-view="dashboard" data-i18n="tabDashboard">Dashboard</button>
+        <button class="tab px-4 py-2 border-b-2 border-transparent" data-view="transactions" data-i18n="tabTransactions">Transactions</button>
+        <button class="tab px-4 py-2 border-b-2 border-transparent" data-view="projects" data-i18n="tabProjects">Projects</button>
+        <button class="tab px-4 py-2 border-b-2 border-transparent" data-view="receipts" data-i18n="tabReceipts">Receipts</button>
+        <button class="tab px-4 py-2 border-b-2 border-transparent" data-view="monthly" data-i18n="tabMonthly">Monthly Close</button>
+        <button class="tab px-4 py-2 border-b-2 border-transparent" data-view="settings" data-i18n="tabSettings">Settings</button>
+      </div>
+    </nav>
+
+    <main class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+      <section id="view-dashboard" class="xl:col-span-12 space-y-6">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="glass border border-slate-800 rounded-3xl p-5 card"><div class="text-slate-400 text-xs" data-i18n="mIncomeLabel">Total Income</div><div class="text-2xl font-black text-emerald-400 mt-1" id="m-income">0.00 PLN</div></div>
+          <div class="glass border border-slate-800 rounded-3xl p-5 card"><div class="text-slate-400 text-xs" data-i18n="mExpenseLabel">Total Expenses</div><div class="text-2xl font-black text-rose-400 mt-1" id="m-expense">0.00 PLN</div></div>
+          <div class="glass border border-slate-800 rounded-3xl p-5 card"><div class="text-slate-400 text-xs" data-i18n="mTaxLabel">Tax Reserve</div><div class="text-2xl font-black text-amber-400 mt-1" id="m-tax">0.00 PLN</div><div id="taxRateBadgeDash" class="text-[11px] text-slate-500 mt-1"></div></div>
+          <div class="glass border border-slate-800 rounded-3xl p-5 card"><div class="text-slate-400 text-xs" data-i18n="mProfitLabel">Net Profit</div><div class="text-2xl font-black text-sky-400 mt-1" id="m-profit">0.00 PLN</div></div>
+        </div>
+
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          <div class="xl:col-span-2 glass border border-slate-800 rounded-3xl p-5 card">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <h2 class="text-lg font-bold" data-i18n="cashflowTitle">Cashflow overview</h2>
+                <p class="text-xs text-slate-400" data-i18n="cashflowSubtitle">Bank, cash and reserve balances in one place.</p>
+              </div>
+              <div class="text-xs text-slate-400" data-i18n="currentMonth">Current month</div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="rounded-2xl p-4 bg-slate-950/60 border border-slate-800">
+                <div class="text-xs text-slate-400" data-i18n="bankLabel">Bank Account</div>
+                <div class="text-xl font-bold text-emerald-300 mt-1" id="bank-balance">0.00 PLN</div>
+              </div>
+              <div class="rounded-2xl p-4 bg-slate-950/60 border border-slate-800">
+                <div class="text-xs text-slate-400" data-i18n="cashLabel">Cash Box</div>
+                <div class="text-xl font-bold text-amber-300 mt-1" id="cash-balance">0.00 PLN</div>
+              </div>
+              <div class="rounded-2xl p-4 bg-slate-950/60 border border-slate-800">
+                <div class="text-xs text-slate-400" data-i18n="reserveLabel">Virtual Tax Buffer</div>
+                <div class="text-xl font-bold text-fuchsia-300 mt-1" id="reserve-balance">0.00 PLN</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass border border-slate-800 rounded-3xl p-5 card">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-lg font-bold" data-i18n="splitTitle">Partner balance</h2>
+              <div class="text-xs badge px-3 py-1 rounded-xl" id="split-ratio">50 / 50</div>
+            </div>
+            <div class="space-y-4">
+              <div class="rounded-2xl p-4 bg-slate-950/60 border border-slate-800">
+                <div class="flex justify-between text-sm"><span id="partnerAName">Partner A</span><span class="text-slate-400" id="partnerAshare">50%</span></div>
+                <div class="mt-2 grid grid-cols-2 gap-2 text-xs">
+                  <div class="text-slate-400"><div data-i18n="earnedShare">Earned share</div><div class="text-slate-100 text-sm font-bold" id="partnerAearned">4,650.00 PLN</div></div>
+                  <div class="text-slate-400"><div data-i18n="withdrawnDraws">Withdrawn draws</div><div class="text-rose-400 text-sm font-bold" id="partnerAwithdrawn">2,000.00 PLN</div></div>
+                </div>
+                <div class="mt-3 flex justify-between items-center border-t border-slate-800 pt-3"><span class="text-slate-400 text-xs" data-i18n="remainingLabel">Remaining</span><span class="text-sky-400 font-black" id="partnerAremaining">2,650.00 PLN</span></div>
+              </div>
+              <div class="rounded-2xl p-4 bg-slate-950/60 border border-slate-800">
+                <div class="flex justify-between text-sm"><span id="partnerBName">Partner B</span><span class="text-slate-400" id="partnerBshare">50%</span></div>
+                <div class="mt-2 grid grid-cols-2 gap-2 text-xs">
+                  <div class="text-slate-400"><div data-i18n="earnedShare">Earned share</div><div class="text-slate-100 text-sm font-bold" id="partnerBearned">4,650.00 PLN</div></div>
+                  <div class="text-slate-400"><div data-i18n="withdrawnDraws">Withdrawn draws</div><div class="text-rose-400 text-sm font-bold" id="partnerBwithdrawn">1,100.00 PLN</div></div>
+                </div>
+                <div class="mt-3 flex justify-between items-center border-t border-slate-800 pt-3"><span class="text-slate-400 text-xs" data-i18n="remainingLabel">Remaining</span><span class="text-sky-400 font-black" id="partnerBremaining">3,550.00 PLN</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-transactions" class="xl:col-span-12 hidden grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <div class="xl:col-span-2 glass border border-slate-800 rounded-3xl p-5 card">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h2 class="text-lg font-bold" data-i18n="txTitle">Transactions</h2>
+              <p class="text-xs text-slate-400" data-i18n="txSubtitle">Create income, expense, draw, and verify with receipts.</p>
+            </div>
+            <div class="text-xs badge px-3 py-1 rounded-xl" id="tx-count">0 transactions</div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label class="text-xs text-slate-400" data-i18n="filterProject">Filter by project</label>
+              <select id="filterProject" class="select w-full rounded-2xl px-4 py-3 mt-1">
+                <option value="" data-i18n="optAll">All</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs text-slate-400" data-i18n="filterStatus">Filter by status</label>
+              <select id="filterStatus" class="select w-full rounded-2xl px-4 py-3 mt-1">
+                <option value="" data-i18n="optAll">All</option>
+                <option value="pending" data-i18n="statusPending">pending</option>
+                <option value="verified" data-i18n="statusVerified">verified</option>
+                <option value="rejected" data-i18n="statusRejected">rejected</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="text-xs text-slate-400" data-i18n="labelDate">Date</label>
+              <input id="date" class="input w-full rounded-2xl px-4 py-3 mt-1" type="date" />
+            </div>
+            <div>
+              <label class="text-xs text-slate-400" data-i18n="labelAmount">Amount</label>
+              <input id="amount" class="input w-full rounded-2xl px-4 py-3 mt-1" type="number" placeholder="0.00" />
+            </div>
+            <div>
+              <label class="text-xs text-slate-400" data-i18n="labelDirection">Direction</label>
+              <select id="direction" class="select w-full rounded-2xl px-4 py-3 mt-1">
+                <option value="income" data-i18n="optIncome">Income</option>
+                <option value="expense" data-i18n="optExpense">Expense</option>
+                <option value="transfer" data-i18n="optTransfer">Transfer</option>
+                <option value="draw" data-i18n="optDraw">Draw</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs text-slate-400" data-i18n="labelAccount">Account</label>
+              <select id="account" class="select w-full rounded-2xl px-4 py-3 mt-1">
+                <option value="Bank" data-i18n="optBank">Bank</option>
+                <option value="Cash" data-i18n="optCash">Cash</option>
+                <option value="Tax Reserve" data-i18n="optTaxReserve">Tax Reserve</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs text-slate-400" data-i18n="labelProject">Project</label>
+              <input id="project" class="input w-full rounded-2xl px-4 py-3 mt-1" placeholder="e.g. Kowalski / Floriańska 12" />
+            </div>
+            <div>
+              <label class="text-xs text-slate-400" data-i18n="labelCategory">Category</label>
+              <select id="category" class="select w-full rounded-2xl px-4 py-3 mt-1">
+                <option value="Income" data-i18n="catIncome">Income</option>
+                <option value="Materials" data-i18n="catMaterials">Materials</option>
+                <option value="Fuel" data-i18n="catFuel">Fuel</option>
+                <option value="Labor Employee" data-i18n="catLaborEmployee">Labor Employee</option>
+                <option value="Labor Partner" data-i18n="catLaborPartner">Labor Partner</option>
+                <option value="Accounting" data-i18n="catAccounting">Accounting</option>
+                <option value="Marketing" data-i18n="catMarketing">Marketing</option>
+                <option value="Equipment" data-i18n="catEquipment">Equipment</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs text-slate-400" data-i18n="labelStatus">Status</label>
+              <select id="status" class="select w-full rounded-2xl px-4 py-3 mt-1">
+                <option value="pending" data-i18n="statusPending">pending</option>
+                <option value="verified" data-i18n="statusVerified">verified</option>
+                <option value="rejected" data-i18n="statusRejected">rejected</option>
+              </select>
+            </div>
+            <div class="md:col-span-2">
+              <label class="text-xs text-slate-400" data-i18n="labelDescription">Description</label>
+              <input id="description" class="input w-full rounded-2xl px-4 py-3 mt-1" placeholder="Short note" />
+            </div>
+            <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="text-xs text-slate-400" data-i18n="labelCreator">Recorded by</label>
+                <input id="creator" class="input w-full rounded-2xl px-4 py-3 mt-1" readonly />
+              </div>
+              <div>
+                <label class="text-xs text-slate-400" data-i18n="labelReceipt">Receipt / Photo</label>
+                <input id="receipt" type="file" accept="image/*,.pdf" class="input w-full rounded-2xl px-4 py-2.5 mt-1 file:mr-4 file:rounded-xl file:border-0 file:bg-sky-600 file:px-4 file:py-2 file:text-white" />
+              </div>
+            </div>
+            <div class="md:col-span-2 flex flex-wrap gap-3">
+              <button id="saveTx" class="px-5 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 font-semibold" data-i18n="btnSaveTx">Save transaction</button>
+              <button id="resetTx" class="px-5 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 font-semibold" data-i18n="btnReset">Reset</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass border border-slate-800 rounded-3xl p-5 card">
+          <h3 class="text-lg font-bold mb-4" data-i18n="txPreviewTitle">Preview</h3>
+          <div id="preview" class="space-y-3 text-sm"></div>
+          <div class="mt-6 rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
+            <div class="text-xs text-slate-400 mb-2" data-i18n="taxReserveCalc">Tax reserve from income</div>
+            <div class="text-2xl font-black text-amber-400" id="taxCalc">0.00 PLN</div>
+          </div>
+        </div>
+
+        <div id="deleteRequestsSection" class="xl:col-span-3 hidden glass border border-amber-700/40 rounded-3xl p-5 card">
+          <h3 class="text-lg font-bold mb-3" data-i18n="deleteRequestsTitle">Pending delete requests</h3>
+          <div id="deleteRequestsList" class="space-y-2"></div>
+        </div>
+
+        <div class="xl:col-span-3 glass border border-slate-800 rounded-3xl p-5 card">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-bold" data-i18n="txListTitle">Transaction list</h3>
+            <div class="text-xs text-slate-400" id="tx-list-sub">latest first</div>
+          </div>
+          <div class="overflow-auto scrollbar max-h-[560px] rounded-2xl border border-slate-800">
+            <table class="min-w-full text-sm">
+              <thead class="bg-slate-950/80 text-slate-400 sticky top-0">
+                <tr>
+                  <th class="text-left p-3" data-i18n="thDate">Date</th>
+                  <th class="text-left p-3" data-i18n="thProject">Project</th>
+                  <th class="text-left p-3" data-i18n="thAmount">Amount</th>
+                  <th class="text-left p-3" data-i18n="thType">Type</th>
+                  <th class="text-left p-3" data-i18n="thStatus">Status</th>
+                  <th class="text-left p-3" data-i18n="thActions">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="txTable" class="divide-y divide-slate-800 bg-slate-950/40"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-projects" class="xl:col-span-12 hidden glass border border-slate-800 rounded-3xl p-5 card">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-lg font-bold" data-i18n="projectsTitle">Projects</h2>
+            <p class="text-xs text-slate-400" data-i18n="projectsSubtitle">See which object is profitable and which one eats margin.</p>
+          </div>
+          <button class="px-4 py-2 rounded-2xl bg-indigo-600 hover:bg-indigo-500 font-semibold" data-i18n="btnNewProject">+ New project</button>
+        </div>
+        <div id="projectsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+      </section>
+
+      <section id="view-receipts" class="xl:col-span-12 hidden glass border border-slate-800 rounded-3xl p-5 card">
+        <h2 class="text-lg font-bold mb-4" data-i18n="receiptsTitle">Receipts</h2>
+        <div id="receiptsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+      </section>
+
+      <section id="view-monthly" class="xl:col-span-12 hidden glass border border-slate-800 rounded-3xl p-5 card">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
+          <div>
+            <h2 class="text-lg font-bold" data-i18n="monthlyTitle">Monthly close</h2>
+            <p class="text-xs text-slate-400" data-i18n="monthlySubtitle">Generate report, send it to both partners, then lock the month.</p>
+          </div>
+          <div class="flex gap-3">
+            <button id="generateReport" class="px-4 py-2 rounded-2xl bg-sky-600 hover:bg-sky-500 font-semibold" data-i18n="btnGenerateReport">Generate report</button>
+            <button id="sendReport" class="px-4 py-2 rounded-2xl bg-emerald-600 hover:bg-emerald-500 font-semibold" data-i18n="btnSendReport">Send to partners</button>
+            <button id="lockMonth" class="px-4 py-2 rounded-2xl bg-rose-600 hover:bg-rose-500 font-semibold" data-i18n="btnLockMonth">Lock month</button>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div class="rounded-2xl bg-slate-950/60 border border-slate-800 p-4"><div class="text-xs text-slate-400" data-i18n="monthlyIncome">Income</div><div class="text-2xl font-black text-emerald-400 mt-1" id="monthIncome">18,640 PLN</div></div>
+          <div class="rounded-2xl bg-slate-950/60 border border-slate-800 p-4"><div class="text-xs text-slate-400" data-i18n="monthlyExpenses">Expenses</div><div class="text-2xl font-black text-rose-400 mt-1" id="monthExpense">9,740 PLN</div></div>
+          <div class="rounded-2xl bg-slate-950/60 border border-slate-800 p-4"><div class="text-xs text-slate-400" data-i18n="monthlyTax">Tax reserve</div><div class="text-2xl font-black text-amber-400 mt-1" id="monthTax">1,864 PLN</div><div id="taxRateBadgeMonthly" class="text-[11px] text-slate-500 mt-1"></div></div>
+          <div class="rounded-2xl bg-slate-950/60 border border-slate-800 p-4"><div class="text-xs text-slate-400" data-i18n="monthlyDistrib">Distributable</div><div class="text-2xl font-black text-sky-400 mt-1" id="monthDistrib">7,036 PLN</div></div>
+        </div>
+        <div class="mt-4 rounded-2xl border border-slate-800 bg-slate-950/60 p-4 text-sm text-slate-300" id="monthlySummary"></div>
+        <div id="monthLockedBadge" class="hidden mt-3 rounded-2xl border border-amber-700/40 bg-amber-500/10 p-3 text-sm text-amber-400" data-i18n="monthLockedBadge">This month is locked — no further changes are possible.</div>
+      </section>
+
+      <section id="view-settings" class="xl:col-span-12 hidden grid grid-cols-1 xl:grid-cols-2 gap-6">
+        <div class="glass border border-slate-800 rounded-3xl p-5 card space-y-4">
+          <h2 class="text-lg font-bold" data-i18n="settingsPartnerTitle">Partner settings</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div><label class="text-xs text-slate-400" data-i18n="partnerANameLabel">Partner A name</label><input id="setNameA" class="input w-full rounded-2xl px-4 py-3 mt-1" value="Partner A"></div>
+            <div><label class="text-xs text-slate-400" data-i18n="partnerBNameLabel">Partner B name</label><input id="setNameB" class="input w-full rounded-2xl px-4 py-3 mt-1" value="Partner B"></div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div><label class="text-xs text-slate-400" data-i18n="shareALabel">Share A %</label><input id="shareA" type="range" min="0" max="100" value="50" class="w-full"></div>
+            <div><label class="text-xs text-slate-400" data-i18n="shareBLabel">Share B %</label><div id="shareDisplay" class="text-2xl font-black text-indigo-400 mt-2">50 / 50</div></div>
+          </div>
+          <div class="pt-2 border-t border-slate-800 mt-2">
+            <p class="text-sm font-semibold" data-i18n="inviteTitle">Invite your partner</p>
+            <p class="text-xs text-slate-400 mb-2" data-i18n="inviteDesc">Generate a one-time link. Whoever opens it and signs up joins this same workspace instead of creating their own.</p>
+            <button id="btnGenerateInvite" class="px-4 py-2 rounded-2xl bg-indigo-600 hover:bg-indigo-500 font-semibold text-sm" data-i18n="btnGenerateInvite">Generate invite link</button>
+            <p id="inviteMemberNote" class="text-xs text-slate-400 hidden" data-i18n="inviteMemberNote">You joined this workspace via an invite from the owner.</p>
+            <div id="inviteLinkBox" class="hidden mt-3 flex flex-col sm:flex-row gap-2">
+              <input id="inviteLinkInput" class="input w-full rounded-2xl px-4 py-2.5 text-sm" readonly>
+              <button id="btnCopyInvite" class="px-4 py-2 rounded-2xl bg-slate-800 hover:bg-slate-700 font-semibold text-sm" data-i18n="btnCopyInvite">Copy</button>
+            </div>
+            <p id="inviteNote" class="text-xs text-emerald-400 mt-2 hidden"></p>
+          </div>
+        </div>
+        <div class="glass border border-slate-800 rounded-3xl p-5 card space-y-4">
+          <h2 class="text-lg font-bold" data-i18n="settingsOrgTitle">Organization settings</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div><label class="text-xs text-slate-400" data-i18n="baseCurrencyLabel">Base currency</label><select id="currency" class="select w-full rounded-2xl px-4 py-3 mt-1"><option>PLN</option><option>EUR</option><option>USD</option><option>UAH</option></select></div>
+            <div><label class="text-xs text-slate-400" data-i18n="taxRateLabel">Tax reserve rate</label><input id="taxRate" type="number" value="10" min="0" max="100" class="input w-full rounded-2xl px-4 py-3 mt-1"><p id="taxRateOwnerOnlyNote" class="text-xs text-slate-500 mt-1 hidden" data-i18n="taxRateOwnerOnlyNote">Only the workspace owner can change this.</p></div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div><label class="text-xs text-slate-400" data-i18n="defaultLangLabel">Default language</label><select id="defaultLang" class="select w-full rounded-2xl px-4 py-3 mt-1"><option value="en">English</option><option value="pl">Polski</option><option value="uk">Українська</option></select></div>
+            <div><label class="text-xs text-slate-400" data-i18n="storageModeLabel">Storage mode</label><div class="mt-2 text-sm text-slate-300" data-i18n="storageModeValue">Local session only (cleared on refresh)</div></div>
+          </div>
+        </div>
+
+        <div class="xl:col-span-2 glass border border-slate-800 rounded-3xl p-5 card space-y-4">
+          <h2 class="text-lg font-bold flex items-center gap-2">
+            <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+            <span data-i18n="settingsSecurityTitle">Security & sync</span>
+          </h2>
+
+          <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-950/60 border border-slate-800">
+            <div>
+              <p class="text-sm font-semibold" data-i18n="pinTitle">Device PIN lock</p>
+              <p class="text-xs text-slate-400" data-i18n="pinDesc">Optional 4-digit code for this device only. Local convenience lock, not a substitute for account security.</p>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer shrink-0 ml-4">
+              <input type="checkbox" id="pinToggle" class="sr-only peer">
+              <div class="w-11 h-6 bg-slate-700 rounded-full peer peer-checked:bg-indigo-600 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+            </label>
+          </div>
+
+          <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-950/60 border border-slate-800">
+            <div>
+              <p class="text-sm font-semibold" data-i18n="syncTitle">Cloud sync between partners</p>
+              <p class="text-xs text-slate-400" data-i18n="syncDesc">In development — not active yet. Each device currently keeps its own local session.</p>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer shrink-0 ml-4">
+              <input type="checkbox" id="syncToggle" class="sr-only peer">
+              <div class="w-11 h-6 bg-slate-700 rounded-full peer peer-checked:bg-indigo-600 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+            </label>
+          </div>
+
+          <div class="pt-2 flex flex-col sm:flex-row gap-3">
+            <button id="btnResetDb" class="flex-1 px-4 py-2.5 rounded-2xl bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500/20 font-semibold text-sm" data-i18n="btnResetDb">Reset local data</button>
+            <button id="btnRoadmap" class="flex-1 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-indigo-600 to-fuchsia-600 hover:from-indigo-500 hover:to-fuchsia-500 font-semibold text-sm" data-i18n="btnRoadmap">What's coming next</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="receiptModal" class="fixed inset-0 modal-backdrop hidden items-center justify-center p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-lg w-full p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-bold" data-i18n="receiptModalTitle">Receipt preview</h3>
+        <button id="closeReceiptModal" class="px-3 py-1 rounded-xl bg-slate-800">×</button>
+      </div>
+      <div id="receiptModalBody" class="text-sm text-slate-300"></div>
+    </div>
+  </div>
+
+  <div id="roadmapModal" class="fixed inset-0 modal-backdrop hidden items-center justify-center p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-lg w-full p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-bold" data-i18n="roadmapTitle">What's coming next</h3>
+        <button id="closeRoadmapModal" class="px-3 py-1 rounded-xl bg-slate-800">×</button>
+      </div>
+      <ul class="space-y-2 text-sm text-slate-300 list-disc pl-4">
+        <li data-i18n="roadmapItem1">Real cloud sync between partners (Supabase, per-organization access control)</li>
+        <li data-i18n="roadmapItem2">Invite the second partner by link, shared transactions in real time</li>
+        <li data-i18n="roadmapItem3">PDF/Excel monthly report export</li>
+        <li data-i18n="roadmapItem4">Approval step before deleting someone else's transaction</li>
+      </ul>
+      <p class="text-xs text-slate-500 mt-4" data-i18n="roadmapNote">None of this is active yet — today the app runs as a local, single-device demo.</p>
+    </div>
+  </div>
+
+  <div id="editModal" class="fixed inset-0 modal-backdrop hidden items-center justify-center p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-bold" data-i18n="editTransactionTitle">Edit transaction</h3>
+        <button id="closeEditModal" class="px-3 py-1 rounded-xl bg-slate-800">×</button>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div><label class="text-xs text-slate-400" data-i18n="labelDate">Date</label><input id="editDate" type="date" class="input w-full rounded-2xl px-4 py-3 mt-1"></div>
+        <div><label class="text-xs text-slate-400" data-i18n="labelAmount">Amount</label><input id="editAmount" type="number" class="input w-full rounded-2xl px-4 py-3 mt-1"></div>
+        <div><label class="text-xs text-slate-400" data-i18n="labelProject">Project</label><input id="editProject" class="input w-full rounded-2xl px-4 py-3 mt-1"></div>
+        <div><label class="text-xs text-slate-400" data-i18n="labelDirection">Direction</label>
+          <select id="editDirection" class="select w-full rounded-2xl px-4 py-3 mt-1">
+            <option value="income" data-i18n="optIncome">Income</option>
+            <option value="expense" data-i18n="optExpense">Expense</option>
+            <option value="transfer" data-i18n="optTransfer">Transfer</option>
+            <option value="draw" data-i18n="optDraw">Draw</option>
+          </select>
+        </div>
+        <div><label class="text-xs text-slate-400" data-i18n="labelCategory">Category</label>
+          <select id="editCategory" class="select w-full rounded-2xl px-4 py-3 mt-1">
+            <option value="Income" data-i18n="catIncome">Income</option>
+            <option value="Materials" data-i18n="catMaterials">Materials</option>
+            <option value="Fuel" data-i18n="catFuel">Fuel</option>
+            <option value="Labor Employee" data-i18n="catLaborEmployee">Labor Employee</option>
+            <option value="Labor Partner" data-i18n="catLaborPartner">Labor Partner</option>
+            <option value="Accounting" data-i18n="catAccounting">Accounting</option>
+            <option value="Marketing" data-i18n="catMarketing">Marketing</option>
+            <option value="Equipment" data-i18n="catEquipment">Equipment</option>
+          </select>
+        </div>
+        <div><label class="text-xs text-slate-400" data-i18n="labelStatus">Status</label>
+          <select id="editStatus" class="select w-full rounded-2xl px-4 py-3 mt-1">
+            <option value="pending" data-i18n="statusPending">pending</option>
+            <option value="verified" data-i18n="statusVerified">verified</option>
+            <option value="rejected" data-i18n="statusRejected">rejected</option>
+          </select>
+        </div>
+        <div class="md:col-span-2 flex gap-3 mt-2">
+          <button id="saveEdit" class="px-5 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 font-semibold" data-i18n="btnSaveChanges">Save changes</button>
+          <button id="deleteEdit" class="px-5 py-3 rounded-2xl bg-rose-600 hover:bg-rose-500 font-semibold" data-i18n="btnDeleteTx">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const i18n = {
+      en: {
+        uiState:'Local demo · offline', appTitle:'AI Cashflow Copilot', subtitle:'Shared finance control for partners, projects, receipts and monthly closing.',
+        activeUserLabel:'Signed in as', authSubtitle:'Sign in to access your shared workspace', btnLogin:'Log In', btnSignup:'Sign Up', btnLogout:'Sign out',
+        monthlyCloseBtn:'Monthly Close', tabDashboard:'Dashboard', tabTransactions:'Transactions', tabProjects:'Projects', tabReceipts:'Receipts', tabMonthly:'Monthly Close', tabSettings:'Settings',
+        mIncomeLabel:'Total Income', mExpenseLabel:'Total Expenses', mTaxLabel:'Tax Reserve', mProfitLabel:'Net Profit', cashflowTitle:'Cashflow overview', cashflowSubtitle:'Bank, cash and reserve balances in one place.', currentMonth:'Current month',
+        bankLabel:'Bank Account', cashLabel:'Cash Box', reserveLabel:'Virtual Tax Buffer', splitTitle:'Partner balance', earnedShare:'Earned share', withdrawnDraws:'Withdrawn draws', remainingLabel:'Remaining',
+        txTitle:'Transactions', txSubtitle:'Create income, expense, draw, and verify with receipts.', txPreviewTitle:'Preview', txListTitle:'Transaction list',
+        thDate:'Date', thProject:'Project', thAmount:'Amount', thType:'Type', thStatus:'Status', thActions:'Actions',
+        labelDate:'Date', labelAmount:'Amount', labelDirection:'Direction', labelAccount:'Account', labelProject:'Project', labelCategory:'Category', labelStatus:'Status', labelDescription:'Description', labelCreator:'Recorded by', labelReceipt:'Receipt / Photo',
+        phAmount:'0.00', phProject:'e.g. Kowalski / Floriańska 12', phDescription:'Short note',
+        optAll:'All', optIncome:'Income', optExpense:'Expense', optTransfer:'Transfer', optDraw:'Draw', optBank:'Bank', optCash:'Cash', optTaxReserve:'Tax Reserve',
+        catIncome:'Income', catMaterials:'Materials', catFuel:'Fuel', catLaborEmployee:'Labor Employee', catLaborPartner:'Labor Partner', catAccounting:'Accounting', catMarketing:'Marketing', catEquipment:'Equipment',
+        statusPending:'pending', statusVerified:'verified', statusRejected:'rejected',
+        btnSaveTx:'Save transaction', btnReset:'Reset', btnNewProject:'+ New project', btnGenerateReport:'Generate report', btnSendReport:'Send to partners', btnLockMonth:'Lock month',
+        projectsTitle:'Projects', projectsSubtitle:'See which object is profitable and which one eats margin.', noProjects:'No projects yet', receiptsTitle:'Receipts', noReceipts:'No receipts yet', receiptLoading:'Loading…',
+        monthlyTitle:'Monthly close', monthlySubtitle:'Generate report, send it to both partners, then lock the month.', monthlyIncome:'Income', monthlyExpenses:'Expenses', monthlyTax:'Tax reserve', monthlyDistrib:'Distributable',
+        settingsPartnerTitle:'Partner settings', settingsOrgTitle:'Organization settings', partnerANameLabel:'Partner A name', partnerBNameLabel:'Partner B name', shareALabel:'Share A %', shareBLabel:'Share B %',
+        baseCurrencyLabel:'Base currency', taxRateLabel:'Tax reserve rate', defaultLangLabel:'Default language', storageModeLabel:'Storage mode', storageModeValue:'Synced to your account (Supabase)',
+        filterProject:'Filter by project', filterStatus:'Filter by status', taxReserveCalc:'Tax reserve from income', receiptModalTitle:'Receipt preview', editTransactionTitle:'Edit transaction', btnSaveChanges:'Save changes', btnDeleteTx:'Delete',
+        settingsSecurityTitle:'Security & sync', pinTitle:'Device PIN lock', pinDesc:'Optional 4-digit code for this device only. Local convenience lock, not a substitute for account security.',
+        syncTitle:'Cloud sync between partners', syncDesc:'In development — not active yet. Each device currently keeps its own local session.',
+        btnResetDb:'Delete all transactions', btnRoadmap:"What's coming next", roadmapTitle:"What's coming next",
+        roadmapItem1:'Real cloud sync between partners (Supabase, per-organization access control)', roadmapItem2:'Invite the second partner by link, shared transactions in real time',
+        roadmapItem3:'PDF/Excel monthly report export', roadmapItem4:"Approval step before deleting someone else's transaction",
+        roadmapNote:'None of this is active yet — today the app runs as a local, single-device demo.', confirmReset:'Reset all local data for this session?',
+        inviteTitle:'Invite your partner', inviteDesc:'Generate a one-time link. Whoever opens it and signs up joins this same workspace instead of creating their own.',
+        btnGenerateInvite:'Generate invite link', btnCopyInvite:'Copy', inviteCopied:'Link copied', inviteMemberNote:'You joined this workspace via an invite from the owner.',
+        deleteRequestsTitle:'Pending delete requests', btnApprove:'Approve', btnReject:'Reject',
+        deleteRequestConfirm:"You don't have permission to delete this directly. Send a delete request to the workspace owner for approval?",
+        deleteRequestSent:'Delete request sent to the owner.', deleteRequestDuplicate:'A delete request for this transaction is already pending.',
+        reportGenerated:'Report downloaded.', monthLockConfirm:'Lock the current month? No further changes will be possible for transactions dated in this month.',
+        monthAlreadyLocked:'This month is already locked.', monthLockedBadge:'This month is locked — no further changes are possible.', monthLockedSuccess:'Month locked.',
+        taxRateBadgeLabel:'Rate', taxRateOwnerOnlyNote:'Only the workspace owner can change this.', taxRateSaved:'Tax rate saved.'
+      },
+      pl: {
+        uiState:'Demo lokalne · offline', appTitle:'AI Cashflow Copilot', subtitle:'Wspólny system finansowy dla partnerów, projektów, paragonów i zamknięcia miesiąca.',
+        activeUserLabel:'Zalogowano jako', authSubtitle:'Zaloguj się, aby uzyskać dostęp do wspólnego konta', btnLogin:'Zaloguj się', btnSignup:'Zarejestruj się', btnLogout:'Wyloguj się',
+        monthlyCloseBtn:'Zamknięcie miesiąca', tabDashboard:'Dashboard', tabTransactions:'Transakcje', tabProjects:'Projekty', tabReceipts:'Paragony', tabMonthly:'Zamknięcie miesiąca', tabSettings:'Ustawienia',
+        mIncomeLabel:'Przychody', mExpenseLabel:'Koszty', mTaxLabel:'Rezerwa podatkowa', mProfitLabel:'Zysk netto', cashflowTitle:'Przegląd przepływów pieniężnych', cashflowSubtitle:'Konto bankowe, kasa i rezerwa podatkowa w jednym miejscu.', currentMonth:'Bieżący miesiąc',
+        bankLabel:'Konto bankowe', cashLabel:'Kasa', reserveLabel:'Wirtualna rezerwa podatkowa', splitTitle:'Saldo partnerów', earnedShare:'Należna część', withdrawnDraws:'Wypłacone draw', remainingLabel:'Pozostało',
+        txTitle:'Transakcje', txSubtitle:'Dodawaj przychody, koszty, wypłaty i potwierdzaj paragonami.', txPreviewTitle:'Podgląd', txListTitle:'Lista transakcji',
+        thDate:'Data', thProject:'Projekt', thAmount:'Kwota', thType:'Typ', thStatus:'Status', thActions:'Akcje',
+        labelDate:'Data', labelAmount:'Kwota', labelDirection:'Kierunek', labelAccount:'Konto', labelProject:'Projekt', labelCategory:'Kategoria', labelStatus:'Status', labelDescription:'Opis', labelCreator:'Wprowadził', labelReceipt:'Paragon / Zdjęcie',
+        phAmount:'0.00', phProject:'np. Kowalski / Floriańska 12', phDescription:'Krótka notatka',
+        optAll:'Wszystkie', optIncome:'Przychód', optExpense:'Koszt', optTransfer:'Transfer', optDraw:'Wypłata', optBank:'Bank', optCash:'Kasa', optTaxReserve:'Rezerwa podatkowa',
+        catIncome:'Przychód', catMaterials:'Materiały', catFuel:'Paliwo', catLaborEmployee:'Pracownik', catLaborPartner:'Partner', catAccounting:'Księgowość', catMarketing:'Marketing', catEquipment:'Sprzęt',
+        statusPending:'oczekuje', statusVerified:'potwierdzony', statusRejected:'odrzucony',
+        btnSaveTx:'Zapisz transakcję', btnReset:'Reset', btnNewProject:'+ Nowy projekt', btnGenerateReport:'Generuj raport', btnSendReport:'Wyślij do partnerów', btnLockMonth:'Zablokuj miesiąc',
+        projectsTitle:'Projekty', projectsSubtitle:'Zobacz, które zlecenie jest rentowne, a które zjada marżę.', noProjects:'Brak projektów', receiptsTitle:'Paragony', noReceipts:'Brak paragonów', receiptLoading:'Ładowanie…',
+        monthlyTitle:'Zamknięcie miesiąca', monthlySubtitle:'Wygeneruj raport, wyślij do partnerów i zablokuj miesiąc.', monthlyIncome:'Przychody', monthlyExpenses:'Koszty', monthlyTax:'Rezerwa podatkowa', monthlyDistrib:'Do podziału',
+        settingsPartnerTitle:'Ustawienia partnerów', settingsOrgTitle:'Ustawienia organizacji', partnerANameLabel:'Nazwa partnera A', partnerBNameLabel:'Nazwa partnera B', shareALabel:'Udział A %', shareBLabel:'Udział B %',
+        baseCurrencyLabel:'Waluta bazowa', taxRateLabel:'Stawka rezerwy podatkowej', defaultLangLabel:'Język domyślny', storageModeLabel:'Tryb zapisu', storageModeValue:'Synchronizowane z Twoim kontem (Supabase)',
+        filterProject:'Filtruj po projekcie', filterStatus:'Filtruj po statusie', taxReserveCalc:'Rezerwa podatkowa z przychodu', receiptModalTitle:'Podgląd paragonu', editTransactionTitle:'Edytuj transakcję', btnSaveChanges:'Zapisz zmiany', btnDeleteTx:'Usuń',
+        settingsSecurityTitle:'Bezpieczeństwo i synchronizacja', pinTitle:'Blokada PIN urządzenia', pinDesc:'Opcjonalny 4-cyfrowy kod tylko dla tego urządzenia. Lokalna wygoda, nie zabezpieczenie konta.',
+        syncTitle:'Synchronizacja w chmurze między partnerami', syncDesc:'W trakcie budowy — jeszcze nieaktywna. Każde urządzenie ma na razie własną lokalną sesję.',
+        btnResetDb:'Usuń wszystkie transakcje', btnRoadmap:'Co dalej', roadmapTitle:'Co dalej',
+        roadmapItem1:'Prawdziwa synchronizacja w chmurze między partnerami (Supabase, dostęp per organizacja)', roadmapItem2:'Zaproszenie drugiego partnera linkiem, wspólne transakcje na żywo',
+        roadmapItem3:'Eksport miesięcznego raportu PDF/Excel', roadmapItem4:'Zatwierdzanie przed usunięciem cudzej transakcji',
+        roadmapNote:'Nic z tego nie działa jeszcze — dziś aplikacja to lokalne demo na jednym urządzeniu.', confirmReset:'Zresetować wszystkie lokalne dane tej sesji?',
+        inviteTitle:'Zaproś partnera', inviteDesc:'Wygeneruj jednorazowy link. Osoba, która go otworzy i się zarejestruje, dołączy do tego samego workspace zamiast tworzyć własny.',
+        btnGenerateInvite:'Wygeneruj link zaproszenia', btnCopyInvite:'Kopiuj', inviteCopied:'Link skopiowany', inviteMemberNote:'Dołączyłeś do tego workspace dzięki zaproszeniu właściciela.',
+        deleteRequestsTitle:'Oczekujące prośby o usunięcie', btnApprove:'Zatwierdź', btnReject:'Odrzuć',
+        deleteRequestConfirm:'Nie masz uprawnień, by usunąć to bezpośrednio. Wysłać prośbę o usunięcie do właściciela workspace?',
+        deleteRequestSent:'Prośba o usunięcie została wysłana do właściciela.', deleteRequestDuplicate:'Prośba o usunięcie tej transakcji już oczekuje.',
+        reportGenerated:'Raport pobrany.', monthLockConfirm:'Zablokować bieżący miesiąc? Zmiany transakcji z tego miesiąca nie będą już możliwe.',
+        monthAlreadyLocked:'Ten miesiąc jest już zablokowany.', monthLockedBadge:'Ten miesiąc jest zablokowany — zmiany nie są już możliwe.', monthLockedSuccess:'Miesiąc zablokowany.',
+        taxRateBadgeLabel:'Stawka', taxRateOwnerOnlyNote:'Tylko właściciel workspace może to zmienić.', taxRateSaved:'Stawka podatkowa zapisana.'
+      },
+      uk: {
+        uiState:'Локальна демо · offline', appTitle:'AI Cashflow Copilot', subtitle:'Спільний фінансовий контроль для партнерів, проєктів, чеків і закриття місяця.',
+        activeUserLabel:'Ви увійшли як', authSubtitle:'Увійдіть, щоб отримати доступ до спільного простору', btnLogin:'Увійти', btnSignup:'Зареєструватися', btnLogout:'Вийти',
+        monthlyCloseBtn:'Закриття місяця', tabDashboard:'Панель', tabTransactions:'Транзакції', tabProjects:'Проєкти', tabReceipts:'Чеки', tabMonthly:'Закриття місяця', tabSettings:'Налаштування',
+        mIncomeLabel:'Дохід', mExpenseLabel:'Витрати', mTaxLabel:'Податковий резерв', mProfitLabel:'Чистий прибуток', cashflowTitle:'Огляд руху коштів', cashflowSubtitle:'Банк, каса і податковий резерв в одному місці.', currentMonth:'Поточний місяць',
+        bankLabel:'Банківський рахунок', cashLabel:'Каса', reserveLabel:'Віртуальний податковий буфер', splitTitle:'Баланс партнерів', earnedShare:'Нарахована частка', withdrawnDraws:'Виплачені draw', remainingLabel:'Залишок',
+        txTitle:'Транзакції', txSubtitle:'Додавайте дохід, витрати, виплати та підтверджуйте чеками.', txPreviewTitle:'Перегляд', txListTitle:'Список транзакцій',
+        thDate:'Дата', thProject:'Проєкт', thAmount:'Сума', thType:'Тип', thStatus:'Статус', thActions:'Дії',
+        labelDate:'Дата', labelAmount:'Сума', labelDirection:'Напрямок', labelAccount:'Рахунок', labelProject:'Проєкт', labelCategory:'Категорія', labelStatus:'Статус', labelDescription:'Опис', labelCreator:'Вніс', labelReceipt:'Чек / Фото',
+        phAmount:'0.00', phProject:'напр. Kowalski / Floriańska 12', phDescription:'Коротка нотатка',
+        optAll:'Всі', optIncome:'Дохід', optExpense:'Витрата', optTransfer:'Переведення', optDraw:'Виплата', optBank:'Банк', optCash:'Каса', optTaxReserve:'Податковий резерв',
+        catIncome:'Дохід', catMaterials:'Матеріали', catFuel:'Паливо', catLaborEmployee:'Працівник', catLaborPartner:'Партнер', catAccounting:'Бухгалтерія', catMarketing:'Маркетинг', catEquipment:'Обладнання',
+        statusPending:'очікує', statusVerified:'підтверджено', statusRejected:'відхилено',
+        btnSaveTx:'Зберегти транзакцію', btnReset:'Скинути', btnNewProject:'+ Новий проєкт', btnGenerateReport:'Згенерувати звіт', btnSendReport:'Надіслати партнерам', btnLockMonth:'Заблокувати місяць',
+        projectsTitle:'Проєкти', projectsSubtitle:'Дивіться, який об’єкт прибутковий, а який з’їдає маржу.', noProjects:'Ще немає проєктів', receiptsTitle:'Чеки', noReceipts:'Ще немає чеків', receiptLoading:'Завантаження…',
+        monthlyTitle:'Закриття місяця', monthlySubtitle:'Згенеруйте звіт, надішліть партнерам і заблокуйте місяць.', monthlyIncome:'Дохід', monthlyExpenses:'Витрати', monthlyTax:'Податковий резерв', monthlyDistrib:'До розподілу',
+        settingsPartnerTitle:'Налаштування партнерів', settingsOrgTitle:'Налаштування організації', partnerANameLabel:'Ім’я партнера A', partnerBNameLabel:'Ім’я партнера B', shareALabel:'Частка A %', shareBLabel:'Частка B %',
+        baseCurrencyLabel:'Базова валюта', taxRateLabel:'Ставка податкового резерву', defaultLangLabel:'Мова за замовчуванням', storageModeLabel:'Режим збереження', storageModeValue:'Синхронізовано з вашим акаунтом (Supabase)',
+        filterProject:'Фільтр за проєктом', filterStatus:'Фільтр за статусом', taxReserveCalc:'Податковий резерв з доходу', receiptModalTitle:'Перегляд чека', editTransactionTitle:'Редагувати транзакцію', btnSaveChanges:'Зберегти зміни', btnDeleteTx:'Видалити',
+        settingsSecurityTitle:'Безпека та синхронізація', pinTitle:'PIN-блокування пристрою', pinDesc:'Необов’язковий 4-значний код лише для цього пристрою. Локальна зручність, не захист акаунта.',
+        syncTitle:'Хмарна синхронізація між партнерами', syncDesc:'У розробці — ще не активна. Поки кожен пристрій має власну локальну сесію.',
+        btnResetDb:'Видалити всі транзакції', btnRoadmap:'Що далі', roadmapTitle:'Що далі',
+        roadmapItem1:'Реальна хмарна синхронізація між партнерами (Supabase, доступ по організаціях)', roadmapItem2:'Запросити другого партнера посиланням, спільні транзакції в реальному часі',
+        roadmapItem3:'Експорт місячного звіту в PDF/Excel', roadmapItem4:'Підтвердження перед видаленням чужої транзакції',
+        roadmapNote:'Поки що нічого з цього не працює — зараз застосунок це локальне демо на одному пристрої.', confirmReset:'Скинути всі локальні дані цієї сесії?',
+        inviteTitle:'Запросити партнера', inviteDesc:'Згенеруйте одноразове посилання. Той, хто відкриє його і зареєструється, приєднається до цього ж робочого простору замість створення власного.',
+        btnGenerateInvite:'Згенерувати посилання-запрошення', btnCopyInvite:'Копіювати', inviteCopied:'Посилання скопійовано', inviteMemberNote:'Ви приєдналися до цього робочого простору за запрошенням власника.',
+        deleteRequestsTitle:'Запити на видалення, що очікують', btnApprove:'Схвалити', btnReject:'Відхилити',
+        deleteRequestConfirm:'У вас немає прав видалити це напряму. Надіслати запит на видалення власнику робочого простору?',
+        deleteRequestSent:'Запит на видалення надіслано власнику.', deleteRequestDuplicate:'Запит на видалення цієї транзакції вже очікує.',
+        reportGenerated:'Звіт завантажено.', monthLockConfirm:'Заблокувати поточний місяць? Зміни транзакцій цього місяця більше не будуть можливі.',
+        monthAlreadyLocked:'Цей місяць вже заблокований.', monthLockedBadge:'Цей місяць заблоковано — зміни більше не можливі.', monthLockedSuccess:'Місяць заблоковано.',
+        taxRateBadgeLabel:'Ставка', taxRateOwnerOnlyNote:'Лише власник робочого простору може це змінити.', taxRateSaved:'Податкову ставку збережено.'
+      }
+    };
+
+    const state = {
+      lang:'en',
+      user:null,
+      orgId:null,
+      role:null,
+      partnerA:{name:'Partner A', share:50, earned:4650, withdrawn:2000},
+      partnerB:{name:'Partner B', share:50, earned:4650, withdrawn:1100},
+      currency:'PLN',
+      taxRate:10,
+      txs:[],
+      deleteRequests:[],
+      monthLocked:false,
+      editId:null,
+      receiptText:'',
+      pinEnabled:false,
+      cloudSyncEnabled:false
+    };
+
+    const $ = id => document.getElementById(id);
+
+    // Task #4: partner invite-by-link. The token travels via ?invite=... but
+    // must survive a sign-up -> email-confirmation -> login round trip, which
+    // can lose URL query params along the way — so it's captured into
+    // localStorage (scoped to this browser) the moment it's seen, and the URL
+    // is cleaned up immediately so it doesn't linger in the address bar.
+    const PENDING_INVITE_KEY = 'cashflow_pending_invite_token';
+    (function capturePendingInviteFromUrl(){
+      const params = new URLSearchParams(location.search);
+      const token = params.get('invite');
+      if (token) {
+        localStorage.setItem(PENDING_INVITE_KEY, token);
+        params.delete('invite');
+        const cleanUrl = location.pathname + (params.toString() ? '?' + params.toString() : '');
+        history.replaceState(null, '', cleanUrl);
+      }
+    })();
+    function getPendingInviteToken(){ return localStorage.getItem(PENDING_INVITE_KEY); }
+    function clearPendingInviteToken(){ localStorage.removeItem(PENDING_INVITE_KEY); }
+
+    // Supabase — реальный проект (Этап 1 плана), не заглушка
+    const SUPABASE_URL = "https://bgbcyncpdfnsrhvunzkv.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJnYmN5bmNwZGZuc3JodnVuemt2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxOTA0ODgsImV4cCI6MjA5ODc2NjQ4OH0.hhbeo4hxCKwURz_hqXmJQMNy6TxOJV6vpcbTxp0VNNw";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    function showAuthError(msg){
+      const el = $('authError');
+      el.textContent = msg;
+      el.classList.remove('hidden', 'text-emerald-400');
+      el.classList.add('text-rose-400');
+    }
+
+    function showAuthSuccess(msg){
+      const el = $('authError');
+      el.textContent = msg;
+      el.classList.remove('hidden', 'text-rose-400');
+      el.classList.add('text-emerald-400');
+    }
+
+    function checkUserSession(){
+      // onAuthStateChange fires immediately with the current session on subscribe,
+      // then again on real changes — a separate getSession() call here would run
+      // the whole login flow twice in parallel and race two organizations into
+      // existence, which is why saving used to work "every other time".
+      supabaseClient.auth.onAuthStateChange((_event, session) => {
+        if (session && session.user) handleUserLogin(session.user); else showAuthScreen();
+      });
+    }
+
+    async function handleUserLogin(user){
+      if (state.user && state.user.id === user.id && state.orgId) {
+        state.user = user;
+        return; // already loaded (e.g. token refresh) — avoid re-running setup and re-rendering
+      }
+      state.user = user;
+      $('user-display').textContent = user.email;
+      $('auth-screen').classList.add('hidden');
+      $('main-app').classList.remove('hidden');
+      try {
+        await ensureOrganization();
+        await loadTaxRate();
+        await loadTransactions();
+        await loadDeleteRequests();
+        await checkMonthLocked();
+      } catch (e) {
+        alert('Could not load your workspace: ' + e.message);
+      }
+      populateFilters();
+      refreshUI();
+    }
+
+    function showAuthScreen(){
+      state.user = null;
+      state.orgId = null;
+      state.role = null;
+      state.txs = [];
+      $('main-app').classList.add('hidden');
+      $('auth-screen').classList.remove('hidden');
+    }
+
+    // Каждая организация — 1..N участников (memberships). Соло-пользователь — это
+    // организация с одним owner. Второй партнёр присоединится по инвайту (Этап 4),
+    // здесь только гарантируем, что у залогиненного пользователя есть организация.
+    async function ensureOrganization(){
+      const { data: existing, error: findErr } = await supabaseClient
+        .from('memberships')
+        .select('org_id, role')
+        .eq('user_id', state.user.id)
+        .limit(1)
+        .maybeSingle();
+      if (findErr) throw findErr;
+
+      if (existing) {
+        state.orgId = existing.org_id;
+        state.role = existing.role;
+        return;
+      }
+
+      // A brand-new user with a pending invite joins the inviter's org instead
+      // of getting their own. accept_invite is a one-shot RPC — clear the
+      // token regardless of outcome so a stale/expired/already-used token
+      // doesn't keep getting retried on every future login. If redemption
+      // fails for any reason, fall through to the normal org-creation path
+      // below rather than leaving the user stuck with no workspace at all.
+      const pendingToken = getPendingInviteToken();
+      if (pendingToken) {
+        clearPendingInviteToken();
+        const { data, error } = await supabaseClient.rpc('accept_invite', { p_token: pendingToken });
+        if (!error) {
+          const row = Array.isArray(data) ? data[0] : data;
+          state.orgId = row.out_org_id;
+          state.role = row.out_role;
+          return;
+        }
+        console.warn('Invite could not be redeemed, creating a new organization instead:', error.message);
+      }
+
+      const { data: org, error: orgErr } = await supabaseClient
+        .from('organizations')
+        .insert({ name: state.user.email + '’s organization', created_by: state.user.id })
+        .select()
+        .single();
+      if (orgErr) throw orgErr;
+
+      const { error: memErr } = await supabaseClient
+        .from('memberships')
+        .insert({ org_id: org.id, user_id: state.user.id, role: 'owner', display_name: state.user.email.split('@')[0], share_percent: 50 });
+      if (memErr) throw memErr;
+
+      state.orgId = org.id;
+      state.role = 'owner';
+    }
+
+    // Tax rate is a per-organization setting now (previously it only lived in
+    // in-memory state, so it silently reset to the 10% default on every
+    // reload/relogin — the actual rate a business needs, e.g. 19% CIT or a
+    // Ryczałt %, was never remembered). Only the owner can change it
+    // (mirrors the org_update RLS policy: is_org_owner(id)); members see the
+    // input disabled rather than firing a write that RLS would silently drop.
+    async function loadTaxRate(){
+      const { data, error } = await supabaseClient
+        .from('organizations')
+        .select('tax_rate')
+        .eq('id', state.orgId)
+        .single();
+      if (error) { console.warn('Could not load tax rate:', error.message); return; }
+      state.taxRate = Number(data.tax_rate);
+      $('taxRate').value = state.taxRate;
+    }
+
+    function refreshTaxRateUI(){
+      const isOwner = state.role === 'owner';
+      $('taxRate').disabled = !isOwner;
+      $('taxRateOwnerOnlyNote').classList.toggle('hidden', isOwner);
+    }
+
+    function creatorLabel(row){
+      return row.created_by_user_id === state.user.id ? state.user.email : 'Partner';
+    }
+
+    // Draws need to be attributed to Partner A vs Partner B for the balance card.
+    // Partner A/B names are freely editable text in Settings, so they can never be
+    // reliably matched against the real creator (an email address) — that mismatch
+    // was why draws never reduced anyone's balance. Until the second partner can
+    // actually be invited (org role becomes 'member'), attribute by role instead:
+    // the org owner is Partner A, everyone else is Partner B.
+    function partnerSlotFor(row){
+      const mine = row.created_by_user_id === state.user.id;
+      const myRole = state.role === 'owner' ? 'owner' : 'member';
+      const otherRole = myRole === 'owner' ? 'member' : 'owner';
+      return mine ? myRole : otherRole;
+    }
+
+    async function loadTransactions(){
+      const { data, error } = await supabaseClient
+        .from('transactions')
+        .select('*')
+        .eq('org_id', state.orgId)
+        .order('date', { ascending:false })
+        .order('created_at', { ascending:false });
+      if (error) throw error;
+      state.txs = (data || []).map(row => ({
+        id: row.id,
+        date: row.date,
+        project: row.project || '—',
+        amount: Number(row.amount),
+        type: row.type,
+        status: row.status,
+        creator: creatorLabel(row),
+        createdByUserId: row.created_by_user_id,
+        partnerSlot: partnerSlotFor(row),
+        category: row.category || '—',
+        account: row.account || '—',
+        description: row.description || '—',
+        receipt: row.receipt_path || null
+      }));
+    }
+
+    // receipt_path is now a real Storage object path ("<org_id>/<ts>-<name>"),
+    // not just the filename the browser reported — strip that prefix back off
+    // for a friendly display name.
+    function receiptFileName(path){
+      if (!path) return '';
+      const last = path.split('/').pop();
+      const dashIdx = last.indexOf('-');
+      return dashIdx > -1 ? last.slice(dashIdx + 1) : last;
+    }
+
+    // Task #5: a member can freely delete their own not-yet-verified entries
+    // (matches the tx_delete RLS policy exactly), but deleting anything else —
+    // someone else's transaction, or one already verified/rejected — requires
+    // the owner's approval. Mirrors the DB policy client-side so the UI can
+    // route to the right action instead of firing a delete that RLS would
+    // just silently drop (Postgres RLS makes a blocked DELETE a silent 0-row
+    // no-op, not an error, so this check has to happen before the call).
+    function canDeleteDirectly(tx){
+      return state.role === 'owner' || (tx.createdByUserId === state.user.id && tx.status === 'pending');
+    }
+
+    // Only relevant for the owner — members can see their own requests
+    // implicitly (they know what they asked for) but approving is an
+    // owner-only action per the delreq_update RLS policy, so there's no
+    // separate "my requests" view for members in this first version.
+    async function loadDeleteRequests(){
+      if (state.role !== 'owner') { state.deleteRequests = []; return; }
+      const { data, error } = await supabaseClient
+        .from('delete_requests')
+        .select('id, created_at, transactions(id, project, amount, date)')
+        .eq('org_id', state.orgId)
+        .eq('status', 'pending')
+        .order('created_at', { ascending: false });
+      if (error) { console.warn('Could not load delete requests:', error.message); state.deleteRequests = []; return; }
+      state.deleteRequests = data || [];
+    }
+
+    // Approving deletes the transaction directly (the owner already has that
+    // right via tx_delete's is_org_owner clause — no special RPC needed,
+    // unlike accept_invite which had to bypass RLS for a not-yet-a-member
+    // user). The delete_requests row then disappears on its own: its
+    // transaction_id FK is ON DELETE CASCADE, so there's nothing left to mark
+    // "approved" — it simply won't show up in the next pending-requests load.
+    window.approveDeleteRequest = async function(requestId, txId){
+      const { error } = await supabaseClient.from('transactions').delete().eq('id', txId);
+      if (error) { alert('Could not delete transaction: ' + error.message); return; }
+      await loadTransactions();
+      await loadDeleteRequests();
+      populateFilters();
+      renderTxTable();
+      recalcPartnerBalances();
+      renderDeleteRequests();
+    };
+
+    window.rejectDeleteRequest = async function(requestId){
+      const { error } = await supabaseClient.from('delete_requests').update({ status: 'rejected' }).eq('id', requestId);
+      if (error) { alert('Could not reject: ' + error.message); return; }
+      await loadDeleteRequests();
+      renderDeleteRequests();
+    };
+
+    // Task #8: "Lock month" locks the current calendar month (there's no month
+    // picker in this UI yet — Monthly Close always shows all-time totals, so
+    // "current month" is the only unambiguous choice without adding one).
+    // Enforcement lives in a DB trigger (check_month_not_locked), not just
+    // client-side, so a locked month is actually protected against being
+    // edited via any client, not merely hidden in this UI.
+    function currentYearMonth(){ return new Date().toISOString().slice(0,7); }
+
+    async function checkMonthLocked(){
+      const { data, error } = await supabaseClient
+        .from('locked_months')
+        .select('year_month')
+        .eq('org_id', state.orgId)
+        .eq('year_month', currentYearMonth())
+        .maybeSingle();
+      if (error) { console.warn('Could not check month lock status:', error.message); return; }
+      state.monthLocked = !!data;
+    }
+
+    function renderMonthLockUI(){
+      const badge = $('monthLockedBadge');
+      const btn = $('lockMonth');
+      if (!badge || !btn) return;
+      badge.classList.toggle('hidden', !state.monthLocked);
+      btn.disabled = state.monthLocked;
+      btn.classList.toggle('opacity-50', state.monthLocked);
+      btn.classList.toggle('cursor-not-allowed', state.monthLocked);
+    }
+
+    function renderDeleteRequests(){
+      const section = $('deleteRequestsSection');
+      if (state.role !== 'owner' || !state.deleteRequests.length) {
+        section.classList.add('hidden');
+        return;
+      }
+      section.classList.remove('hidden');
+      $('deleteRequestsList').innerHTML = state.deleteRequests.map(r => {
+        const tx = r.transactions || {};
+        return `
+        <div class="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-slate-800 bg-slate-950/60 p-3">
+          <div class="text-sm"><span class="text-slate-400">${tx.date || ''}</span> · ${tx.project || ''} · <span class="font-semibold">${tx.amount != null ? fmt(Number(tx.amount)) : ''}</span></div>
+          <div class="flex gap-2">
+            <button class="px-3 py-1.5 rounded-lg bg-emerald-600 text-xs" onclick="approveDeleteRequest('${r.id}', '${tx.id}')" data-i18n="btnApprove">Approve</button>
+            <button class="px-3 py-1.5 rounded-lg bg-slate-700 text-xs" onclick="rejectDeleteRequest('${r.id}')" data-i18n="btnReject">Reject</button>
+          </div>
+        </div>`;
+      }).join('');
+      applyLangToDynamicButtons();
+    }
+
+    $('btnEmailLogin').addEventListener('click', async () => {
+      const email = $('authEmail').value;
+      const password = $('authPassword').value;
+      if (!email || !password) { showAuthError('Enter email and password.'); return; }
+      try {
+        const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+        if (error) showAuthError(error.message);
+      } catch (e) {
+        showAuthError('Could not reach the server: ' + e.message);
+      }
+    });
+
+    $('btnEmailSignup').addEventListener('click', async () => {
+      const email = $('authEmail').value;
+      const password = $('authPassword').value;
+      if (!email || !password) { showAuthError('Enter email and password.'); return; }
+      try {
+        const { error } = await supabaseClient.auth.signUp({ email, password });
+        if (error) showAuthError(error.message);
+        else showAuthSuccess('Registered. Check your email to confirm, then log in.');
+      } catch (e) {
+        showAuthError('Could not reach the server: ' + e.message);
+      }
+    });
+
+    $('btnLogout').addEventListener('click', async () => {
+      await supabaseClient.auth.signOut();
+      showAuthScreen();
+    });
+
+    function fmt(n){ return new Intl.NumberFormat(state.lang === 'en' ? 'en-US' : 'pl-PL', {minimumFractionDigits:2, maximumFractionDigits:2}).format(n) + ' ' + state.currency; }
+
+    // How a transaction moves the balance of whichever account it's tagged with.
+    // Transfer has no destination-account field yet, so it's left neutral rather
+    // than guessed at.
+    function signedAmount(t){
+      if (t.type === 'income') return t.amount;
+      if (t.type === 'expense' || t.type === 'draw') return -t.amount;
+      return 0;
+    }
+
+    function recalcPartnerBalances(){
+      const income = state.txs.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+      const expenses = state.txs.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+      const drawA = state.txs.filter(t=>t.type==='draw' && t.partnerSlot==='owner').reduce((s,t)=>s+t.amount,0);
+      const drawB = state.txs.filter(t=>t.type==='draw' && t.partnerSlot==='member').reduce((s,t)=>s+t.amount,0);
+      const net = income - expenses;
+      const reserve = Math.max(0, net) * state.taxRate / 100;
+      const distributable = Math.max(0, net - reserve);
+      const aEarned = distributable * state.partnerA.share / 100;
+      const bEarned = distributable * state.partnerB.share / 100;
+      state.partnerA.earned = aEarned;
+      state.partnerB.earned = bEarned;
+      state.partnerA.withdrawn = drawA;
+      state.partnerB.withdrawn = drawB;
+      $('partnerAremaining').textContent = fmt(aEarned - drawA);
+      $('partnerBremaining').textContent = fmt(bEarned - drawB);
+      $('partnerAearned').textContent = fmt(aEarned);
+      $('partnerBearned').textContent = fmt(bEarned);
+      $('partnerAwithdrawn').textContent = fmt(drawA);
+      $('partnerBwithdrawn').textContent = fmt(drawB);
+      $('split-ratio').textContent = state.partnerA.share + ' / ' + state.partnerB.share;
+      $('shareDisplay').textContent = state.partnerA.share + ' / ' + state.partnerB.share;
+      $('m-income').textContent = fmt(income);
+      $('m-expense').textContent = fmt(expenses);
+      $('m-tax').textContent = fmt(reserve);
+      $('m-profit').textContent = fmt(net);
+      // Real balances per account, from the Account field on each transaction —
+      // these used to be hardcoded demo numbers (12,450 / 3,220 flat) that never
+      // reflected what was actually entered.
+      const bankBalance = state.txs.filter(t=>t.account==='Bank').reduce((s,t)=>s+signedAmount(t),0);
+      const cashBalance = state.txs.filter(t=>t.account==='Cash').reduce((s,t)=>s+signedAmount(t),0);
+      $('bank-balance').textContent = fmt(bankBalance);
+      $('cash-balance').textContent = fmt(cashBalance);
+      $('reserve-balance').textContent = fmt(reserve);
+      $('monthIncome').textContent = fmt(income);
+      $('monthExpense').textContent = fmt(expenses);
+      $('monthTax').textContent = fmt(reserve);
+      $('monthDistrib').textContent = fmt(distributable);
+      $('monthlySummary').textContent = `${state.lang==='pl'?'Przychody':''}${state.lang==='uk'?'':''}`;
+      // taxCalc is owned by renderPreview() (it's direction-aware — only income
+      // should show a reserve). Recomputing it here unconditionally used to
+      // overwrite that with a reserve figure even for draw/expense/transfer.
+      $('tx-count').textContent = `${state.txs.length} transactions`;
+      const rateLabel = `${i18n[state.lang].taxRateBadgeLabel || 'Rate'}: ${state.taxRate}%`;
+      if ($('taxRateBadgeDash')) $('taxRateBadgeDash').textContent = rateLabel;
+      if ($('taxRateBadgeMonthly')) $('taxRateBadgeMonthly').textContent = rateLabel;
+    }
+
+    function populateFilters(){
+      const proj = $('filterProject');
+      const current = proj.value;
+      const unique = [...new Set(state.txs.map(t=>t.project))];
+      const allLabel = i18n[state.lang].optAll || 'All';
+      proj.innerHTML = `<option value="" data-i18n="optAll">${allLabel}</option>` + unique.map(p=>`<option value="${p}">${p}</option>`).join('');
+      proj.value = current;
+    }
+
+    function txStatusClass(status){
+      return status==='verified' ? 'text-emerald-400' : status==='rejected' ? 'text-rose-400' : 'text-amber-400';
+    }
+
+    // The transactions table rendered tx.type/tx.status straight from the DB
+    // enum value (always English: 'income', 'pending', ...) instead of the
+    // translated label — same class of bug as the earlier filter dropdowns.
+    const TYPE_I18N_KEY = { income:'optIncome', expense:'optExpense', transfer:'optTransfer', draw:'optDraw' };
+    const STATUS_I18N_KEY = { pending:'statusPending', verified:'statusVerified', rejected:'statusRejected' };
+    function typeLabel(type){ const key = TYPE_I18N_KEY[type]; return key ? i18n[state.lang][key] : type; }
+    function statusLabel(status){ const key = STATUS_I18N_KEY[status]; return key ? i18n[state.lang][key] : status; }
+
+    function renderTxTable(){
+      const projectFilter = $('filterProject').value;
+      const statusFilter = $('filterStatus').value;
+      const rows = state.txs.filter(t => (!projectFilter || t.project===projectFilter) && (!statusFilter || t.status===statusFilter)).map(tx => `
+        <tr class="tx-row">
+          <td class="p-3 text-slate-400">${tx.date}</td>
+          <td class="p-3">${tx.project}</td>
+          <td class="p-3 font-semibold">${fmt(tx.amount)}</td>
+          <td class="p-3">${typeLabel(tx.type)}</td>
+          <td class="p-3 ${txStatusClass(tx.status)}">${statusLabel(tx.status)}</td>
+          <td class="p-3">
+            <div class="flex gap-2">
+              <button class="px-2 py-1 rounded-lg bg-sky-600 text-xs" onclick="editTx('${tx.id}')" data-i18n="btnEditTx">Edit</button>
+              <button class="px-2 py-1 rounded-lg bg-rose-600 text-xs" onclick="deleteTx('${tx.id}')" data-i18n="btnDeleteTxSmall">Delete</button>
+              ${tx.receipt ? `<button class="px-2 py-1 rounded-lg bg-slate-700 text-xs" onclick="openReceipt('${tx.receipt.replace(/'/g, "\\'")}')" data-i18n="btnReceipt">View</button>` : ''}
+            </div>
+          </td>
+        </tr>`).join('');
+      $('txTable').innerHTML = rows || `<tr><td colspan="6" class="p-4 text-slate-500">No transactions</td></tr>`;
+      applyLangToDynamicButtons();
+      renderReceipts();
+      renderProjects();
+    }
+
+    // The Projects view used to be 3 permanent hardcoded demo cards (Kowalski,
+    // Roof cleaning, Facade repair) with fake income/cost figures, unrelated
+    // to what was actually entered. Build it from real transactions instead,
+    // grouped by the free-text Project field on each transaction.
+    function renderProjects(){
+      const grid = $('projectsGrid');
+      const byProject = {};
+      state.txs.forEach(t => {
+        const name = (t.project || '').trim();
+        if (!name) return;
+        if (!byProject[name]) byProject[name] = { income: 0, cost: 0 };
+        if (t.type === 'income') byProject[name].income += t.amount;
+        if (t.type === 'expense') byProject[name].cost += t.amount;
+      });
+      const names = Object.keys(byProject);
+      if (!names.length) {
+        grid.innerHTML = `<div class="text-sm text-slate-500">${i18n[state.lang].noProjects || 'No projects yet'}</div>`;
+        return;
+      }
+      grid.innerHTML = names.map(name => {
+        const { income, cost } = byProject[name];
+        const net = income - cost;
+        const colorClass = net > 0 ? 'text-emerald-400' : net < 0 ? 'text-rose-400' : 'text-amber-400';
+        const sign = net > 0 ? '+' : '';
+        return `
+        <div class="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
+          <div class="text-slate-400 text-xs">${name}</div>
+          <div class="${colorClass} text-xl font-black mt-1">${sign}${fmt(net)}</div>
+          <div class="text-xs text-slate-500 mt-2">income ${fmt(income)} · cost ${fmt(cost)}</div>
+        </div>`;
+      }).join('');
+    }
+
+    // The Receipts view used to be 3 permanent hardcoded demo cards (Castorama,
+    // Orlen, Accounting) that showed regardless of what was actually entered.
+    // Build it from real transactions that have a receipt attached instead.
+    function renderReceipts(){
+      const grid = $('receiptsGrid');
+      const withReceipts = state.txs.filter(t => t.receipt);
+      if (!withReceipts.length) {
+        grid.innerHTML = `<div class="text-sm text-slate-500">${i18n[state.lang].noReceipts || 'No receipts yet'}</div>`;
+        return;
+      }
+      grid.innerHTML = withReceipts.map(tx => {
+        const safePath = tx.receipt.replace(/'/g, "\\'");
+        return `
+        <button class="receipt-card rounded-2xl border border-slate-800 bg-slate-950/60 p-4 text-left" onclick="openReceipt('${safePath}')">
+          <div class="text-xs text-slate-400">${tx.project} · ${fmt(tx.amount)}</div>
+          <div class="mt-2 text-sm">${tx.description || '—'}</div>
+          <div class="mt-3 text-xs text-emerald-400">📎 ${receiptFileName(tx.receipt)}</div>
+        </button>`;
+      }).join('');
+    }
+
+    function applyLang(){
+      const t = i18n[state.lang];
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.dataset.i18n;
+        if (t[key] !== undefined) el.textContent = t[key];
+      });
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.dataset.i18nPlaceholder;
+        if (t[key] !== undefined) el.placeholder = t[key];
+      });
+      document.querySelectorAll('#direction option, #account option, #category option, #status option, #defaultLang option, #editDirection option, #editCategory option, #editStatus option').forEach(opt => {
+        const key = opt.dataset.i18n;
+        if (key && t[key] !== undefined) opt.textContent = t[key];
+      });
+      $('tx-list-sub').textContent = state.lang === 'pl' ? 'najnowsze na górze' : state.lang === 'uk' ? 'новіші зверху' : 'latest first';
+      populateFilters();
+      recalcPartnerBalances();
+      renderTxTable();
+    }
+
+    function applyLangToDynamicButtons(){
+      const t = i18n[state.lang];
+      document.querySelectorAll('[data-i18n="btnEditTx"]').forEach(el => el.textContent = t.btnEditTx || 'Edit');
+      document.querySelectorAll('[data-i18n="btnDeleteTxSmall"]').forEach(el => el.textContent = t.btnDeleteTxSmall || (state.lang==='pl' ? 'Usuń' : state.lang==='uk' ? 'Видалити' : 'Delete'));
+      document.querySelectorAll('[data-i18n="btnReceipt"]').forEach(el => el.textContent = t.btnReceipt || (state.lang==='pl' ? 'Pokaż' : state.lang==='uk' ? 'Показати' : 'View'));
+      document.querySelectorAll('[data-i18n="btnApprove"]').forEach(el => el.textContent = t.btnApprove || 'Approve');
+      document.querySelectorAll('[data-i18n="btnReject"]').forEach(el => el.textContent = t.btnReject || 'Reject');
+    }
+
+    function renderPreview(){
+      const amount = Number($('amount').value || 0);
+      const t = i18n[state.lang];
+      const directionText = $('direction').options[$('direction').selectedIndex].text;
+      const accountText = $('account').options[$('account').selectedIndex].text;
+      const statusText = $('status').options[$('status').selectedIndex].text;
+      $('preview').innerHTML = `
+        <div class="rounded-2xl border border-slate-800 bg-slate-950/60 p-4 space-y-2">
+          <div class="flex justify-between"><span class="text-slate-400">${t.labelAmount}</span><span class="font-bold">${amount.toFixed(2)} ${state.currency}</span></div>
+          <div class="flex justify-between"><span class="text-slate-400">${t.labelDirection}</span><span>${directionText}</span></div>
+          <div class="flex justify-between"><span class="text-slate-400">${t.labelAccount}</span><span>${accountText}</span></div>
+          <div class="flex justify-between"><span class="text-slate-400">${t.labelProject}</span><span>${$('project').value || '—'}</span></div>
+          <div class="flex justify-between"><span class="text-slate-400">${t.labelStatus}</span><span class="${txStatusClass($('status').value)} capitalize">${statusText}</span></div>
+          <div class="pt-2 text-slate-400">${$('description').value || '—'}</div>
+        </div>`;
+      // Tax reserve only makes sense against income — a withdrawal/expense/transfer
+      // isn't taxable income, so it shouldn't show a reserve being carved out of it.
+      const reserveAmount = $('direction').value === 'income' ? amount * state.taxRate / 100 : 0;
+      $('taxCalc').textContent = fmt(reserveAmount);
+      recalcPartnerBalances();
+    }
+
+    function setView(view){
+      ['dashboard','transactions','projects','receipts','monthly','settings'].forEach(v => $('view-' + v).classList.toggle('hidden', v !== view));
+      document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+    }
+
+    window.editTx = function(id){
+      const tx = state.txs.find(t=>t.id===id);
+      if (!tx) return;
+      state.editId = id;
+      $('editDate').value = tx.date;
+      $('editAmount').value = tx.amount;
+      $('editProject').value = tx.project;
+      $('editDirection').value = tx.type;
+      $('editCategory').value = tx.category;
+      $('editStatus').value = tx.status;
+      $('editModal').classList.remove('hidden');
+      $('editModal').classList.add('flex');
+    };
+
+    window.deleteTx = async function(id){
+      const tx = state.txs.find(t => t.id === id);
+      if (!tx) return;
+
+      if (canDeleteDirectly(tx)) {
+        const { error } = await supabaseClient.from('transactions').delete().eq('id', id);
+        if (error) { alert('Could not delete: ' + error.message); return; }
+        await loadTransactions();
+        populateFilters();
+        renderTxTable();
+        recalcPartnerBalances();
+        return;
+      }
+
+      // Not allowed to delete this one directly (someone else's transaction,
+      // or one that's already verified/rejected) — file a request instead.
+      if (!confirm(i18n[state.lang].deleteRequestConfirm || "You don't have permission to delete this directly. Send a delete request to the workspace owner for approval?")) return;
+      const { error } = await supabaseClient.from('delete_requests').insert({
+        org_id: state.orgId,
+        transaction_id: id,
+        requested_by: state.user.id
+      });
+      if (error) {
+        // 23505 = unique_violation, from the one-pending-request-per-tx index.
+        const msg = error.code === '23505'
+          ? (i18n[state.lang].deleteRequestDuplicate || 'A delete request for this transaction is already pending.')
+          : 'Could not request deletion: ' + error.message;
+        alert(msg);
+        return;
+      }
+      alert(i18n[state.lang].deleteRequestSent || 'Delete request sent to the owner.');
+    };
+
+    // receipt is now a real Storage object path, not display text — the
+    // bucket is private, so viewing it means asking Storage for a short-lived
+    // signed URL each time rather than linking to it directly.
+    window.openReceipt = async function(path){
+      const body = $('receiptModalBody');
+      body.textContent = i18n[state.lang].receiptLoading || 'Loading…';
+      $('receiptModal').classList.remove('hidden');
+      $('receiptModal').classList.add('flex');
+      const { data, error } = await supabaseClient.storage.from('receipts').createSignedUrl(path, 3600);
+      if (error) { body.textContent = 'Could not load receipt: ' + error.message; return; }
+      const url = data.signedUrl;
+      const isImage = /\.(png|jpe?g|gif|webp)$/i.test(path);
+      body.innerHTML = isImage
+        ? `<img src="${url}" class="max-w-full rounded-xl" alt="Receipt">`
+        : `<a href="${url}" target="_blank" rel="noopener" class="text-sky-400 underline">${receiptFileName(path)}</a>`;
+    };
+
+    function closeModal(id){
+      const el = $(id);
+      el.classList.add('hidden');
+      el.classList.remove('flex');
+    }
+
+    document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => setView(b.dataset.view)));
+    document.querySelectorAll('[data-lang]').forEach(b => b.addEventListener('click', () => { state.lang = b.dataset.lang; $('defaultLang').value = state.lang; applyLang(); refreshUI(); }));
+
+    // Category and Direction used to be picked independently, so it was easy to
+    // categorize a transaction as e.g. Fuel/Equipment but leave Direction on
+    // whatever it was left at from the previous entry (Direction isn't reset by
+    // clearTxForm — that's deliberate, so a run of similar entries doesn't need
+    // re-picking every field). That silently excluded real expenses from the
+    // dashboard's "Total Expenses", since it only sums type === 'expense'.
+    // Auto-set Direction from the category so the two stay consistent by default;
+    // "Labor Partner" maps to a draw (paying a partner is a distribution, not a
+    // business expense — that's exactly why it's a separate category from
+    // "Labor Employee"). The user can still override Direction manually afterward.
+    const CATEGORY_TYPE_MAP = {
+      'Income': 'income',
+      'Materials': 'expense',
+      'Fuel': 'expense',
+      'Labor Employee': 'expense',
+      'Labor Partner': 'draw',
+      'Accounting': 'expense',
+      'Marketing': 'expense',
+      'Equipment': 'expense'
+    };
+    $('category').addEventListener('input', () => {
+      const mapped = CATEGORY_TYPE_MAP[$('category').value];
+      if (mapped) $('direction').value = mapped;
+    });
+
+    ['amount','direction','account','project','category','status','description'].forEach(id => $(id).addEventListener('input', () => { renderPreview(); }));
+    $('date').value = new Date().toISOString().slice(0,10);
+
+    function clearTxForm(){
+      $('date').value = new Date().toISOString().slice(0,10);
+      $('amount').value = '';
+      $('project').value = '';
+      $('description').value = '';
+      $('receipt').value = '';
+      $('status').value = 'pending';
+      renderPreview();
+    }
+
+    $('saveTx').addEventListener('click', async () => {
+      const amount = Number($('amount').value || 0);
+      if (!amount || amount <= 0) return;
+
+      // Task #6: actually upload the file to the private receipts bucket
+      // (path scoped by org folder, matching the storage.objects RLS
+      // policies) instead of just remembering the filename the browser
+      // reported with nothing ever stored anywhere.
+      let receiptPath = null;
+      const file = $('receipt').files[0];
+      if (file) {
+        receiptPath = `${state.orgId}/${Date.now()}-${file.name}`;
+        const { error: uploadError } = await supabaseClient.storage.from('receipts').upload(receiptPath, file);
+        if (uploadError) { alert('Could not upload receipt: ' + uploadError.message); return; }
+      }
+
+      const row = {
+        org_id: state.orgId,
+        created_by_user_id: state.user.id,
+        date: $('date').value || new Date().toISOString().slice(0,10),
+        project: $('project').value || '—',
+        amount,
+        type: $('direction').value,
+        status: $('status').value,
+        category: $('category').value,
+        account: $('account').value,
+        description: $('description').value || '—',
+        receipt_path: receiptPath
+      };
+      const { error } = await supabaseClient.from('transactions').insert(row);
+      if (error) { alert('Could not save transaction: ' + error.message); return; }
+      await loadTransactions();
+      populateFilters();
+      renderTxTable();
+      recalcPartnerBalances();
+      clearTxForm();
+    });
+
+    $('resetTx').addEventListener('click', clearTxForm);
+
+    $('filterProject').addEventListener('change', renderTxTable);
+    $('filterStatus').addEventListener('change', renderTxTable);
+
+    $('shareA').addEventListener('input', e => {
+      state.partnerA.share = Number(e.target.value);
+      state.partnerB.share = 100 - state.partnerA.share;
+      recalcPartnerBalances();
+    });
+
+    $('setNameA').addEventListener('input', e => {
+      state.partnerA.name = e.target.value || 'Partner A';
+      refreshUI();
+    });
+
+    $('setNameB').addEventListener('input', e => {
+      state.partnerB.name = e.target.value || 'Partner B';
+      refreshUI();
+    });
+
+    $('currency').addEventListener('change', e => {
+      state.currency = e.target.value;
+      refreshUI();
+    });
+
+    $('taxRate').addEventListener('input', e => {
+      state.taxRate = Number(e.target.value || 0);
+      renderPreview();
+      recalcPartnerBalances();
+    });
+
+    // Persist on 'change' (fires on blur/enter), not on every 'input' keystroke
+    // — the live recalculation above already gives instant feedback, this just
+    // saves the final value once the user is done typing, instead of writing
+    // to the DB on every digit.
+    $('taxRate').addEventListener('change', async () => {
+      if (state.role !== 'owner') return;
+      const { error } = await supabaseClient.from('organizations').update({ tax_rate: state.taxRate }).eq('id', state.orgId);
+      if (error) { alert('Could not save tax rate: ' + error.message); return; }
+    });
+
+    $('defaultLang').addEventListener('change', e => {
+      state.lang = e.target.value;
+      applyLang();
+      refreshUI();
+    });
+
+    $('btnMonthlyClose').addEventListener('click', () => setView('monthly'));
+
+    // Builds the report from the same figures already on screen (the Monthly
+    // Close cards), so the report always matches exactly what the user sees —
+    // rather than recomputing a separate "monthly" total that could drift out
+    // of sync with the displayed one.
+    function buildMonthlyReportText(){
+      const lines = [
+        `AI Cashflow Copilot — Report (${new Date().toISOString().slice(0,10)})`,
+        '',
+        `Income: ${$('monthIncome').textContent}`,
+        `Expenses: ${$('monthExpense').textContent}`,
+        `Tax reserve: ${$('monthTax').textContent} (rate: ${state.taxRate}%)`,
+        `Distributable: ${$('monthDistrib').textContent}`,
+        '',
+        `${state.partnerA.name}: earned ${$('partnerAearned').textContent}, withdrawn ${$('partnerAwithdrawn').textContent}, remaining ${$('partnerAremaining').textContent}`,
+        `${state.partnerB.name}: earned ${$('partnerBearned').textContent}, withdrawn ${$('partnerBwithdrawn').textContent}, remaining ${$('partnerBremaining').textContent}`,
+        '',
+        'Transactions:'
+      ];
+      state.txs.forEach(t => {
+        lines.push(`${t.date}  ${t.project}  ${fmt(t.amount)}  ${t.type}  ${t.status}`);
+      });
+      return lines.join('\n');
+    }
+
+    $('generateReport').addEventListener('click', () => {
+      const text = buildMonthlyReportText();
+      const blob = new Blob([text], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `cashflow-report-${new Date().toISOString().slice(0,10)}.txt`;
+      a.click();
+      URL.revokeObjectURL(url);
+      alert(i18n[state.lang].reportGenerated || 'Report downloaded.');
+    });
+
+    // There's no reliable way to look up a partner's email client-side (auth.users
+    // isn't exposed to the anon key), so this opens the user's own mail client
+    // with the real report pre-filled in the body instead of pretending to send
+    // it server-side — the user picks the recipient themselves.
+    $('sendReport').addEventListener('click', () => {
+      const text = buildMonthlyReportText();
+      const subject = encodeURIComponent('Cashflow report');
+      const body = encodeURIComponent(text);
+      location.href = `mailto:?subject=${subject}&body=${body}`;
+    });
+
+    $('lockMonth').addEventListener('click', async () => {
+      if (state.role !== 'owner') return;
+      if (state.monthLocked) { alert(i18n[state.lang].monthAlreadyLocked || 'This month is already locked.'); return; }
+      if (!confirm(i18n[state.lang].monthLockConfirm || 'Lock the current month? No further changes will be possible for transactions dated in this month.')) return;
+      const { error } = await supabaseClient.from('locked_months').insert({
+        org_id: state.orgId,
+        year_month: currentYearMonth(),
+        locked_by: state.user.id
+      });
+      if (error) {
+        if (error.code === '23505') { state.monthLocked = true; renderMonthLockUI(); alert(i18n[state.lang].monthAlreadyLocked || 'This month is already locked.'); return; }
+        alert('Could not lock month: ' + error.message);
+        return;
+      }
+      state.monthLocked = true;
+      renderMonthLockUI();
+      alert(i18n[state.lang].monthLockedSuccess || 'Month locked.');
+    });
+
+    $('saveEdit').addEventListener('click', async () => {
+      const updates = {
+        date: $('editDate').value,
+        amount: Number($('editAmount').value || 0),
+        project: $('editProject').value,
+        type: $('editDirection').value,
+        category: $('editCategory').value,
+        status: $('editStatus').value
+      };
+      const { error } = await supabaseClient.from('transactions').update(updates).eq('id', state.editId);
+      if (error) { alert('Could not save changes: ' + error.message); return; }
+      await loadTransactions();
+      closeModal('editModal');
+      renderTxTable();
+      recalcPartnerBalances();
+    });
+
+    $('deleteEdit').addEventListener('click', async () => {
+      const { error } = await supabaseClient.from('transactions').delete().eq('id', state.editId);
+      if (error) { alert('Could not delete: ' + error.message); return; }
+      await loadTransactions();
+      closeModal('editModal');
+      populateFilters();
+      renderTxTable();
+      recalcPartnerBalances();
+    });
+
+    $('closeReceiptModal').addEventListener('click', () => closeModal('receiptModal'));
+    $('closeEditModal').addEventListener('click', () => closeModal('editModal'));
+
+    $('pinToggle').addEventListener('change', e => { state.pinEnabled = e.target.checked; });
+    $('syncToggle').addEventListener('change', e => { state.cloudSyncEnabled = e.target.checked; });
+
+    $('btnResetDb').addEventListener('click', async () => {
+      if (!confirm(i18n[state.lang].confirmReset || 'Reset all local data for this session?')) return;
+      const { error } = await supabaseClient.from('transactions').delete().eq('org_id', state.orgId);
+      if (error) { alert('Could not reset: ' + error.message); return; }
+      await loadTransactions();
+      populateFilters();
+      renderTxTable();
+      recalcPartnerBalances();
+    });
+
+    $('btnRoadmap').addEventListener('click', () => {
+      $('roadmapModal').classList.remove('hidden');
+      $('roadmapModal').classList.add('flex');
+    });
+    $('closeRoadmapModal').addEventListener('click', () => closeModal('roadmapModal'));
+
+    // Only the org owner can create invites (matches the invites_insert RLS
+    // policy) — a member trying this would just get an RLS error, so the
+    // button is hidden for members instead (refreshInviteUI below).
+    $('btnGenerateInvite').addEventListener('click',
