@@ -16,5 +16,19 @@ sources of truth). For reference, the migrations applied so far, in order:
 9. `add_locked_months` — `locked_months` table + `check_month_not_locked` trigger
 10. `harden_check_month_not_locked` — locked down the trigger function (search_path, revoked direct EXECUTE)
 11. `add_org_tax_rate` — `organizations.tax_rate` column (default 10), editable by the owner only (existing `org_update` RLS policy already covers it)
+12. `add_projects_delete_policy` — `projects` table had INSERT/SELECT policies but no DELETE policy, so deletes silently no-op'd (HTTP 200, 0 rows affected). Added `projects_delete` policy: `FOR DELETE USING (is_org_owner(org_id))`.
+13. `add_partner_names_to_organizations` — added `partner_a_name` / `partner_b_name` columns to `organizations`. **Superseded by #15 below** — reverted once the design changed from "owner-only names" to "each partner edits their own name".
+14. `enable_realtime_on_transactions` — `ALTER PUBLICATION supabase_realtime ADD TABLE transactions;`. The publication was empty before this, so `postgres_changes` subscriptions on `transactions` silently received nothing; a transaction added by one partner only appeared for the other after a manual page refresh.
+15. `revert_partner_names_on_organizations` — dropped `organizations.partner_a_name` / `partner_b_name` (see #13).
+16. `allow_self_update_membership_display_name` — final partner-name design: each partner edits only their own name, stored in `memberships.display_name`. Adds a second, more permissive UPDATE policy (`membership_update_self`, `USING (user_id = auth.uid())`) alongside the existing owner-only policy — Postgres RLS policies are OR'd together, so this only *adds* permission. A `BEFORE UPDATE` trigger (`enforce_membership_self_update()` / `membership_self_update_guard`) compares `OLD` vs `NEW` and blocks non-owners from changing `role`, `share_percent`, `org_id`, or `user_id`, while still allowing them to change their own `display_name`. RLS `USING`/`WITH CHECK` clauses can't compare old-vs-new column values directly, hence the trigger.
 
-To pull the live schema into a fres
+## Deployment history
+
+- Originally deployed on Netlify (Drop/manual upload flow).
+- 2026-07-05: Netlify blocked new deploys ("Account credit usage exceeded"). Migrated hosting to **Cloudflare Pages** (project `ai-cashflow-copilot-v2`), Direct Upload flow (zip upload of `index.html`).
+- Live URL: https://ai-cashflow-copilot-v2.pages.dev
+
+To pull the live schema into a fresh environment, use the Supabase CLI
+(`supabase db dump`) against project `bgbcyncpdfnsrhvunzkv`, or apply
+`supabase_001_schema_and_rls.sql` followed by the migrations listed above in
+order.

@@ -199,7 +199,9 @@
             </div>
             <div>
               <label class="text-xs text-slate-400" data-i18n="labelProject">Project</label>
-              <input id="project" class="input w-full rounded-2xl px-4 py-3 mt-1" placeholder="e.g. Kowalski / Floriańska 12" />
+              <select id="project" class="select w-full rounded-2xl px-4 py-3 mt-1">
+                <option value="">—</option>
+              </select>
             </div>
             <div>
               <label class="text-xs text-slate-400" data-i18n="labelCategory">Category</label>
@@ -286,7 +288,7 @@
             <h2 class="text-lg font-bold" data-i18n="projectsTitle">Projects</h2>
             <p class="text-xs text-slate-400" data-i18n="projectsSubtitle">See which object is profitable and which one eats margin.</p>
           </div>
-          <button class="px-4 py-2 rounded-2xl bg-indigo-600 hover:bg-indigo-500 font-semibold" data-i18n="btnNewProject">+ New project</button>
+          <button id="btnNewProject" class="px-4 py-2 rounded-2xl bg-indigo-600 hover:bg-indigo-500 font-semibold" data-i18n="btnNewProject">+ New project</button>
         </div>
         <div id="projectsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
       </section>
@@ -306,6 +308,7 @@
             <button id="generateReport" class="px-4 py-2 rounded-2xl bg-sky-600 hover:bg-sky-500 font-semibold" data-i18n="btnGenerateReport">Generate report</button>
             <button id="sendReport" class="px-4 py-2 rounded-2xl bg-emerald-600 hover:bg-emerald-500 font-semibold" data-i18n="btnSendReport">Send to partners</button>
             <button id="lockMonth" class="px-4 py-2 rounded-2xl bg-rose-600 hover:bg-rose-500 font-semibold" data-i18n="btnLockMonth">Lock month</button>
+            <button id="unlockMonth" class="hidden px-4 py-2 rounded-2xl bg-slate-700 hover:bg-slate-600 font-semibold" data-i18n="btnUnlockMonth">Unlock month</button>
           </div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -476,7 +479,7 @@
         optAll:'All', optIncome:'Income', optExpense:'Expense', optTransfer:'Transfer', optDraw:'Draw', optBank:'Bank', optCash:'Cash', optTaxReserve:'Tax Reserve',
         catIncome:'Income', catMaterials:'Materials', catFuel:'Fuel', catLaborEmployee:'Labor Employee', catLaborPartner:'Labor Partner', catAccounting:'Accounting', catMarketing:'Marketing', catEquipment:'Equipment',
         statusPending:'pending', statusVerified:'verified', statusRejected:'rejected',
-        btnSaveTx:'Save transaction', btnReset:'Reset', btnNewProject:'+ New project', btnGenerateReport:'Generate report', btnSendReport:'Send to partners', btnLockMonth:'Lock month',
+        btnSaveTx:'Save transaction', btnReset:'Reset', btnNewProject:'+ New project', btnGenerateReport:'Generate report', btnSendReport:'Send to partners', btnLockMonth:'Lock month', btnUnlockMonth:'Unlock month',
         projectsTitle:'Projects', projectsSubtitle:'See which object is profitable and which one eats margin.', noProjects:'No projects yet', receiptsTitle:'Receipts', noReceipts:'No receipts yet', receiptLoading:'Loading…',
         monthlyTitle:'Monthly close', monthlySubtitle:'Generate report, send it to both partners, then lock the month.', monthlyIncome:'Income', monthlyExpenses:'Expenses', monthlyTax:'Tax reserve', monthlyDistrib:'Distributable',
         settingsPartnerTitle:'Partner settings', settingsOrgTitle:'Organization settings', partnerANameLabel:'Partner A name', partnerBNameLabel:'Partner B name', shareALabel:'Share A %', shareBLabel:'Share B %',
@@ -495,7 +498,9 @@
         deleteRequestSent:'Delete request sent to the owner.', deleteRequestDuplicate:'A delete request for this transaction is already pending.',
         reportGenerated:'Report downloaded.', monthLockConfirm:'Lock the current month? No further changes will be possible for transactions dated in this month.',
         monthAlreadyLocked:'This month is already locked.', monthLockedBadge:'This month is locked — no further changes are possible.', monthLockedSuccess:'Month locked.',
-        taxRateBadgeLabel:'Rate', taxRateOwnerOnlyNote:'Only the workspace owner can change this.', taxRateSaved:'Tax rate saved.'
+        monthUnlockConfirm:'Unlock the current month? Transactions dated in this month can be added and edited again.', monthUnlockedSuccess:'Month unlocked.',
+        taxRateBadgeLabel:'Rate', taxRateOwnerOnlyNote:'Only the workspace owner can change this.', taxRateSaved:'Tax rate saved.',
+        newProjectPrompt:'Project name:', projectExists:'A project with this name already exists.'
       },
       pl: {
         uiState:'Demo lokalne · offline', appTitle:'AI Cashflow Copilot', subtitle:'Wspólny system finansowy dla partnerów, projektów, paragonów i zamknięcia miesiąca.',
@@ -510,7 +515,7 @@
         optAll:'Wszystkie', optIncome:'Przychód', optExpense:'Koszt', optTransfer:'Transfer', optDraw:'Wypłata', optBank:'Bank', optCash:'Kasa', optTaxReserve:'Rezerwa podatkowa',
         catIncome:'Przychód', catMaterials:'Materiały', catFuel:'Paliwo', catLaborEmployee:'Pracownik', catLaborPartner:'Partner', catAccounting:'Księgowość', catMarketing:'Marketing', catEquipment:'Sprzęt',
         statusPending:'oczekuje', statusVerified:'potwierdzony', statusRejected:'odrzucony',
-        btnSaveTx:'Zapisz transakcję', btnReset:'Reset', btnNewProject:'+ Nowy projekt', btnGenerateReport:'Generuj raport', btnSendReport:'Wyślij do partnerów', btnLockMonth:'Zablokuj miesiąc',
+        btnSaveTx:'Zapisz transakcję', btnReset:'Reset', btnNewProject:'+ Nowy projekt', btnGenerateReport:'Generuj raport', btnSendReport:'Wyślij do partnerów', btnLockMonth:'Zablokuj miesiąc', btnUnlockMonth:'Odblokuj miesiąc',
         projectsTitle:'Projekty', projectsSubtitle:'Zobacz, które zlecenie jest rentowne, a które zjada marżę.', noProjects:'Brak projektów', receiptsTitle:'Paragony', noReceipts:'Brak paragonów', receiptLoading:'Ładowanie…',
         monthlyTitle:'Zamknięcie miesiąca', monthlySubtitle:'Wygeneruj raport, wyślij do partnerów i zablokuj miesiąc.', monthlyIncome:'Przychody', monthlyExpenses:'Koszty', monthlyTax:'Rezerwa podatkowa', monthlyDistrib:'Do podziału',
         settingsPartnerTitle:'Ustawienia partnerów', settingsOrgTitle:'Ustawienia organizacji', partnerANameLabel:'Nazwa partnera A', partnerBNameLabel:'Nazwa partnera B', shareALabel:'Udział A %', shareBLabel:'Udział B %',
@@ -529,7 +534,9 @@
         deleteRequestSent:'Prośba o usunięcie została wysłana do właściciela.', deleteRequestDuplicate:'Prośba o usunięcie tej transakcji już oczekuje.',
         reportGenerated:'Raport pobrany.', monthLockConfirm:'Zablokować bieżący miesiąc? Zmiany transakcji z tego miesiąca nie będą już możliwe.',
         monthAlreadyLocked:'Ten miesiąc jest już zablokowany.', monthLockedBadge:'Ten miesiąc jest zablokowany — zmiany nie są już możliwe.', monthLockedSuccess:'Miesiąc zablokowany.',
-        taxRateBadgeLabel:'Stawka', taxRateOwnerOnlyNote:'Tylko właściciel workspace może to zmienić.', taxRateSaved:'Stawka podatkowa zapisana.'
+        monthUnlockConfirm:'Odblokować bieżący miesiąc? Transakcje z tego miesiąca będzie można ponownie dodawać i edytować.', monthUnlockedSuccess:'Miesiąc odblokowany.',
+        taxRateBadgeLabel:'Stawka', taxRateOwnerOnlyNote:'Tylko właściciel workspace może to zmienić.', taxRateSaved:'Stawka podatkowa zapisana.',
+        newProjectPrompt:'Nazwa projektu:', projectExists:'Projekt o tej nazwie już istnieje.'
       },
       uk: {
         uiState:'Локальна демо · offline', appTitle:'AI Cashflow Copilot', subtitle:'Спільний фінансовий контроль для партнерів, проєктів, чеків і закриття місяця.',
@@ -544,7 +551,7 @@
         optAll:'Всі', optIncome:'Дохід', optExpense:'Витрата', optTransfer:'Переведення', optDraw:'Виплата', optBank:'Банк', optCash:'Каса', optTaxReserve:'Податковий резерв',
         catIncome:'Дохід', catMaterials:'Матеріали', catFuel:'Паливо', catLaborEmployee:'Працівник', catLaborPartner:'Партнер', catAccounting:'Бухгалтерія', catMarketing:'Маркетинг', catEquipment:'Обладнання',
         statusPending:'очікує', statusVerified:'підтверджено', statusRejected:'відхилено',
-        btnSaveTx:'Зберегти транзакцію', btnReset:'Скинути', btnNewProject:'+ Новий проєкт', btnGenerateReport:'Згенерувати звіт', btnSendReport:'Надіслати партнерам', btnLockMonth:'Заблокувати місяць',
+        btnSaveTx:'Зберегти транзакцію', btnReset:'Скинути', btnNewProject:'+ Новий проєкт', btnGenerateReport:'Згенерувати звіт', btnSendReport:'Надіслати партнерам', btnLockMonth:'Заблокувати місяць', btnUnlockMonth:'Розблокувати місяць',
         projectsTitle:'Проєкти', projectsSubtitle:'Дивіться, який об’єкт прибутковий, а який з’їдає маржу.', noProjects:'Ще немає проєктів', receiptsTitle:'Чеки', noReceipts:'Ще немає чеків', receiptLoading:'Завантаження…',
         monthlyTitle:'Закриття місяця', monthlySubtitle:'Згенеруйте звіт, надішліть партнерам і заблокуйте місяць.', monthlyIncome:'Дохід', monthlyExpenses:'Витрати', monthlyTax:'Податковий резерв', monthlyDistrib:'До розподілу',
         settingsPartnerTitle:'Налаштування партнерів', settingsOrgTitle:'Налаштування організації', partnerANameLabel:'Ім’я партнера A', partnerBNameLabel:'Ім’я партнера B', shareALabel:'Частка A %', shareBLabel:'Частка B %',
@@ -563,7 +570,9 @@
         deleteRequestSent:'Запит на видалення надіслано власнику.', deleteRequestDuplicate:'Запит на видалення цієї транзакції вже очікує.',
         reportGenerated:'Звіт завантажено.', monthLockConfirm:'Заблокувати поточний місяць? Зміни транзакцій цього місяця більше не будуть можливі.',
         monthAlreadyLocked:'Цей місяць вже заблокований.', monthLockedBadge:'Цей місяць заблоковано — зміни більше не можливі.', monthLockedSuccess:'Місяць заблоковано.',
-        taxRateBadgeLabel:'Ставка', taxRateOwnerOnlyNote:'Лише власник робочого простору може це змінити.', taxRateSaved:'Податкову ставку збережено.'
+        monthUnlockConfirm:'Розблокувати поточний місяць? Транзакції цього місяця знову можна буде додавати й редагувати.', monthUnlockedSuccess:'Місяць розблоковано.',
+        taxRateBadgeLabel:'Ставка', taxRateOwnerOnlyNote:'Лише власник робочого простору може це змінити.', taxRateSaved:'Податкову ставку збережено.',
+        newProjectPrompt:'Назва проєкту:', projectExists:'Проєкт з такою назвою вже існує.'
       }
     };
 
@@ -572,11 +581,13 @@
       user:null,
       orgId:null,
       role:null,
+      myMembershipId:null,
       partnerA:{name:'Partner A', share:50, earned:4650, withdrawn:2000},
       partnerB:{name:'Partner B', share:50, earned:4650, withdrawn:1100},
       currency:'PLN',
       taxRate:10,
       txs:[],
+      projects:[],
       deleteRequests:[],
       monthLocked:false,
       editId:null,
@@ -587,11 +598,6 @@
 
     const $ = id => document.getElementById(id);
 
-    // Task #4: partner invite-by-link. The token travels via ?invite=... but
-    // must survive a sign-up -> email-confirmation -> login round trip, which
-    // can lose URL query params along the way — so it's captured into
-    // localStorage (scoped to this browser) the moment it's seen, and the URL
-    // is cleaned up immediately so it doesn't linger in the address bar.
     const PENDING_INVITE_KEY = 'cashflow_pending_invite_token';
     (function capturePendingInviteFromUrl(){
       const params = new URLSearchParams(location.search);
@@ -606,7 +612,6 @@
     function getPendingInviteToken(){ return localStorage.getItem(PENDING_INVITE_KEY); }
     function clearPendingInviteToken(){ localStorage.removeItem(PENDING_INVITE_KEY); }
 
-    // Supabase — реальный проект (Этап 1 плана), не заглушка
     const SUPABASE_URL = "https://bgbcyncpdfnsrhvunzkv.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJnYmN5bmNwZGZuc3JodnVuemt2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxOTA0ODgsImV4cCI6MjA5ODc2NjQ4OH0.hhbeo4hxCKwURz_hqXmJQMNy6TxOJV6vpcbTxp0VNNw";
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -626,10 +631,6 @@
     }
 
     function checkUserSession(){
-      // onAuthStateChange fires immediately with the current session on subscribe,
-      // then again on real changes — a separate getSession() call here would run
-      // the whole login flow twice in parallel and race two organizations into
-      // existence, which is why saving used to work "every other time".
       supabaseClient.auth.onAuthStateChange((_event, session) => {
         if (session && session.user) handleUserLogin(session.user); else showAuthScreen();
       });
@@ -638,7 +639,7 @@
     async function handleUserLogin(user){
       if (state.user && state.user.id === user.id && state.orgId) {
         state.user = user;
-        return; // already loaded (e.g. token refresh) — avoid re-running setup and re-rendering
+        return;
       }
       state.user = user;
       $('user-display').textContent = user.email;
@@ -647,13 +648,17 @@
       try {
         await ensureOrganization();
         await loadTaxRate();
+        await loadMembers();
         await loadTransactions();
+        await loadProjects();
         await loadDeleteRequests();
         await checkMonthLocked();
+        subscribeToTransactions();
       } catch (e) {
         alert('Could not load your workspace: ' + e.message);
       }
       populateFilters();
+      populateProjectSelect();
       refreshUI();
     }
 
@@ -662,13 +667,11 @@
       state.orgId = null;
       state.role = null;
       state.txs = [];
+      unsubscribeFromTransactions();
       $('main-app').classList.add('hidden');
       $('auth-screen').classList.remove('hidden');
     }
 
-    // Каждая организация — 1..N участников (memberships). Соло-пользователь — это
-    // организация с одним owner. Второй партнёр присоединится по инвайту (Этап 4),
-    // здесь только гарантируем, что у залогиненного пользователя есть организация.
     async function ensureOrganization(){
       const { data: existing, error: findErr } = await supabaseClient
         .from('memberships')
@@ -684,12 +687,6 @@
         return;
       }
 
-      // A brand-new user with a pending invite joins the inviter's org instead
-      // of getting their own. accept_invite is a one-shot RPC — clear the
-      // token regardless of outcome so a stale/expired/already-used token
-      // doesn't keep getting retried on every future login. If redemption
-      // fails for any reason, fall through to the normal org-creation path
-      // below rather than leaving the user stuck with no workspace at all.
       const pendingToken = getPendingInviteToken();
       if (pendingToken) {
         clearPendingInviteToken();
@@ -719,12 +716,6 @@
       state.role = 'owner';
     }
 
-    // Tax rate is a per-organization setting now (previously it only lived in
-    // in-memory state, so it silently reset to the 10% default on every
-    // reload/relogin — the actual rate a business needs, e.g. 19% CIT or a
-    // Ryczałt %, was never remembered). Only the owner can change it
-    // (mirrors the org_update RLS policy: is_org_owner(id)); members see the
-    // input disabled rather than firing a write that RLS would silently drop.
     async function loadTaxRate(){
       const { data, error } = await supabaseClient
         .from('organizations')
@@ -736,22 +727,107 @@
       $('taxRate').value = state.taxRate;
     }
 
+    // Partner names are each person's own display_name on their membership
+    // row (self-editable — see membership_update_self RLS policy), not a
+    // shared org-level field. Owner's row maps to the "Partner A" slot in the
+    // UI, the other member's row maps to "Partner B" (matches partnerSlotFor()
+    // used elsewhere for balance attribution).
+    async function loadMembers(){
+      const { data, error } = await supabaseClient
+        .from('memberships')
+        .select('id, user_id, role, display_name')
+        .eq('org_id', state.orgId);
+      if (error) { console.warn('Could not load members:', error.message); return; }
+      const mine = data.find(m => m.user_id === state.user.id);
+      const owner = data.find(m => m.role === 'owner');
+      const member = data.find(m => m.role !== 'owner');
+      if (mine) state.myMembershipId = mine.id;
+      state.partnerA.name = (owner && owner.display_name) || 'Partner A';
+      state.partnerB.name = (member && member.display_name) || 'Partner B';
+      $('setNameA').value = state.partnerA.name;
+      $('setNameB').value = state.partnerB.name;
+    }
+
+    // Realtime sync: without this, a transaction created by one partner only
+    // appeared for the other after a manual page reload (loadTransactions()
+    // only ran once, at login). Subscribing to postgres_changes on the org's
+    // own transactions keeps both partners' views live.
+    let txRealtimeChannel = null;
+
+    function subscribeToTransactions(){
+      unsubscribeFromTransactions();
+      txRealtimeChannel = supabaseClient
+        .channel('transactions-org-' + state.orgId)
+        .on('postgres_changes', {
+          event: '*',
+          schema: 'public',
+          table: 'transactions',
+          filter: `org_id=eq.${state.orgId}`
+        }, async () => {
+          await loadTransactions();
+          populateFilters();
+          populateProjectSelect();
+          renderTxTable();
+          recalcPartnerBalances();
+        })
+        .subscribe();
+    }
+
+    function unsubscribeFromTransactions(){
+      if (txRealtimeChannel) {
+        supabaseClient.removeChannel(txRealtimeChannel);
+        txRealtimeChannel = null;
+      }
+    }
+
+    // Task #19: projects can now be pre-created (via "+ New project") instead
+    // of only existing implicitly through whatever free text was typed on a
+    // transaction. Loaded per-organization, same isolation as everything else
+    // (projects_select RLS: is_org_member(org_id)).
+    async function loadProjects(){
+      const { data, error } = await supabaseClient
+        .from('projects')
+        .select('id, name')
+        .eq('org_id', state.orgId)
+        .order('name', { ascending: true });
+      if (error) { console.warn('Could not load projects:', error.message); return; }
+      state.projects = data || [];
+    }
+
+    // The transaction form's Project field used to be free text, which meant
+    // two transactions for "the same" project could silently diverge by a typo
+    // and get split across two project cards. Now it's a select sourced from
+    // real project rows — plus any project names already used on existing
+    // transactions, so nothing entered before this change disappears from the
+    // dropdown just because it was never formally created as a project.
+    function populateProjectSelect(){
+      const sel = $('project');
+      if (!sel) return;
+      const current = sel.value;
+      const fromProjects = state.projects.map(p => p.name);
+      const fromTxs = state.txs.map(t => t.project).filter(p => p && p !== '—');
+      const names = [...new Set([...fromProjects, ...fromTxs])].sort((a, b) => a.localeCompare(b));
+      sel.innerHTML = '<option value="">—</option>' + names.map(n => `<option value="${n}">${n}</option>`).join('');
+      if (names.includes(current)) sel.value = current;
+    }
+
     function refreshTaxRateUI(){
       const isOwner = state.role === 'owner';
       $('taxRate').disabled = !isOwner;
       $('taxRateOwnerOnlyNote').classList.toggle('hidden', isOwner);
     }
 
+    function refreshPartnerNameUI(){
+      // Everyone can rename themselves, nobody can rename their partner.
+      const isOwner = state.role === 'owner';
+      $('setNameA').disabled = !isOwner;
+      $('setNameB').disabled = isOwner;
+    }
+
     function creatorLabel(row){
       return row.created_by_user_id === state.user.id ? state.user.email : 'Partner';
     }
 
-    // Draws need to be attributed to Partner A vs Partner B for the balance card.
-    // Partner A/B names are freely editable text in Settings, so they can never be
-    // reliably matched against the real creator (an email address) — that mismatch
-    // was why draws never reduced anyone's balance. Until the second partner can
-    // actually be invited (org role becomes 'member'), attribute by role instead:
-    // the org owner is Partner A, everyone else is Partner B.
     function partnerSlotFor(row){
       const mine = row.created_by_user_id === state.user.id;
       const myRole = state.role === 'owner' ? 'owner' : 'member';
@@ -784,9 +860,6 @@
       }));
     }
 
-    // receipt_path is now a real Storage object path ("<org_id>/<ts>-<name>"),
-    // not just the filename the browser reported — strip that prefix back off
-    // for a friendly display name.
     function receiptFileName(path){
       if (!path) return '';
       const last = path.split('/').pop();
@@ -794,21 +867,10 @@
       return dashIdx > -1 ? last.slice(dashIdx + 1) : last;
     }
 
-    // Task #5: a member can freely delete their own not-yet-verified entries
-    // (matches the tx_delete RLS policy exactly), but deleting anything else —
-    // someone else's transaction, or one already verified/rejected — requires
-    // the owner's approval. Mirrors the DB policy client-side so the UI can
-    // route to the right action instead of firing a delete that RLS would
-    // just silently drop (Postgres RLS makes a blocked DELETE a silent 0-row
-    // no-op, not an error, so this check has to happen before the call).
     function canDeleteDirectly(tx){
       return state.role === 'owner' || (tx.createdByUserId === state.user.id && tx.status === 'pending');
     }
 
-    // Only relevant for the owner — members can see their own requests
-    // implicitly (they know what they asked for) but approving is an
-    // owner-only action per the delreq_update RLS policy, so there's no
-    // separate "my requests" view for members in this first version.
     async function loadDeleteRequests(){
       if (state.role !== 'owner') { state.deleteRequests = []; return; }
       const { data, error } = await supabaseClient
@@ -821,12 +883,6 @@
       state.deleteRequests = data || [];
     }
 
-    // Approving deletes the transaction directly (the owner already has that
-    // right via tx_delete's is_org_owner clause — no special RPC needed,
-    // unlike accept_invite which had to bypass RLS for a not-yet-a-member
-    // user). The delete_requests row then disappears on its own: its
-    // transaction_id FK is ON DELETE CASCADE, so there's nothing left to mark
-    // "approved" — it simply won't show up in the next pending-requests load.
     window.approveDeleteRequest = async function(requestId, txId){
       const { error } = await supabaseClient.from('transactions').delete().eq('id', txId);
       if (error) { alert('Could not delete transaction: ' + error.message); return; }
@@ -845,12 +901,6 @@
       renderDeleteRequests();
     };
 
-    // Task #8: "Lock month" locks the current calendar month (there's no month
-    // picker in this UI yet — Monthly Close always shows all-time totals, so
-    // "current month" is the only unambiguous choice without adding one).
-    // Enforcement lives in a DB trigger (check_month_not_locked), not just
-    // client-side, so a locked month is actually protected against being
-    // edited via any client, not merely hidden in this UI.
     function currentYearMonth(){ return new Date().toISOString().slice(0,7); }
 
     async function checkMonthLocked(){
@@ -867,11 +917,13 @@
     function renderMonthLockUI(){
       const badge = $('monthLockedBadge');
       const btn = $('lockMonth');
+      const unlockBtn = $('unlockMonth');
       if (!badge || !btn) return;
       badge.classList.toggle('hidden', !state.monthLocked);
       btn.disabled = state.monthLocked;
       btn.classList.toggle('opacity-50', state.monthLocked);
       btn.classList.toggle('cursor-not-allowed', state.monthLocked);
+      if (unlockBtn) unlockBtn.classList.toggle('hidden', !(state.monthLocked && state.role === 'owner'));
     }
 
     function renderDeleteRequests(){
@@ -927,9 +979,6 @@
 
     function fmt(n){ return new Intl.NumberFormat(state.lang === 'en' ? 'en-US' : 'pl-PL', {minimumFractionDigits:2, maximumFractionDigits:2}).format(n) + ' ' + state.currency; }
 
-    // How a transaction moves the balance of whichever account it's tagged with.
-    // Transfer has no destination-account field yet, so it's left neutral rather
-    // than guessed at.
     function signedAmount(t){
       if (t.type === 'income') return t.amount;
       if (t.type === 'expense' || t.type === 'draw') return -t.amount;
@@ -962,9 +1011,6 @@
       $('m-expense').textContent = fmt(expenses);
       $('m-tax').textContent = fmt(reserve);
       $('m-profit').textContent = fmt(net);
-      // Real balances per account, from the Account field on each transaction —
-      // these used to be hardcoded demo numbers (12,450 / 3,220 flat) that never
-      // reflected what was actually entered.
       const bankBalance = state.txs.filter(t=>t.account==='Bank').reduce((s,t)=>s+signedAmount(t),0);
       const cashBalance = state.txs.filter(t=>t.account==='Cash').reduce((s,t)=>s+signedAmount(t),0);
       $('bank-balance').textContent = fmt(bankBalance);
@@ -975,9 +1021,6 @@
       $('monthTax').textContent = fmt(reserve);
       $('monthDistrib').textContent = fmt(distributable);
       $('monthlySummary').textContent = `${state.lang==='pl'?'Przychody':''}${state.lang==='uk'?'':''}`;
-      // taxCalc is owned by renderPreview() (it's direction-aware — only income
-      // should show a reserve). Recomputing it here unconditionally used to
-      // overwrite that with a reserve figure even for draw/expense/transfer.
       $('tx-count').textContent = `${state.txs.length} transactions`;
       const rateLabel = `${i18n[state.lang].taxRateBadgeLabel || 'Rate'}: ${state.taxRate}%`;
       if ($('taxRateBadgeDash')) $('taxRateBadgeDash').textContent = rateLabel;
@@ -997,9 +1040,6 @@
       return status==='verified' ? 'text-emerald-400' : status==='rejected' ? 'text-rose-400' : 'text-amber-400';
     }
 
-    // The transactions table rendered tx.type/tx.status straight from the DB
-    // enum value (always English: 'income', 'pending', ...) instead of the
-    // translated label — same class of bug as the earlier filter dropdowns.
     const TYPE_I18N_KEY = { income:'optIncome', expense:'optExpense', transfer:'optTransfer', draw:'optDraw' };
     const STATUS_I18N_KEY = { pending:'statusPending', verified:'statusVerified', rejected:'statusRejected' };
     function typeLabel(type){ const key = TYPE_I18N_KEY[type]; return key ? i18n[state.lang][key] : type; }
@@ -1032,10 +1072,12 @@
     // The Projects view used to be 3 permanent hardcoded demo cards (Kowalski,
     // Roof cleaning, Facade repair) with fake income/cost figures, unrelated
     // to what was actually entered. Build it from real transactions instead,
-    // grouped by the free-text Project field on each transaction.
+    // grouped by project. Projects created via "+ New project" but with no
+    // transactions yet are seeded here at 0/0 so they still show up.
     function renderProjects(){
       const grid = $('projectsGrid');
       const byProject = {};
+      state.projects.forEach(p => { byProject[p.name] = { income: 0, cost: 0 }; });
       state.txs.forEach(t => {
         const name = (t.project || '').trim();
         if (!name) return;
@@ -1062,9 +1104,6 @@
       }).join('');
     }
 
-    // The Receipts view used to be 3 permanent hardcoded demo cards (Castorama,
-    // Orlen, Accounting) that showed regardless of what was actually entered.
-    // Build it from real transactions that have a receipt attached instead.
     function renderReceipts(){
       const grid = $('receiptsGrid');
       const withReceipts = state.txs.filter(t => t.receipt);
@@ -1127,8 +1166,6 @@
           <div class="flex justify-between"><span class="text-slate-400">${t.labelStatus}</span><span class="${txStatusClass($('status').value)} capitalize">${statusText}</span></div>
           <div class="pt-2 text-slate-400">${$('description').value || '—'}</div>
         </div>`;
-      // Tax reserve only makes sense against income — a withdrawal/expense/transfer
-      // isn't taxable income, so it shouldn't show a reserve being carved out of it.
       const reserveAmount = $('direction').value === 'income' ? amount * state.taxRate / 100 : 0;
       $('taxCalc').textContent = fmt(reserveAmount);
       recalcPartnerBalances();
@@ -1167,8 +1204,6 @@
         return;
       }
 
-      // Not allowed to delete this one directly (someone else's transaction,
-      // or one that's already verified/rejected) — file a request instead.
       if (!confirm(i18n[state.lang].deleteRequestConfirm || "You don't have permission to delete this directly. Send a delete request to the workspace owner for approval?")) return;
       const { error } = await supabaseClient.from('delete_requests').insert({
         org_id: state.orgId,
@@ -1176,7 +1211,6 @@
         requested_by: state.user.id
       });
       if (error) {
-        // 23505 = unique_violation, from the one-pending-request-per-tx index.
         const msg = error.code === '23505'
           ? (i18n[state.lang].deleteRequestDuplicate || 'A delete request for this transaction is already pending.')
           : 'Could not request deletion: ' + error.message;
@@ -1186,9 +1220,6 @@
       alert(i18n[state.lang].deleteRequestSent || 'Delete request sent to the owner.');
     };
 
-    // receipt is now a real Storage object path, not display text — the
-    // bucket is private, so viewing it means asking Storage for a short-lived
-    // signed URL each time rather than linking to it directly.
     window.openReceipt = async function(path){
       const body = $('receiptModalBody');
       body.textContent = i18n[state.lang].receiptLoading || 'Loading…';
@@ -1212,16 +1243,6 @@
     document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => setView(b.dataset.view)));
     document.querySelectorAll('[data-lang]').forEach(b => b.addEventListener('click', () => { state.lang = b.dataset.lang; $('defaultLang').value = state.lang; applyLang(); refreshUI(); }));
 
-    // Category and Direction used to be picked independently, so it was easy to
-    // categorize a transaction as e.g. Fuel/Equipment but leave Direction on
-    // whatever it was left at from the previous entry (Direction isn't reset by
-    // clearTxForm — that's deliberate, so a run of similar entries doesn't need
-    // re-picking every field). That silently excluded real expenses from the
-    // dashboard's "Total Expenses", since it only sums type === 'expense'.
-    // Auto-set Direction from the category so the two stay consistent by default;
-    // "Labor Partner" maps to a draw (paying a partner is a distribution, not a
-    // business expense — that's exactly why it's a separate category from
-    // "Labor Employee"). The user can still override Direction manually afterward.
     const CATEGORY_TYPE_MAP = {
       'Income': 'income',
       'Materials': 'expense',
@@ -1254,10 +1275,6 @@
       const amount = Number($('amount').value || 0);
       if (!amount || amount <= 0) return;
 
-      // Task #6: actually upload the file to the private receipts bucket
-      // (path scoped by org folder, matching the storage.objects RLS
-      // policies) instead of just remembering the filename the browser
-      // reported with nothing ever stored anywhere.
       let receiptPath = null;
       const file = $('receipt').files[0];
       if (file) {
@@ -1309,6 +1326,20 @@
       refreshUI();
     });
 
+    // Only your own name is editable (see refreshPartnerNameUI — the other
+    // slot's input is disabled), and it saves to your own membership row.
+    // The disabled check here is a second guard in case the field somehow
+    // got re-enabled client-side; the real enforcement is the DB trigger.
+    async function saveMyDisplayName(){
+      if (!state.myMembershipId) return;
+      const myName = state.role === 'owner' ? state.partnerA.name : state.partnerB.name;
+      const { error } = await supabaseClient.from('memberships').update({ display_name: myName }).eq('id', state.myMembershipId);
+      if (error) { alert('Could not save your name: ' + error.message); return; }
+    }
+
+    $('setNameA').addEventListener('change', () => { if (state.role === 'owner') saveMyDisplayName(); });
+    $('setNameB').addEventListener('change', () => { if (state.role !== 'owner') saveMyDisplayName(); });
+
     $('currency').addEventListener('change', e => {
       state.currency = e.target.value;
       refreshUI();
@@ -1320,10 +1351,6 @@
       recalcPartnerBalances();
     });
 
-    // Persist on 'change' (fires on blur/enter), not on every 'input' keystroke
-    // — the live recalculation above already gives instant feedback, this just
-    // saves the final value once the user is done typing, instead of writing
-    // to the DB on every digit.
     $('taxRate').addEventListener('change', async () => {
       if (state.role !== 'owner') return;
       const { error } = await supabaseClient.from('organizations').update({ tax_rate: state.taxRate }).eq('id', state.orgId);
@@ -1338,10 +1365,6 @@
 
     $('btnMonthlyClose').addEventListener('click', () => setView('monthly'));
 
-    // Builds the report from the same figures already on screen (the Monthly
-    // Close cards), so the report always matches exactly what the user sees —
-    // rather than recomputing a separate "monthly" total that could drift out
-    // of sync with the displayed one.
     function buildMonthlyReportText(){
       const lines = [
         `AI Cashflow Copilot — Report (${new Date().toISOString().slice(0,10)})`,
@@ -1374,10 +1397,6 @@
       alert(i18n[state.lang].reportGenerated || 'Report downloaded.');
     });
 
-    // There's no reliable way to look up a partner's email client-side (auth.users
-    // isn't exposed to the anon key), so this opens the user's own mail client
-    // with the real report pre-filled in the body instead of pretending to send
-    // it server-side — the user picks the recipient themselves.
     $('sendReport').addEventListener('click', () => {
       const text = buildMonthlyReportText();
       const subject = encodeURIComponent('Cashflow report');
@@ -1402,6 +1421,24 @@
       state.monthLocked = true;
       renderMonthLockUI();
       alert(i18n[state.lang].monthLockedSuccess || 'Month locked.');
+    });
+
+    $('unlockMonth').addEventListener('click', async () => {
+      if (state.role !== 'owner') return;
+      if (!state.monthLocked) return;
+      if (!confirm(i18n[state.lang].monthUnlockConfirm || 'Unlock the current month? Transactions dated in this month can be added and edited again.')) return;
+      const { error } = await supabaseClient
+        .from('locked_months')
+        .delete()
+        .eq('org_id', state.orgId)
+        .eq('year_month', currentYearMonth());
+      if (error) {
+        alert('Could not unlock month: ' + error.message);
+        return;
+      }
+      state.monthLocked = false;
+      renderMonthLockUI();
+      alert(i18n[state.lang].monthUnlockedSuccess || 'Month unlocked.');
     });
 
     $('saveEdit').addEventListener('click', async () => {
@@ -1447,13 +1484,88 @@
       recalcPartnerBalances();
     });
 
+    $('btnNewProject').addEventListener('click', async () => {
+      const name = (prompt(i18n[state.lang].newProjectPrompt || 'Project name:') || '').trim();
+      if (!name) return;
+      const { error } = await supabaseClient.from('projects').insert({ org_id: state.orgId, name, created_by: state.user.id });
+      if (error) {
+        const msg = error.code === '23505'
+          ? (i18n[state.lang].projectExists || 'A project with this name already exists.')
+          : 'Could not create project: ' + error.message;
+        alert(msg);
+        return;
+      }
+      await loadProjects();
+      populateProjectSelect();
+      renderProjects();
+    });
+
     $('btnRoadmap').addEventListener('click', () => {
       $('roadmapModal').classList.remove('hidden');
       $('roadmapModal').classList.add('flex');
     });
     $('closeRoadmapModal').addEventListener('click', () => closeModal('roadmapModal'));
 
-    // Only the org owner can create invites (matches the invites_insert RLS
-    // policy) — a member trying this would just get an RLS error, so the
-    // button is hidden for members instead (refreshInviteUI below).
-    $('btnGenerateInvite').addEventListener('click',
+    $('btnGenerateInvite').addEventListener('click', async () => {
+      if (state.role !== 'owner') return;
+      const token = crypto.randomUUID().replace(/-/g, '') + crypto.randomUUID().replace(/-/g, '');
+      const invitedShare = Math.max(0, 100 - state.partnerA.share);
+      const { error } = await supabaseClient.from('invites').insert({
+        org_id: state.orgId,
+        token,
+        created_by: state.user.id,
+        role: 'member',
+        share_percent: invitedShare
+      });
+      if (error) { alert('Could not generate invite: ' + error.message); return; }
+      const link = `${location.origin}${location.pathname}?invite=${token}`;
+      $('inviteLinkInput').value = link;
+      $('inviteLinkBox').classList.remove('hidden');
+      $('inviteNote').classList.add('hidden');
+    });
+
+    $('btnCopyInvite').addEventListener('click', async () => {
+      const note = $('inviteNote');
+      try {
+        await navigator.clipboard.writeText($('inviteLinkInput').value);
+      } catch (e) {
+        $('inviteLinkInput').select();
+      }
+      note.textContent = i18n[state.lang].inviteCopied || 'Link copied';
+      note.classList.remove('hidden');
+    });
+
+    function refreshInviteUI(){
+      const isOwner = state.role === 'owner';
+      $('btnGenerateInvite').classList.toggle('hidden', !isOwner);
+      $('inviteMemberNote').classList.toggle('hidden', isOwner);
+      if (!isOwner) $('inviteLinkBox').classList.add('hidden');
+    }
+
+    function refreshUI(){
+      applyLang();
+      $('creator').value = state.user ? state.user.email : '—';
+      refreshTopStatic();
+      refreshInviteUI();
+      renderDeleteRequests();
+      renderMonthLockUI();
+      refreshTaxRateUI();
+      refreshPartnerNameUI();
+      renderPreview();
+      populateFilters();
+      renderTxTable();
+      recalcPartnerBalances();
+      $('monthlySummary').textContent = `Income: ${$('monthIncome').textContent}, Expenses: ${$('monthExpense').textContent}, Tax reserve: ${$('monthTax').textContent}, Distributable: ${$('monthDistrib').textContent}.`;
+    }
+
+    function refreshTopStatic(){
+      $('partnerAName').textContent = state.partnerA.name;
+      $('partnerBName').textContent = state.partnerB.name;
+      $('partnerAshare').textContent = state.partnerA.share + '%';
+      $('partnerBshare').textContent = state.partnerB.share + '%';
+    }
+
+    checkUserSession();
+  </script>
+</body>
+</html>
