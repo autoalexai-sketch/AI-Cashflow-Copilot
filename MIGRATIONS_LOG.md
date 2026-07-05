@@ -27,6 +27,8 @@ sources of truth). For reference, the migrations applied so far, in order:
 - Originally deployed on Netlify (Drop/manual upload flow).
 - 2026-07-05: Netlify blocked new deploys ("Account credit usage exceeded"). Migrated hosting to **Cloudflare Pages** (project `ai-cashflow-copilot-v2`), Direct Upload flow (zip upload of `index.html`).
 - Live URL: https://ai-cashflow-copilot-v2.pages.dev
+- 2026-07-05: Fixed stale in-app "What's coming next" copy that still claimed cloud sync, partner invites, realtime sync, delete approval, and report export were unbuilt — all of these had already shipped. Updated the top status badge ("Local demo · offline" → "Live · synced"), the Settings → Security & sync section (replaced the non-functional sync toggle with a static "Active" badge), and the roadmap modal text, across all three languages (EN/PL/UK).
+- 2026-07-05: Replaced the plain-text-only "Generate report" button with real **PDF export** (jsPDF + jsPDF-AutoTable, loaded via CDN) and **Excel export** (SheetJS/xlsx, loaded via CDN) on the Monthly Close view. The "Send to partners" mailto link keeps using a shared plain-text summary. All three formats are built from one `buildMonthlyReportData()` function to avoid duplicating DOM-read logic. Redeployed to Cloudflare Pages.
 
 To pull the live schema into a fresh environment, use the Supabase CLI
 (`supabase db dump`) against project `bgbcyncpdfnsrhvunzkv`, or apply
