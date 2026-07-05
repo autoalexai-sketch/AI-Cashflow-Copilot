@@ -1,4 +1,6 @@
-# AI Cashflow Copilot — development plan (completed)
+# SplitBooks — development plan (completed)
+
+_(Originally built under the working name "AI Cashflow Copilot"; renamed to SplitBooks in July 2026.)_
 
 Original plan date: 2026-07-04. All 9 stages below have since been completed
 and deployed. This file is kept as a historical record of the plan and its
