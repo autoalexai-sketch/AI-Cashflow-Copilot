@@ -44,18 +44,43 @@
       <div class="space-y-3">
         <input id="authEmail" type="email" class="input w-full rounded-2xl px-4 py-3 text-sm" placeholder="your@email.com" />
         <input id="authPassword" type="password" class="input w-full rounded-2xl px-4 py-3 text-sm" placeholder="Password" />
+        <input id="authPasswordConfirm" type="password" class="input w-full rounded-2xl px-4 py-3 text-sm" placeholder="Confirm password (for Sign Up)" data-i18n-placeholder="placeholderConfirmPassword" />
         <div class="cf-turnstile" data-sitekey="0x4AAAAAADwsM0GGrGwJpZ7O" data-theme="dark"></div>
         <div id="authError" class="text-xs text-rose-400 hidden"></div>
         <div class="grid grid-cols-2 gap-3 pt-1">
           <button id="btnEmailLogin" class="py-3 px-4 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm transition-all" data-i18n="btnLogin">Log In</button>
           <button id="btnEmailSignup" class="py-3 px-4 rounded-2xl bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-400 border border-indigo-500/30 font-semibold text-sm transition-all" data-i18n="btnSignup">Sign Up</button>
         </div>
+        <button id="btnForgotPassword" class="text-xs text-slate-400 hover:text-slate-200 underline text-center w-full" data-i18n="btnForgotPassword">Forgot password?</button>
       </div>
       <div class="flex justify-center gap-4 text-xs text-slate-500">
         <a href="/pricing.html" class="hover:text-slate-300 underline" data-i18n="footerPricing">Pricing</a>
         <a href="/privacy.html" class="hover:text-slate-300 underline" data-i18n="footerPrivacy">Privacy Policy</a>
         <a href="/terms.html" class="hover:text-slate-300 underline" data-i18n="footerTerms">Terms of Use</a>
       </div>
+    </div>
+  </div>
+
+  <div id="forgotPasswordModal" class="fixed inset-0 modal-backdrop hidden items-center justify-center p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-bold" data-i18n="forgotPasswordTitle">Reset your password</h3>
+        <button id="closeForgotPasswordModal" class="px-3 py-1 rounded-xl bg-slate-800">×</button>
+      </div>
+      <p class="text-sm text-slate-400 mb-3" data-i18n="forgotPasswordDesc">Enter your email — we'll send a link to set a new password.</p>
+      <input id="forgotPasswordEmail" type="email" class="input w-full rounded-2xl px-4 py-3 text-sm" placeholder="your@email.com" />
+      <div id="forgotPasswordMsg" class="text-xs mt-2 hidden"></div>
+      <button id="btnSendResetLink" class="mt-4 w-full py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 font-semibold text-sm" data-i18n="btnSendResetLink">Send reset link</button>
+    </div>
+  </div>
+
+  <div id="resetPasswordModal" class="fixed inset-0 modal-backdrop hidden items-center justify-center p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6">
+      <h3 class="text-lg font-bold mb-4" data-i18n="resetPasswordTitle">Set a new password</h3>
+      <input id="newPassword" type="password" class="input w-full rounded-2xl px-4 py-3 text-sm" placeholder="New password" data-i18n-placeholder="placeholderNewPassword" />
+      <input id="newPasswordConfirm" type="password" class="input w-full rounded-2xl px-4 py-3 text-sm mt-3" placeholder="Confirm new password" data-i18n-placeholder="placeholderConfirmPassword" />
+      <div id="resetPasswordMsg" class="text-xs mt-2 hidden"></div>
+      <button id="btnSaveNewPassword" class="mt-4 w-full py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 font-semibold text-sm" data-i18n="btnSaveNewPassword">Save new password</button>
     </div>
   </div>
 
@@ -506,6 +531,7 @@
       en: {
         uiState:'Live · synced', appTitle:'SplitBooks', subtitle:'Shared finance control for partners, projects, receipts and monthly closing.',
         activeUserLabel:'Signed in as', authSubtitle:'Sign in to access your shared workspace', btnLogin:'Log In', btnSignup:'Sign Up', btnLogout:'Sign out',
+        btnForgotPassword:'Forgot password?', forgotPasswordTitle:'Reset your password', forgotPasswordDesc:"Enter your email — we'll send a link to set a new password.", btnSendResetLink:'Send reset link', resetPasswordTitle:'Set a new password', btnSaveNewPassword:'Save new password', placeholderConfirmPassword:'Confirm password (for Sign Up)', placeholderNewPassword:'New password',
         monthlyCloseBtn:'Monthly Close', tabDashboard:'Dashboard', tabTransactions:'Transactions', tabProjects:'Projects', tabReceipts:'Receipts', tabMonthly:'Monthly Close', tabSettings:'Settings',
         mIncomeLabel:'Total Income', mExpenseLabel:'Total Expenses', mTaxLabel:'Tax Reserve', mProfitLabel:'Net Profit', cashflowTitle:'Cashflow overview', cashflowSubtitle:'Bank, cash and reserve balances in one place.', currentMonth:'Current month',
         bankLabel:'Bank Account', cashLabel:'Cash Box', reserveLabel:'Virtual Tax Buffer', splitTitle:'Partner balance', earnedShare:'Earned share', withdrawnDraws:'Withdrawn draws', remainingLabel:'Remaining',
@@ -544,6 +570,7 @@
       pl: {
         uiState:'Na żywo · zsynchronizowane', appTitle:'SplitBooks', subtitle:'Wspólny system finansowy dla partnerów, projektów, paragonów i zamknięcia miesiąca.',
         activeUserLabel:'Zalogowano jako', authSubtitle:'Zaloguj się, aby uzyskać dostęp do wspólnego konta', btnLogin:'Zaloguj się', btnSignup:'Zarejestruj się', btnLogout:'Wyloguj się',
+        btnForgotPassword:'Nie pamiętasz hasła?', forgotPasswordTitle:'Zresetuj hasło', forgotPasswordDesc:'Podaj swój e-mail — wyślemy link do ustawienia nowego hasła.', btnSendResetLink:'Wyślij link resetujący', resetPasswordTitle:'Ustaw nowe hasło', btnSaveNewPassword:'Zapisz nowe hasło', placeholderConfirmPassword:'Potwierdź hasło (przy rejestracji)', placeholderNewPassword:'Nowe hasło',
         monthlyCloseBtn:'Zamknięcie miesiąca', tabDashboard:'Dashboard', tabTransactions:'Transakcje', tabProjects:'Projekty', tabReceipts:'Paragony', tabMonthly:'Zamknięcie miesiąca', tabSettings:'Ustawienia',
         mIncomeLabel:'Przychody', mExpenseLabel:'Koszty', mTaxLabel:'Rezerwa podatkowa', mProfitLabel:'Zysk netto', cashflowTitle:'Przegląd przepływów pieniężnych', cashflowSubtitle:'Konto bankowe, kasa i rezerwa podatkowa w jednym miejscu.', currentMonth:'Bieżący miesiąc',
         bankLabel:'Konto bankowe', cashLabel:'Kasa', reserveLabel:'Wirtualna rezerwa podatkowa', splitTitle:'Saldo partnerów', earnedShare:'Należna część', withdrawnDraws:'Wypłacone środki', remainingLabel:'Pozostało',
@@ -582,6 +609,7 @@
       uk: {
         uiState:'Наживо · синхронізовано', appTitle:'SplitBooks', subtitle:'Спільний фінансовий контроль для партнерів, проєктів, чеків і закриття місяця.',
         activeUserLabel:'Ви увійшли як', authSubtitle:'Увійдіть, щоб отримати доступ до спільного простору', btnLogin:'Увійти', btnSignup:'Зареєструватися', btnLogout:'Вийти',
+        btnForgotPassword:'Забули пароль?', forgotPasswordTitle:'Скидання пароля', forgotPasswordDesc:'Введіть email — надішлемо посилання для встановлення нового пароля.', btnSendResetLink:'Надіслати посилання', resetPasswordTitle:'Встановіть новий пароль', btnSaveNewPassword:'Зберегти новий пароль', placeholderConfirmPassword:'Підтвердіть пароль (для реєстрації)', placeholderNewPassword:'Новий пароль',
         monthlyCloseBtn:'Закриття місяця', tabDashboard:'Панель', tabTransactions:'Транзакції', tabProjects:'Проєкти', tabReceipts:'Чеки', tabMonthly:'Закриття місяця', tabSettings:'Налаштування',
         mIncomeLabel:'Дохід', mExpenseLabel:'Витрати', mTaxLabel:'Податковий резерв', mProfitLabel:'Чистий прибуток', cashflowTitle:'Огляд руху коштів', cashflowSubtitle:'Банк, каса і податковий резерв в одному місці.', currentMonth:'Поточний місяць',
         bankLabel:'Банківський рахунок', cashLabel:'Каса', reserveLabel:'Віртуальний податковий буфер', splitTitle:'Баланс партнерів', earnedShare:'Нарахована частка', withdrawnDraws:'Виплачені кошти', remainingLabel:'Залишок',
@@ -696,7 +724,15 @@
     }
 
     function checkUserSession(){
-      supabaseClient.auth.onAuthStateChange((_event, session) => {
+      supabaseClient.auth.onAuthStateChange((event, session) => {
+        // Supabase logs the user into a temporary session when they follow a
+        // password-reset email link. Intercept that case and ask for a new
+        // password instead of dropping them straight into the app.
+        if (event === 'PASSWORD_RECOVERY') {
+          $('resetPasswordModal').classList.remove('hidden');
+          $('resetPasswordModal').classList.add('flex');
+          return;
+        }
         if (session && session.user) handleUserLogin(session.user); else showAuthScreen();
       });
     }
@@ -1032,7 +1068,9 @@
     $('btnEmailSignup').addEventListener('click', async () => {
       const email = $('authEmail').value;
       const password = $('authPassword').value;
+      const passwordConfirm = $('authPasswordConfirm').value;
       if (!email || !password) { showAuthError('Enter email and password.'); return; }
+      if (password !== passwordConfirm) { showAuthError('Passwords do not match.'); return; }
       try {
         const { error } = await supabaseClient.auth.signUp({ email, password, options: { captchaToken: getCaptchaToken() } });
         if (error) showAuthError(error.message);
@@ -1047,6 +1085,40 @@
     $('btnLogout').addEventListener('click', async () => {
       await supabaseClient.auth.signOut();
       showAuthScreen();
+    });
+
+    $('btnForgotPassword').addEventListener('click', () => {
+      $('forgotPasswordEmail').value = $('authEmail').value;
+      $('forgotPasswordMsg').classList.add('hidden');
+      $('forgotPasswordModal').classList.remove('hidden');
+      $('forgotPasswordModal').classList.add('flex');
+    });
+
+    $('closeForgotPasswordModal').addEventListener('click', () => closeModal('forgotPasswordModal'));
+
+    $('btnSendResetLink').addEventListener('click', async () => {
+      const email = $('forgotPasswordEmail').value;
+      const msg = $('forgotPasswordMsg');
+      if (!email) { msg.textContent = 'Enter your email.'; msg.className = 'text-xs mt-2 text-rose-400'; return; }
+      const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + window.location.pathname });
+      if (error) { msg.textContent = error.message; msg.className = 'text-xs mt-2 text-rose-400'; return; }
+      msg.textContent = 'Check your email for the reset link.';
+      msg.className = 'text-xs mt-2 text-emerald-400';
+    });
+
+    $('btnSaveNewPassword').addEventListener('click', async () => {
+      const newPassword = $('newPassword').value;
+      const newPasswordConfirm = $('newPasswordConfirm').value;
+      const msg = $('resetPasswordMsg');
+      if (!newPassword || newPassword.length < 6) { msg.textContent = 'Password must be at least 6 characters.'; msg.className = 'text-xs mt-2 text-rose-400'; return; }
+      if (newPassword !== newPasswordConfirm) { msg.textContent = 'Passwords do not match.'; msg.className = 'text-xs mt-2 text-rose-400'; return; }
+      const { error } = await supabaseClient.auth.updateUser({ password: newPassword });
+      if (error) { msg.textContent = error.message; msg.className = 'text-xs mt-2 text-rose-400'; return; }
+      closeModal('resetPasswordModal');
+      $('newPassword').value = '';
+      $('newPasswordConfirm').value = '';
+      const { data: { user } } = await supabaseClient.auth.getUser();
+      if (user) handleUserLogin(user);
     });
 
     function fmt(n){ return new Intl.NumberFormat(state.lang === 'en' ? 'en-US' : 'pl-PL', {minimumFractionDigits:2, maximumFractionDigits:2}).format(n) + ' ' + state.currency; }
