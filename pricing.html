@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pricing — SplitBooks</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html, body { background:#020617; }
+    .glass { background: rgba(15,23,42,.72); backdrop-filter: blur(12px); }
+    a { color:#60a5fa; }
+    h2 { margin-top: 2rem; }
+    .plan-card { display:flex; flex-direction:column; height:100%; }
+    .plan-feats { flex:1; }
+  </style>
+</head>
+<body class="text-slate-100 min-h-screen">
+  <div class="max-w-5xl mx-auto p-6 md:p-10">
+    <a href="/" class="text-sm text-slate-400 hover:text-slate-200">&larr; Back to SplitBooks</a>
+    <h1 class="text-3xl font-black mt-4 mb-2 bg-gradient-to-r from-sky-400 via-indigo-400 to-fuchsia-400 bg-clip-text text-transparent">Pricing</h1>
+    <p class="text-slate-400 text-sm mb-8">Simple pricing for partners running a business together. Prices shown net, per month.</p>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="plan-card glass border border-slate-800 rounded-2xl p-5">
+        <div class="text-sm font-semibold text-slate-300">Free</div>
+        <div class="text-3xl font-black mt-2">0 zł<span class="text-sm font-normal text-slate-500">/mo</span></div>
+        <div class="text-xs text-slate-500 mb-4">≈ €0</div>
+        <p class="text-xs text-slate-400 mb-3">Try it out with one workspace.</p>
+        <ul class="plan-feats text-sm text-slate-300 space-y-2 mb-5">
+          <li>✓ 1 workspace</li>
+          <li>✓ ~20 transactions / month</li>
+          <li>✓ 1 project</li>
+          <li>✓ Basic tax reserve view</li>
+          <li class="text-slate-600">✗ PDF / Excel export</li>
+        </ul>
+        <a href="/" class="text-center py-2.5 px-4 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm no-underline">Start free</a>
+      </div>
+
+      <div class="plan-card glass border border-slate-800 rounded-2xl p-5">
+        <div class="text-sm font-semibold text-slate-300">Starter</div>
+        <div class="text-3xl font-black mt-2">29 zł<span class="text-sm font-normal text-slate-500">/mo</span></div>
+        <div class="text-xs text-slate-500 mb-4">≈ €7</div>
+        <p class="text-xs text-slate-400 mb-3">For two partners just getting going.</p>
+        <ul class="plan-feats text-sm text-slate-300 space-y-2 mb-5">
+          <li>✓ Unlimited transactions</li>
+          <li>✓ Up to 3 projects</li>
+          <li>✓ Receipt storage</li>
+          <li>✓ Tax reserve tracking</li>
+          <li>✓ PDF export</li>
+        </ul>
+        <a href="/" class="text-center py-2.5 px-4 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm no-underline">Get started</a>
+      </div>
+
+      <div class="plan-card glass border-2 border-indigo-500/60 rounded-2xl p-5 relative">
+        <div class="absolute -top-3 left-5 text-[10px] uppercase tracking-wide bg-indigo-600 text-white px-2 py-1 rounded-full">Most popular</div>
+        <div class="text-sm font-semibold text-slate-300 mt-1">Pro</div>
+        <div class="text-3xl font-black mt-2">59 zł<span class="text-sm font-normal text-slate-500">/mo</span></div>
+        <div class="text-xs text-slate-500 mb-4">≈ €14</div>
+        <p class="text-xs text-slate-400 mb-3">The full toolkit for an active partnership.</p>
+        <ul class="plan-feats text-sm text-slate-300 space-y-2 mb-5">
+          <li>✓ Everything in Starter</li>
+          <li>✓ Unlimited projects</li>
+          <li>✓ Excel export</li>
+          <li>✓ Monthly close &amp; lock</li>
+          <li>✓ Real-time sync between partners</li>
+          <li>✓ Priority support</li>
+        </ul>
+        <a href="/" class="text-center py-2.5 px-4 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm no-underline">Get started</a>
+      </div>
+
+      <div class="plan-card glass border border-slate-800 rounded-2xl p-5 relative opacity-90">
+        <div class="absolute -top-3 left-5 text-[10px] uppercase tracking-wide bg-amber-500/90 text-slate-950 px-2 py-1 rounded-full font-semibold">Coming soon</div>
+        <div class="text-sm font-semibold text-slate-300 mt-1">Team</div>
+        <div class="text-3xl font-black mt-2">129 zł<span class="text-sm font-normal text-slate-500">/mo</span></div>
+        <div class="text-xs text-slate-500 mb-4">≈ €29</div>
+        <p class="text-xs text-slate-400 mb-3">For 3+ partners or multiple companies.</p>
+        <ul class="plan-feats text-sm text-slate-300 space-y-2 mb-5">
+          <li>✓ Everything in Pro</li>
+          <li>✓ 3+ partner seats</li>
+          <li>✓ Multiple companies, one login</li>
+          <li>✓ Read-only accountant access</li>
+          <li>✓ Priority SLA support</li>
+        </ul>
+        <a href="mailto:biuro@splitbooks.pl?subject=SplitBooks%20Team%20plan%20interest&body=Hi%2C%20I%27m%20interested%20in%20the%20Team%20plan%20for%20SplitBooks.%20We%20have%20___%20partners%20/%20___%20companies." class="text-center py-2.5 px-4 rounded-2xl border border-amber-500/50 text-amber-300 hover:bg-amber-500/10 font-semibold text-sm no-underline">Team — coming soon, leave a request</a>
+      </div>
+    </div>
+
+    <div class="glass border border-slate-800 rounded-2xl p-5 mt-6 text-sm text-slate-400 space-y-1">
+      <p>Pay yearly and save ~20% (2 months free) on Starter and Pro.</p>
+      <p>First 30 days of Pro are free, no card required. If you don't subscribe, your workspace softly drops to the Free plan — no data is lost.</p>
+      <p class="text-xs text-slate-500">Prices shown net of VAT. Final price may vary depending on your country and applicable tax rules.</p>
+    </div>
+
+    <hr class="border-slate-800 my-10" />
+
+    <h1 class="text-3xl font-black mt-4 mb-2 bg-gradient-to-r from-sky-400 via-indigo-400 to-fuchsia-400 bg-clip-text text-transparent">Cennik</h1>
+    <p class="text-slate-400 text-sm mb-8">Proste ceny dla wspólników prowadzących firmę razem. Ceny netto, za miesiąc.</p>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="plan-card glass border border-slate-800 rounded-2xl p-5">
+        <div class="text-sm font-semibold text-slate-300">Free</div>
+        <div class="text-3xl font-black mt-2">0 zł<span class="text-sm font-normal text-slate-500">/mies.</span></div>
+        <div class="text-xs text-slate-500 mb-4">≈ €0</div>
+        <p class="text-xs text-slate-400 mb-3">Wypróbuj z jednym workspace.</p>
+        <ul class="plan-feats text-sm text-slate-300 space-y-2 mb-5">
+          <li>✓ 1 workspace</li>
+          <li>✓ ~20 transakcji / miesiąc</li>
+          <li>✓ 1 projekt</li>
+          <li>✓ Podstawowy podgląd rezerwy podatkowej</li>
+          <li class="text-slate-600">✗ Eksport PDF / Excel</li>
+        </ul>
+        <a href="/" class="text-center py-2.5 px-4 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm no-underline">Zacznij za darmo</a>
+      </div>
+
+      <div class="plan-card glass border border-slate-800 rounded-2xl p-5">
+        <div class="text-sm font-semibold text-slate-300">Starter</div>
+        <div class="text-3xl font-black mt-2">29 zł<span class="text-sm font-normal text-slate-500">/mies.</span></div>
+        <div class="text-xs text-slate-500 mb-4">≈ €7</div>
+        <p class="text-xs text-slate-400 mb-3">Dla dwóch wspólników, którzy zaczynają.</p>
+        <ul class="plan-feats text-sm text-slate-300 space-y-2 mb-5">
+          <li>✓ Nielimitowane transakcje</li>
+          <li>✓ Do 3 projektów</li>
+          <li>✓ Przechowywanie paragonów</li>
+          <li>✓ Śledzenie rezerwy podatkowej</li>
+          <li>✓ Eksport PDF</li>
+        </ul>
+        <a href="/" class="text-center py-2.5 px-4 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm no-underline">Zacznij</a>
+      </div>
+
+      <div class="plan-card glass border-2 border-indigo-500/60 rounded-2xl p-5 relative">
+        <div class="absolute -top-3 left-5 text-[10px] uppercase tracking-wide bg-indigo-600 text-white px-2 py-1 rounded-full">Najpopularniejszy</div>
+        <div class="text-sm font-semibold text-slate-300 mt-1">Pro</div>
+        <div class="text-3xl font-black mt-2">59 zł<span class="text-sm font-normal text-slate-500">/mies.</span></div>
+        <div class="text-xs text-slate-500 mb-4">≈ €14</div>
+        <p class="text-xs text-slate-400 mb-3">Pełny zestaw narzędzi dla aktywnej spółki.</p>
+        <ul class="plan-feats text-sm text-slate-300 space-y-2 mb-5">
+          <li>✓ Wszystko z planu Starter</li>
+          <li>✓ Nielimitowane projekty</li>
+          <li>✓ Eksport do Excela</li>
+          <li>✓ Zamknięcie i blokada miesiąca</li>
+          <li>✓ Synchronizacja w czasie rzeczywistym</li>
+          <li>✓ Priorytetowe wsparcie</li>
+        </ul>
+        <a href="/" class="text-center py-2.5 px-4 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm no-underline">Zacznij</a>
+      </div>
+
+      <div class="plan-card glass border border-slate-800 rounded-2xl p-5 relative opacity-90">
+        <div class="absolute -top-3 left-5 text-[10px] uppercase tracking-wide bg-amber-500/90 text-slate-950 px-2 py-1 rounded-full font-semibold">Wkrótce</div>
+        <div class="text-sm font-semibold text-slate-300 mt-1">Team</div>
+        <div class="text-3xl font-black mt-2">129 zł<span class="text-sm font-normal text-slate-500">/mies.</span></div>
+        <div class="text-xs text-slate-500 mb-4">≈ €29</div>
+        <p class="text-xs text-slate-400 mb-3">Dla 3+ wspólników lub kilku firm.</p>
+        <ul class="plan-feats text-sm text-slate-300 space-y-2 mb-5">
+          <li>✓ Wszystko z planu Pro</li>
+          <li>✓ 3+ miejsc dla wspólników</li>
+          <li>✓ Kilka firm pod jednym logowaniem</li>
+          <li>✓ Dostęp tylko do odczytu dla księgowego</li>
+          <li>✓ Priorytetowe SLA</li>
+        </ul>
+        <a href="mailto:biuro@splitbooks.pl?subject=Zainteresowanie%20planem%20Team%20SplitBooks&body=Cze%C5%9B%C4%87%2C%20jestem%20zainteresowany%2Fa%20planem%20Team%20w%20SplitBooks.%20Mamy%20___%20wsp%C3%B3lnik%C3%B3w%20%2F%20___%20firm." class="text-center py-2.5 px-4 rounded-2xl border border-amber-500/50 text-amber-300 hover:bg-amber-500/10 font-semibold text-sm no-underline">Team — wkrótce, zostaw zgłoszenie</a>
+      </div>
+    </div>
+
+    <div class="glass border border-slate-800 rounded-2xl p-5 mt-6 text-sm text-slate-400 space-y-1">
+      <p>Płatność roczna — oszczędzasz ~20% (2 miesiące gratis) na planach Starter i Pro.</p>
+      <p>Pierwsze 30 dni planu Pro za darmo, bez podawania karty. Jeśli nie wykupisz subskrypcji, workspace łagodnie przechodzi na plan Free — bez utraty danych.</p>
+      <p class="text-xs text-slate-500">Ceny netto, bez VAT. Ostateczna cena może zależeć od kraju i obowiązujących przepisów podatkowych.</p>
+    </div>
+  </div>
+</body>
+</html>
