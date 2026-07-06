@@ -1,0 +1,6 @@
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; img-src 'self' data: https://bgbcyncpdfnsrhvunzkv.supabase.co; connect-src 'self' https://bgbcyncpdfnsrhvunzkv.supabase.co wss://bgbcyncpdfnsrhvunzkv.supabase.co; font-src 'self' data:; frame-ancestors 'none'
