@@ -151,6 +151,17 @@
             </div>
           </div>
         </div>
+
+        <div class="glass border border-amber-700/40 rounded-3xl p-5 card">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h2 class="text-lg font-bold" data-i18n="pendingTxTitle">Pending — not yet paid</h2>
+              <p class="text-xs text-slate-400" data-i18n="pendingTxSubtitle">Recorded but not verified. These don't affect any balance or profit yet — mark as paid once the money actually moves.</p>
+            </div>
+            <div class="text-xs badge px-3 py-1 rounded-xl" id="pending-count">0</div>
+          </div>
+          <div id="pendingTxList" class="space-y-2"></div>
+        </div>
       </section>
 
       <section id="view-transactions" class="xl:col-span-12 hidden grid grid-cols-1 xl:grid-cols-3 gap-6">
@@ -274,7 +285,10 @@
             <h3 class="text-lg font-bold" data-i18n="txListTitle">Transaction list</h3>
             <div class="text-xs text-slate-400" id="tx-list-sub">latest first</div>
           </div>
-          <div class="overflow-auto scrollbar max-h-[560px] rounded-2xl border border-slate-800">
+          <!-- Desktop/tablet: full table. Hidden below md so Status/Actions
+               are never scrolled out of view on narrow phones — see the
+               card list below for small screens instead. -->
+          <div class="hidden md:block overflow-auto scrollbar max-h-[560px] rounded-2xl border border-slate-800">
             <table class="min-w-full text-sm">
               <thead class="bg-slate-950/80 text-slate-400 sticky top-0">
                 <tr>
@@ -283,12 +297,16 @@
                   <th class="text-left p-3" data-i18n="thAmount">Amount</th>
                   <th class="text-left p-3" data-i18n="thType">Type</th>
                   <th class="text-left p-3" data-i18n="thStatus">Status</th>
+                  <th class="text-left p-3" data-i18n="thDescription">Description</th>
                   <th class="text-left p-3" data-i18n="thActions">Actions</th>
                 </tr>
               </thead>
               <tbody id="txTable" class="divide-y divide-slate-800 bg-slate-950/40"></tbody>
             </table>
           </div>
+          <!-- Mobile: stacked cards, every field and action always visible,
+               no horizontal scrolling required. -->
+          <div id="txCards" class="md:hidden space-y-2 max-h-[560px] overflow-auto scrollbar"></div>
         </div>
       </section>
 
@@ -483,6 +501,7 @@
         monthlyCloseBtn:'Monthly Close', tabDashboard:'Dashboard', tabTransactions:'Transactions', tabProjects:'Projects', tabReceipts:'Receipts', tabMonthly:'Monthly Close', tabSettings:'Settings',
         mIncomeLabel:'Total Income', mExpenseLabel:'Total Expenses', mTaxLabel:'Tax Reserve', mProfitLabel:'Net Profit', cashflowTitle:'Cashflow overview', cashflowSubtitle:'Bank, cash and reserve balances in one place.', currentMonth:'Current month',
         bankLabel:'Bank Account', cashLabel:'Cash Box', reserveLabel:'Virtual Tax Buffer', splitTitle:'Partner balance', earnedShare:'Earned share', withdrawnDraws:'Withdrawn draws', remainingLabel:'Remaining',
+        pendingTxTitle:'Pending — not yet paid', pendingTxSubtitle:"Recorded but not verified. These don't affect any balance or profit yet — mark as paid once the money actually moves.", noPendingTx:'Nothing pending — everything recorded has been verified.', btnMarkPaid:'Mark as paid', thDescription:'Description',
         txTitle:'Transactions', txSubtitle:'Create income, expense, draw, and verify with receipts.', txPreviewTitle:'Preview', txListTitle:'Transaction list',
         thDate:'Date', thProject:'Project', thAmount:'Amount', thType:'Type', thStatus:'Status', thActions:'Actions',
         labelDate:'Date', labelAmount:'Amount', labelDirection:'Direction', labelAccount:'Account', labelProject:'Project', labelCategory:'Category', labelStatus:'Status', labelDescription:'Description', labelCreator:'Recorded by', labelReceipt:'Receipt / Photo',
@@ -520,6 +539,7 @@
         monthlyCloseBtn:'Zamknięcie miesiąca', tabDashboard:'Dashboard', tabTransactions:'Transakcje', tabProjects:'Projekty', tabReceipts:'Paragony', tabMonthly:'Zamknięcie miesiąca', tabSettings:'Ustawienia',
         mIncomeLabel:'Przychody', mExpenseLabel:'Koszty', mTaxLabel:'Rezerwa podatkowa', mProfitLabel:'Zysk netto', cashflowTitle:'Przegląd przepływów pieniężnych', cashflowSubtitle:'Konto bankowe, kasa i rezerwa podatkowa w jednym miejscu.', currentMonth:'Bieżący miesiąc',
         bankLabel:'Konto bankowe', cashLabel:'Kasa', reserveLabel:'Wirtualna rezerwa podatkowa', splitTitle:'Saldo partnerów', earnedShare:'Należna część', withdrawnDraws:'Wypłacone środki', remainingLabel:'Pozostało',
+        pendingTxTitle:'Oczekujące — jeszcze nie zapłacone', pendingTxSubtitle:'Zarejestrowane, ale niezweryfikowane. Nie wpływają jeszcze na żaden bilans ani zysk — oznacz jako zapłacone, gdy pieniądze faktycznie się przemieszczą.', noPendingTx:'Brak oczekujących — wszystko zostało zweryfikowane.', btnMarkPaid:'Oznacz jako zapłacone', thDescription:'Opis',
         txTitle:'Transakcje', txSubtitle:'Dodawaj przychody, koszty, wypłaty i potwierdzaj paragonami.', txPreviewTitle:'Podgląd', txListTitle:'Lista transakcji',
         thDate:'Data', thProject:'Projekt', thAmount:'Kwota', thType:'Typ', thStatus:'Status', thActions:'Akcje',
         labelDate:'Data', labelAmount:'Kwota', labelDirection:'Kierunek', labelAccount:'Konto', labelProject:'Projekt', labelCategory:'Kategoria', labelStatus:'Status', labelDescription:'Opis', labelCreator:'Wprowadził', labelReceipt:'Paragon / Zdjęcie',
@@ -557,6 +577,7 @@
         monthlyCloseBtn:'Закриття місяця', tabDashboard:'Панель', tabTransactions:'Транзакції', tabProjects:'Проєкти', tabReceipts:'Чеки', tabMonthly:'Закриття місяця', tabSettings:'Налаштування',
         mIncomeLabel:'Дохід', mExpenseLabel:'Витрати', mTaxLabel:'Податковий резерв', mProfitLabel:'Чистий прибуток', cashflowTitle:'Огляд руху коштів', cashflowSubtitle:'Банк, каса і податковий резерв в одному місці.', currentMonth:'Поточний місяць',
         bankLabel:'Банківський рахунок', cashLabel:'Каса', reserveLabel:'Віртуальний податковий буфер', splitTitle:'Баланс партнерів', earnedShare:'Нарахована частка', withdrawnDraws:'Виплачені кошти', remainingLabel:'Залишок',
+        pendingTxTitle:'Очікує — ще не сплачено', pendingTxSubtitle:'Записано, але не підтверджено. Це поки не впливає на жоден баланс чи прибуток — позначте як сплачено, коли гроші фактично підуть.', noPendingTx:'Нічого очікуваного — все записане підтверджено.', btnMarkPaid:'Позначити як сплачено', thDescription:'Опис',
         txTitle:'Транзакції', txSubtitle:'Додавайте дохід, витрати, виплати та підтверджуйте чеками.', txPreviewTitle:'Перегляд', txListTitle:'Список транзакцій',
         thDate:'Дата', thProject:'Проєкт', thAmount:'Сума', thType:'Тип', thStatus:'Статус', thActions:'Дії',
         labelDate:'Дата', labelAmount:'Сума', labelDirection:'Напрямок', labelAccount:'Рахунок', labelProject:'Проєкт', labelCategory:'Категорія', labelStatus:'Статус', labelDescription:'Опис', labelCreator:'Вніс', labelReceipt:'Чек / Фото',
@@ -1029,10 +1050,14 @@
     }
 
     function recalcPartnerBalances(){
-      const income = state.txs.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
-      const expenses = state.txs.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
-      const drawA = state.txs.filter(t=>t.type==='draw' && t.partnerSlot==='owner').reduce((s,t)=>s+t.amount,0);
-      const drawB = state.txs.filter(t=>t.type==='draw' && t.partnerSlot==='member').reduce((s,t)=>s+t.amount,0);
+      // Only status === 'verified' transactions affect balances / net profit.
+      // 'pending' = accrued/recorded but not yet actually paid or confirmed —
+      // stays out of every total below until the user explicitly marks it
+      // verified (see markTxPaid()). 'rejected' never counts.
+      const income = state.txs.filter(t=>t.type==='income' && t.status==='verified').reduce((s,t)=>s+t.amount,0);
+      const expenses = state.txs.filter(t=>t.type==='expense' && t.status==='verified').reduce((s,t)=>s+t.amount,0);
+      const drawA = state.txs.filter(t=>t.type==='draw' && t.status==='verified' && t.partnerSlot==='owner').reduce((s,t)=>s+t.amount,0);
+      const drawB = state.txs.filter(t=>t.type==='draw' && t.status==='verified' && t.partnerSlot==='member').reduce((s,t)=>s+t.amount,0);
       const net = income - expenses;
       const reserve = Math.max(0, net) * state.taxRate / 100;
       const distributable = Math.max(0, net - reserve);
@@ -1054,8 +1079,8 @@
       $('m-expense').textContent = fmt(expenses);
       $('m-tax').textContent = fmt(reserve);
       $('m-profit').textContent = fmt(net);
-      const bankBalance = state.txs.filter(t=>t.account==='Bank').reduce((s,t)=>s+signedAmount(t),0);
-      const cashBalance = state.txs.filter(t=>t.account==='Cash').reduce((s,t)=>s+signedAmount(t),0);
+      const bankBalance = state.txs.filter(t=>t.account==='Bank' && t.status==='verified').reduce((s,t)=>s+signedAmount(t),0);
+      const cashBalance = state.txs.filter(t=>t.account==='Cash' && t.status==='verified').reduce((s,t)=>s+signedAmount(t),0);
       $('bank-balance').textContent = fmt(bankBalance);
       $('cash-balance').textContent = fmt(cashBalance);
       $('reserve-balance').textContent = fmt(reserve);
@@ -1068,7 +1093,49 @@
       const rateLabel = `${i18n[state.lang].taxRateBadgeLabel || 'Rate'}: ${state.taxRate}%`;
       if ($('taxRateBadgeDash')) $('taxRateBadgeDash').textContent = rateLabel;
       if ($('taxRateBadgeMonthly')) $('taxRateBadgeMonthly').textContent = rateLabel;
+      renderPendingTx();
     }
+
+    // Who a pending transaction is owed to: the partner (for draws) or
+    // whatever free-text name was put in the Description field (for
+    // everything else, e.g. an employee's name on a Labor Employee expense).
+    function pendingTxRecipient(tx){
+      if (tx.type === 'draw') {
+        return tx.partnerSlot === 'owner' ? state.partnerA.name : state.partnerB.name;
+      }
+      return tx.description || tx.project || '—';
+    }
+
+    function renderPendingTx(){
+      const list = $('pendingTxList');
+      const countEl = $('pending-count');
+      if (!list || !countEl) return;
+      const pending = state.txs.filter(t => t.status === 'pending');
+      countEl.textContent = String(pending.length);
+      if (!pending.length) {
+        list.innerHTML = `<div class="text-sm text-slate-500">${i18n[state.lang].noPendingTx || 'Nothing pending — everything recorded has been verified.'}</div>`;
+        return;
+      }
+      list.innerHTML = pending.map(tx => `
+        <div class="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-slate-800 bg-slate-950/60 p-3">
+          <div class="min-w-0">
+            <div class="text-sm font-semibold truncate">${escapeHtml(pendingTxRecipient(tx))}</div>
+            <div class="text-xs text-slate-400">${escapeHtml(tx.date)} · ${typeLabel(tx.type)} · ${escapeHtml(tx.category || '')}</div>
+          </div>
+          <div class="flex items-center gap-3 shrink-0">
+            <div class="text-sm font-bold text-amber-400">${fmt(tx.amount)}</div>
+            <button class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-semibold" onclick="markTxPaid('${tx.id}')">${i18n[state.lang].btnMarkPaid || 'Mark as paid'}</button>
+          </div>
+        </div>`).join('');
+    }
+
+    window.markTxPaid = async function(id){
+      const { error } = await supabaseClient.from('transactions').update({ status: 'verified' }).eq('id', id);
+      if (error) { notifyError('Could not update status.', error); return; }
+      await loadTransactions();
+      renderTxTable();
+      recalcPartnerBalances();
+    };
 
     function populateFilters(){
       const proj = $('filterProject');
@@ -1091,22 +1158,46 @@
     function renderTxTable(){
       const projectFilter = $('filterProject').value;
       const statusFilter = $('filterStatus').value;
-      const rows = state.txs.filter(t => (!projectFilter || t.project===projectFilter) && (!statusFilter || t.status===statusFilter)).map(tx => `
+      const filtered = state.txs.filter(t => (!projectFilter || t.project===projectFilter) && (!statusFilter || t.status===statusFilter));
+
+      const actionButtons = tx => `
+        <button class="px-2 py-1 rounded-lg bg-sky-600 text-xs" onclick="editTx('${tx.id}')" data-i18n="btnEditTx">Edit</button>
+        <button class="px-2 py-1 rounded-lg bg-rose-600 text-xs" onclick="deleteTx('${tx.id}')" data-i18n="btnDeleteTxSmall">Delete</button>
+        ${tx.receipt ? `<button class="px-2 py-1 rounded-lg bg-slate-700 text-xs" onclick="openReceipt('${safeOnclickArg(tx.receipt)}')" data-i18n="btnReceipt">View</button>` : ''}`;
+
+      const rows = filtered.map(tx => `
         <tr class="tx-row">
           <td class="p-3 text-slate-400">${escapeHtml(tx.date)}</td>
           <td class="p-3">${escapeHtml(tx.project)}</td>
           <td class="p-3 font-semibold">${fmt(tx.amount)}</td>
           <td class="p-3">${typeLabel(tx.type)}</td>
           <td class="p-3 ${txStatusClass(tx.status)}">${statusLabel(tx.status)}</td>
+          <td class="p-3 text-slate-400">${escapeHtml(tx.description || '—')}</td>
           <td class="p-3">
-            <div class="flex gap-2">
-              <button class="px-2 py-1 rounded-lg bg-sky-600 text-xs" onclick="editTx('${tx.id}')" data-i18n="btnEditTx">Edit</button>
-              <button class="px-2 py-1 rounded-lg bg-rose-600 text-xs" onclick="deleteTx('${tx.id}')" data-i18n="btnDeleteTxSmall">Delete</button>
-              ${tx.receipt ? `<button class="px-2 py-1 rounded-lg bg-slate-700 text-xs" onclick="openReceipt('${safeOnclickArg(tx.receipt)}')" data-i18n="btnReceipt">View</button>` : ''}
-            </div>
+            <div class="flex gap-2">${actionButtons(tx)}</div>
           </td>
         </tr>`).join('');
-      $('txTable').innerHTML = rows || `<tr><td colspan="6" class="p-4 text-slate-500">No transactions</td></tr>`;
+      $('txTable').innerHTML = rows || `<tr><td colspan="7" class="p-4 text-slate-500">No transactions</td></tr>`;
+
+      // Mobile card list — same data, laid out so Status and the action
+      // buttons are always visible without any horizontal scrolling.
+      const cards = filtered.map(tx => `
+        <div class="rounded-2xl border border-slate-800 bg-slate-950/60 p-3">
+          <div class="flex items-start justify-between gap-2">
+            <div class="min-w-0">
+              <div class="text-sm font-semibold truncate">${escapeHtml(tx.project)}</div>
+              <div class="text-xs text-slate-400">${escapeHtml(tx.date)} · ${typeLabel(tx.type)}</div>
+            </div>
+            <div class="text-sm font-bold shrink-0">${fmt(tx.amount)}</div>
+          </div>
+          <div class="mt-2 flex items-center justify-between gap-2">
+            <span class="text-xs font-semibold ${txStatusClass(tx.status)}">${statusLabel(tx.status)}</span>
+            <span class="text-xs text-slate-400 truncate">${escapeHtml(tx.description || '—')}</span>
+          </div>
+          <div class="mt-3 flex flex-wrap gap-2">${actionButtons(tx)}</div>
+        </div>`).join('');
+      $('txCards').innerHTML = cards || `<div class="p-4 text-slate-500 text-sm">No transactions</div>`;
+
       applyLangToDynamicButtons();
       renderReceipts();
       renderProjects();
