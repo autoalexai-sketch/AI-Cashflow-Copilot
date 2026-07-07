@@ -4,13 +4,13 @@
       <stop offset="0" stop-color="#4f46e5"/>
       <stop offset="1" stop-color="#0ea5e9"/>
     </linearGradient>
-    <clipPath id="leftHalf"><rect x="0" y="0" width="248" height="512"/></clipPath>
-    <clipPath id="rightHalf"><rect x="264" y="0" width="248" height="512"/></clipPath>
   </defs>
   <!-- app-icon background: rounded square, brand gradient -->
   <rect width="512" height="512" rx="104" fill="url(#g)"/>
-  <!-- a coin split into two halves with a gap down the middle: reads as
-       "one pot of money, split between two partners" even at tiny sizes -->
-  <circle cx="256" cy="256" r="146" fill="#ffffff" clip-path="url(#leftHalf)"/>
-  <circle cx="256" cy="256" r="146" fill="#bae6fd" clip-path="url(#rightHalf)"/>
+  <!-- SB monogram, centered as a single unit (text-anchor=middle handles both
+       "S" and "B" together): S in white, B in light blue -- the product name
+       and the two partners it's split between, in one lockup -->
+  <text x="256" y="266" text-anchor="middle" dominant-baseline="central"
+        font-family="Arial, Helvetica, sans-serif" font-weight="800"
+        font-size="270" letter-spacing="-10"><tspan fill="#ffffff">S</tspan><tspan fill="#bae6fd">B</tspan></text>
 </svg>
