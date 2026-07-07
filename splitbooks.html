@@ -445,8 +445,9 @@
 
           <div class="pt-2 flex flex-col sm:flex-row gap-3">
             <button id="btnResetDb" class="flex-1 px-4 py-2.5 rounded-2xl bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500/20 font-semibold text-sm" data-i18n="btnResetDb">Reset local data</button>
-            <button id="btnRoadmap" class="flex-1 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-indigo-600 to-fuchsia-600 hover:from-indigo-500 hover:to-fuchsia-500 font-semibold text-sm" data-i18n="btnRoadmap">What's coming next</button>
+            <button id="btnSettingsLock" class="flex-1 px-4 py-2.5 rounded-2xl bg-slate-800 hover:bg-slate-700 font-semibold text-sm">🔒 Settings locked — tap to unlock</button>
           </div>
+          <p class="text-xs text-slate-500" data-i18n="settingsLockHint">Settings are locked by default so you don't change them by accident. Unlock to edit, then it locks again next time you open Settings.</p>
         </div>
       </section>
     </main>
@@ -471,15 +472,6 @@
     </div>
   </div>
 
-  <div id="roadmapModal" class="fixed inset-0 modal-backdrop hidden items-center justify-center p-4 z-50">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-lg w-full p-6">
-      <div class="flex justify-between items-center mb-4">
-        <h3 class="text-lg font-bold" data-i18n="roadmapTitle">What's coming next</h3>
-        <button id="closeRoadmapModal" class="px-3 py-1 rounded-xl bg-slate-800">×</button>
-      </div>
-      <p class="text-sm text-slate-300" data-i18n="roadmapNote">Everything from the original roadmap is live: cloud sync, partner invites, real-time transactions, delete approval, and PDF/Excel export.</p>
-    </div>
-  </div>
 
   <div id="editModal" class="fixed inset-0 modal-backdrop hidden items-center justify-center p-4 z-50">
     <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full p-6">
@@ -551,8 +543,8 @@
         filterProject:'Filter by project', filterStatus:'Filter by status', taxReserveCalc:'Tax reserve from income', receiptModalTitle:'Receipt preview', editTransactionTitle:'Edit transaction', btnSaveChanges:'Save changes', btnDeleteTx:'Delete',
         settingsSecurityTitle:'Security & sync', pinTitle:'Device PIN lock', pinDesc:'Optional 4-digit code for this device only. Local convenience lock, not a substitute for account security.',
         syncTitle:'Cloud sync between partners', syncDesc:'Active — transactions sync live between partners via Supabase.', syncActiveBadge:'Active',
-        btnResetDb:'Delete all transactions', btnRoadmap:"What's coming next", roadmapTitle:"What's coming next",
-        roadmapNote:'Everything from the original roadmap is live: cloud sync, partner invites, real-time transactions, delete approval, and PDF/Excel export.', confirmReset:'Reset all local data for this session?',
+        btnResetDb:'Delete all transactions', btnSettingsLocked:'🔒 Settings locked — tap to unlock', btnSettingsUnlocked:'🔓 Settings unlocked — tap to lock',
+        settingsLockHint:"Settings are locked by default so you don't change them by accident. Unlock to edit, then it locks again next time you open Settings.", confirmReset:'Reset all local data for this session?',
         inviteTitle:'Invite your partner', inviteDesc:'Generate a one-time link. Whoever opens it and signs up joins this same workspace instead of creating their own.',
         btnGenerateInvite:'Generate invite link', btnCopyInvite:'Copy', inviteCopied:'Link copied', inviteMemberNote:'You joined this workspace via an invite from the owner.',
         deleteRequestsTitle:'Pending delete requests', btnApprove:'Approve', btnReject:'Reject',
@@ -590,8 +582,8 @@
         filterProject:'Filtruj po projekcie', filterStatus:'Filtruj po statusie', taxReserveCalc:'Rezerwa podatkowa z przychodu', receiptModalTitle:'Podgląd paragonu', editTransactionTitle:'Edytuj transakcję', btnSaveChanges:'Zapisz zmiany', btnDeleteTx:'Usuń',
         settingsSecurityTitle:'Bezpieczeństwo i synchronizacja', pinTitle:'Blokada PIN urządzenia', pinDesc:'Opcjonalny 4-cyfrowy kod tylko dla tego urządzenia. Lokalna wygoda, nie zabezpieczenie konta.',
         syncTitle:'Synchronizacja w chmurze między partnerami', syncDesc:'Aktywna — transakcje synchronizują się na żywo między partnerami przez Supabase.', syncActiveBadge:'Aktywna',
-        btnResetDb:'Usuń wszystkie transakcje', btnRoadmap:'Co dalej', roadmapTitle:'Co dalej',
-        roadmapNote:'Wszystko z pierwotnego planu już działa: synchronizacja w chmurze, zaproszenia partnerów, transakcje na żywo, zatwierdzanie usunięć i eksport do PDF/Excela.', confirmReset:'Zresetować wszystkie lokalne dane tej sesji?',
+        btnResetDb:'Usuń wszystkie transakcje', btnSettingsLocked:'🔒 Ustawienia zablokowane — dotknij, aby odblokować', btnSettingsUnlocked:'🔓 Ustawienia odblokowane — dotknij, aby zablokować',
+        settingsLockHint:'Ustawienia są domyślnie zablokowane, aby uniknąć przypadkowej zmiany. Odblokuj, aby edytować — zablokują się ponownie przy następnym otwarciu.', confirmReset:'Zresetować wszystkie lokalne dane tej sesji?',
         inviteTitle:'Zaproś partnera', inviteDesc:'Wygeneruj jednorazowy link. Osoba, która go otworzy i się zarejestruje, dołączy do tego samego workspace zamiast tworzyć własny.',
         btnGenerateInvite:'Wygeneruj link zaproszenia', btnCopyInvite:'Kopiuj', inviteCopied:'Link skopiowany', inviteMemberNote:'Dołączyłeś do tego workspace dzięki zaproszeniu właściciela.',
         deleteRequestsTitle:'Oczekujące prośby o usunięcie', btnApprove:'Zatwierdź', btnReject:'Odrzuć',
@@ -629,8 +621,8 @@
         filterProject:'Фільтр за проєктом', filterStatus:'Фільтр за статусом', taxReserveCalc:'Податковий резерв з доходу', receiptModalTitle:'Перегляд чека', editTransactionTitle:'Редагувати транзакцію', btnSaveChanges:'Зберегти зміни', btnDeleteTx:'Видалити',
         settingsSecurityTitle:'Безпека та синхронізація', pinTitle:'PIN-блокування пристрою', pinDesc:'Необов’язковий 4-значний код лише для цього пристрою. Локальна зручність, не захист акаунта.',
         syncTitle:'Хмарна синхронізація між партнерами', syncDesc:'Активна — транзакції синхронізуються наживо між партнерами через Supabase.', syncActiveBadge:'Активна',
-        btnResetDb:'Видалити всі транзакції', btnRoadmap:'Що далі', roadmapTitle:'Що далі',
-        roadmapNote:'Усе з початкового плану вже працює: хмарна синхронізація, запрошення партнерів, транзакції в реальному часі, підтвердження видалення та експорт у PDF/Excel.', confirmReset:'Скинути всі локальні дані цієї сесії?',
+        btnResetDb:'Видалити всі транзакції', btnSettingsLocked:'🔒 Налаштування заблоковані — торкніться, щоб розблокувати', btnSettingsUnlocked:'🔓 Налаштування розблоковані — торкніться, щоб заблокувати',
+        settingsLockHint:'Налаштування заблоковані за замовчуванням, щоб ви випадково їх не змінили. Розблокуйте для редагування — вони знову заблокуються при наступному відкритті.', confirmReset:'Скинути всі локальні дані цієї сесії?',
         inviteTitle:'Запросити партнера', inviteDesc:'Згенеруйте одноразове посилання. Той, хто відкриє його і зареєструється, приєднається до цього ж робочого простору замість створення власного.',
         btnGenerateInvite:'Згенерувати посилання-запрошення', btnCopyInvite:'Копіювати', inviteCopied:'Посилання скопійовано', inviteMemberNote:'Ви приєдналися до цього робочого простору за запрошенням власника.',
         deleteRequestsTitle:'Запити на видалення, що очікують', btnApprove:'Схвалити', btnReject:'Відхилити',
@@ -912,17 +904,42 @@
       if (names.includes(current)) sel.value = current;
     }
 
+    let settingsLocked = true;
+
     function refreshTaxRateUI(){
       const isOwner = state.role === 'owner';
-      $('taxRate').disabled = !isOwner;
+      $('taxRate').disabled = !isOwner || settingsLocked;
       $('taxRateOwnerOnlyNote').classList.toggle('hidden', isOwner);
     }
 
     function refreshPartnerNameUI(){
       // Everyone can rename themselves, nobody can rename their partner.
       const isOwner = state.role === 'owner';
-      $('setNameA').disabled = !isOwner;
-      $('setNameB').disabled = isOwner;
+      $('setNameA').disabled = !isOwner || settingsLocked;
+      $('setNameB').disabled = isOwner || settingsLocked;
+    }
+
+    // Settings are locked by default (see setView) so a stray tap can't
+    // change tax rate, partner shares, currency, etc. Unlocking only
+    // affects this screen's own controls, not role-based rules above —
+    // refreshTaxRateUI/refreshPartnerNameUI still enforce who's allowed
+    // to touch what once unlocked.
+    function applySettingsLock(locked){
+      settingsLocked = locked;
+      ['shareA','currency','defaultLang','pinToggle','btnGenerateInvite','btnCopyInvite','btnResetDb'].forEach(id => {
+        $(id).disabled = locked;
+      });
+      refreshTaxRateUI();
+      refreshPartnerNameUI();
+      const btn = $('btnSettingsLock');
+      const t = i18n[state.lang];
+      if (locked) {
+        btn.textContent = t.btnSettingsLocked || '🔒 Settings locked — tap to unlock';
+        btn.className = 'flex-1 px-4 py-2.5 rounded-2xl bg-slate-800 hover:bg-slate-700 font-semibold text-sm';
+      } else {
+        btn.textContent = t.btnSettingsUnlocked || '🔓 Settings unlocked — tap to lock';
+        btn.className = 'flex-1 px-4 py-2.5 rounded-2xl bg-amber-600 hover:bg-amber-500 font-semibold text-sm';
+      }
     }
 
     function creatorLabel(row){
@@ -1405,6 +1422,9 @@
     function setView(view){
       ['dashboard','transactions','projects','receipts','monthly','settings'].forEach(v => $('view-' + v).classList.toggle('hidden', v !== view));
       document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+      // Settings re-lock every time you (re-)open the tab, so leaving and
+      // coming back never leaves it sitting unlocked by accident.
+      if (view === 'settings') applySettingsLock(true);
     }
 
     window.editTx = function(id){
@@ -1784,11 +1804,7 @@
       renderProjects();
     });
 
-    $('btnRoadmap').addEventListener('click', () => {
-      $('roadmapModal').classList.remove('hidden');
-      $('roadmapModal').classList.add('flex');
-    });
-    $('closeRoadmapModal').addEventListener('click', () => closeModal('roadmapModal'));
+    $('btnSettingsLock').addEventListener('click', () => applySettingsLock(!settingsLocked));
 
     $('btnGenerateInvite').addEventListener('click', async () => {
       if (state.role !== 'owner') return;
