@@ -286,7 +286,8 @@
                 <option value="Materials" data-i18n="catMaterials">Materials</option>
                 <option value="Fuel" data-i18n="catFuel">Fuel</option>
                 <option value="Labor Employee" data-i18n="catLaborEmployee">Labor Employee</option>
-                <option value="Labor Partner" data-i18n="catLaborPartner">Labor Partner</option>
+                <option value="Partner Draw A" id="optPartnerDrawA">Partner A</option>
+                <option value="Partner Draw B" id="optPartnerDrawB">Partner B</option>
                 <option value="Accounting" data-i18n="catAccounting">Accounting</option>
                 <option value="Marketing" data-i18n="catMarketing">Marketing</option>
                 <option value="Equipment" data-i18n="catEquipment">Equipment</option>
@@ -519,7 +520,8 @@
             <option value="Materials" data-i18n="catMaterials">Materials</option>
             <option value="Fuel" data-i18n="catFuel">Fuel</option>
             <option value="Labor Employee" data-i18n="catLaborEmployee">Labor Employee</option>
-            <option value="Labor Partner" data-i18n="catLaborPartner">Labor Partner</option>
+            <option value="Partner Draw A" id="editOptPartnerDrawA">Partner A</option>
+            <option value="Partner Draw B" id="editOptPartnerDrawB">Partner B</option>
             <option value="Accounting" data-i18n="catAccounting">Accounting</option>
             <option value="Marketing" data-i18n="catMarketing">Marketing</option>
             <option value="Equipment" data-i18n="catEquipment">Equipment</option>
@@ -555,7 +557,7 @@
         labelDate:'Date', labelAmount:'Amount', labelDirection:'Direction', labelAccount:'Account', labelProject:'Project', labelCategory:'Category', labelStatus:'Status', labelDescription:'Description', labelCreator:'Recorded by', labelReceipt:'Receipt / Photo',
         phAmount:'0.00', phProject:'e.g. Kowalski / Floriańska 12', phDescription:'Short note',
         optAll:'All', optIncome:'Income', optExpense:'Expense', optTransfer:'Transfer', optDraw:'Draw', optBank:'Bank', optCash:'Cash', optTaxReserve:'Tax Reserve',
-        catIncome:'Income', catMaterials:'Materials', catFuel:'Fuel', catLaborEmployee:'Labor Employee', catLaborPartner:'Labor Partner', catAccounting:'Accounting', catMarketing:'Marketing', catEquipment:'Equipment',
+        catIncome:'Income', catMaterials:'Materials', catFuel:'Fuel', catLaborEmployee:'Labor Employee', catAccounting:'Accounting', catMarketing:'Marketing', catEquipment:'Equipment',
         statusPending:'pending', statusVerified:'verified', statusRejected:'rejected',
         btnSaveTx:'Save transaction', btnReset:'Reset', btnNewProject:'+ New project', btnExportPdf:'Export PDF', btnExportExcel:'Export Excel', btnSendReport:'Send to partners', btnLockMonth:'Lock month', btnUnlockMonth:'Unlock month',
         projectsTitle:'Projects', projectsSubtitle:'See which object is profitable and which one eats margin.', noProjects:'No projects yet', receiptsTitle:'Receipts', noReceipts:'No receipts yet', receiptLoading:'Loading…',
@@ -594,7 +596,7 @@
         labelDate:'Data', labelAmount:'Kwota', labelDirection:'Kierunek', labelAccount:'Konto', labelProject:'Projekt', labelCategory:'Kategoria', labelStatus:'Status', labelDescription:'Opis', labelCreator:'Wprowadził', labelReceipt:'Paragon / Zdjęcie',
         phAmount:'0.00', phProject:'np. Kowalski / Floriańska 12', phDescription:'Krótka notatka',
         optAll:'Wszystkie', optIncome:'Przychód', optExpense:'Koszt', optTransfer:'Transfer', optDraw:'Wypłata', optBank:'Bank', optCash:'Kasa', optTaxReserve:'Rezerwa podatkowa',
-        catIncome:'Przychód', catMaterials:'Materiały', catFuel:'Paliwo', catLaborEmployee:'Pracownik', catLaborPartner:'Partner', catAccounting:'Księgowość', catMarketing:'Marketing', catEquipment:'Sprzęt',
+        catIncome:'Przychód', catMaterials:'Materiały', catFuel:'Paliwo', catLaborEmployee:'Pracownik', catAccounting:'Księgowość', catMarketing:'Marketing', catEquipment:'Sprzęt',
         statusPending:'oczekuje', statusVerified:'potwierdzony', statusRejected:'odrzucony',
         btnSaveTx:'Zapisz transakcję', btnReset:'Reset', btnNewProject:'+ Nowy projekt', btnExportPdf:'Eksportuj PDF', btnExportExcel:'Eksportuj Excel', btnSendReport:'Wyślij do partnerów', btnLockMonth:'Zablokuj miesiąc', btnUnlockMonth:'Odblokuj miesiąc',
         projectsTitle:'Projekty', projectsSubtitle:'Zobacz, które zlecenie jest rentowne, a które zjada marżę.', noProjects:'Brak projektów', receiptsTitle:'Paragony', noReceipts:'Brak paragonów', receiptLoading:'Ładowanie…',
@@ -633,7 +635,7 @@
         labelDate:'Дата', labelAmount:'Сума', labelDirection:'Напрямок', labelAccount:'Рахунок', labelProject:'Проєкт', labelCategory:'Категорія', labelStatus:'Статус', labelDescription:'Опис', labelCreator:'Вніс', labelReceipt:'Чек / Фото',
         phAmount:'0.00', phProject:'напр. Kowalski / Floriańska 12', phDescription:'Коротка нотатка',
         optAll:'Всі', optIncome:'Дохід', optExpense:'Витрата', optTransfer:'Переведення', optDraw:'Виплата', optBank:'Банк', optCash:'Каса', optTaxReserve:'Податковий резерв',
-        catIncome:'Дохід', catMaterials:'Матеріали', catFuel:'Паливо', catLaborEmployee:'Працівник', catLaborPartner:'Партнер', catAccounting:'Бухгалтерія', catMarketing:'Маркетинг', catEquipment:'Обладнання',
+        catIncome:'Дохід', catMaterials:'Матеріали', catFuel:'Паливо', catLaborEmployee:'Працівник', catAccounting:'Бухгалтерія', catMarketing:'Маркетинг', catEquipment:'Обладнання',
         statusPending:'очікує', statusVerified:'підтверджено', statusRejected:'відхилено',
         btnSaveTx:'Зберегти транзакцію', btnReset:'Скинути', btnNewProject:'+ Новий проєкт', btnExportPdf:'Експортувати PDF', btnExportExcel:'Експортувати Excel', btnSendReport:'Надіслати партнерам', btnLockMonth:'Заблокувати місяць', btnUnlockMonth:'Розблокувати місяць',
         projectsTitle:'Проєкти', projectsSubtitle:'Дивіться, який об’єкт прибутковий, а який з’їдає маржу.', noProjects:'Ще немає проєктів', receiptsTitle:'Чеки', noReceipts:'Ще немає чеків', receiptLoading:'Завантаження…',
@@ -695,7 +697,12 @@
     // both contexts, not just the JS one, or a literal `"` breaks out of the
     // attribute entirely.
     function safeOnclickArg(str){
-      return String(str ?? '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+      // Project/transaction names can contain raw newlines (e.g. pasted
+      // multi-line addresses). A literal newline inside a single-quoted JS
+      // string in an onclick="..." attribute is a syntax error, so the click
+      // silently does nothing (no visible error) -- escape \r and \n to
+      // real backslash-escapes first, before the quote escaping.
+      return String(str ?? '').replace(/\\/g, '\\\\').replace(/\r/g, '\\r').replace(/\n/g, '\\n').replace(/'/g, "\\'").replace(/"/g, '&quot;');
     }
 
     // Show the user a neutral message and keep the raw Supabase/Postgres
@@ -939,6 +946,18 @@
       const isOwner = state.role === 'owner';
       $('setNameA').disabled = !isOwner || settingsLocked;
       $('setNameB').disabled = isOwner || settingsLocked;
+      refreshPartnerCategoryLabels();
+    }
+
+    // The "Partner draw" category options show each partner's real name
+    // (as set in Partner settings) instead of a generic "Partner A/B" label,
+    // so whoever is recording the transaction can see whose draw they're
+    // logging at a glance.
+    function refreshPartnerCategoryLabels(){
+      const aName = state.partnerA.name || 'Partner A';
+      const bName = state.partnerB.name || 'Partner B';
+      ['optPartnerDrawA', 'editOptPartnerDrawA'].forEach(id => { const el = $(id); if (el) el.textContent = aName; });
+      ['optPartnerDrawB', 'editOptPartnerDrawB'].forEach(id => { const el = $(id); if (el) el.textContent = bName; });
     }
 
     // Settings are locked by default (see setView) so a stray tap can't
@@ -969,6 +988,16 @@
     }
 
     function partnerSlotFor(row){
+      // A draw explicitly logged under the "Partner Draw A/B" category
+      // belongs to that partner regardless of who recorded it (e.g. one
+      // partner paying out the other's withdrawal in cash). Any other draw
+      // (including legacy "Labor Partner" rows from before this category
+      // split) falls back to the old behavior: attributed to whoever
+      // created the transaction.
+      if (row.type === 'draw') {
+        if (row.category === 'Partner Draw A') return 'owner';
+        if (row.category === 'Partner Draw B') return 'member';
+      }
       const mine = row.created_by_user_id === state.user.id;
       const myRole = state.role === 'owner' ? 'owner' : 'member';
       const otherRole = myRole === 'owner' ? 'member' : 'owner';
@@ -1240,6 +1269,7 @@
           <div class="min-w-0">
             <div class="text-sm font-semibold truncate">${escapeHtml(pendingTxRecipient(tx))}</div>
             <div class="text-xs text-slate-400">${escapeHtml(tx.date)} · ${typeLabel(tx.type)} · ${escapeHtml(tx.category || '')}</div>
+            ${tx.description && tx.description !== '—' ? `<div class="text-xs text-slate-500 mt-0.5 truncate">${escapeHtml(tx.description)}</div>` : ''}
           </div>
           <div class="flex items-center gap-3 shrink-0">
             <div class="text-sm font-bold text-amber-400">${fmt(tx.amount)}</div>
@@ -1522,7 +1552,8 @@
       'Materials': 'expense',
       'Fuel': 'expense',
       'Labor Employee': 'expense',
-      'Labor Partner': 'draw',
+      'Partner Draw A': 'draw',
+      'Partner Draw B': 'draw',
       'Accounting': 'expense',
       'Marketing': 'expense',
       'Equipment': 'expense'
