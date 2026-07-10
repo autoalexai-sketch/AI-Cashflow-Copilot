@@ -3,6 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script>
+    // Applied before first paint so a saved "light" preference doesn't flash dark first.
+    (function(){
+      try {
+        if (localStorage.getItem('sb_theme') === 'light') {
+          document.documentElement.classList.remove('dark');
+          document.documentElement.classList.add('light');
+        }
+      } catch (e) {}
+    })();
+  </script>
   <title>SplitBooks — Shared Cashflow & Profit-Split Tool for Business Partners</title>
   <meta name="description" content="SplitBooks is a shared cashflow and profit-split tool for business partners — track income, expenses, partner draws, tax reserve, and monthly close together in real time." />
   <link rel="canonical" href="https://splitbooks.pl/" />
@@ -58,6 +69,35 @@
     .lang-pill { cursor:pointer; }
     .tx-row:hover { background: rgba(15,23,42,.9); }
     .modal-backdrop { background: rgba(2,6,23,.85); }
+
+    /* Light theme — overrides the dark defaults above when <html> has class="light". */
+    html.light, html.light body { background:#f8fafc; }
+    html.light body { color:#0f172a; }
+    html.light .glass { background: rgba(255,255,255,.75); }
+    html.light .card { box-shadow: 0 10px 30px rgba(15,23,42,.08); }
+    html.light .modal-backdrop { background: rgba(15,23,42,.35); }
+    html.light .input, html.light .select, html.light .textarea { background:#ffffff; border:1px solid #cbd5e1; color:#0f172a; }
+    html.light .input:focus, html.light .select:focus, html.light .textarea:focus { border-color:#6366f1; box-shadow:0 0 0 3px rgba(99,102,241,.15); }
+    html.light .badge { border:1px solid rgba(79,70,229,.18); background: rgba(79,70,229,.06); }
+    html.light .tx-row:hover { background: rgba(226,232,240,.6); }
+    html.light .scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; }
+    html.light .bg-slate-900 { background-color:#ffffff; }
+    html.light .bg-slate-950\/60 { background-color: rgba(241,245,249,.8); }
+    html.light .bg-slate-950\/80 { background-color: rgba(241,245,249,.9); }
+    html.light .bg-slate-950\/40 { background-color: rgba(241,245,249,.6); }
+    html.light .bg-slate-800 { background-color:#e2e8f0; }
+    html.light .bg-slate-700 { background-color:#cbd5e1; }
+    html.light .bg-slate-600 { background-color:#94a3b8; }
+    html.light .hover\:bg-slate-700:hover { background-color:#cbd5e1; }
+    html.light .hover\:bg-slate-600:hover { background-color:#94a3b8; }
+    html.light .text-slate-100 { color:#0f172a; }
+    html.light .text-slate-200 { color:#1e293b; }
+    html.light .text-slate-300 { color:#334155; }
+    html.light .text-slate-400 { color:#475569; }
+    html.light .text-slate-500 { color:#64748b; }
+    html.light .hover\:text-slate-200:hover { color:#0f172a; }
+    html.light .hover\:text-slate-300:hover { color:#1e293b; }
+    html.light .border-slate-800 { border-color:#e2e8f0; }
   </style>
 </head>
 <body class="text-slate-100 min-h-screen flex flex-col">
@@ -454,6 +494,17 @@
 
           <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-950/60 border border-slate-800">
             <div>
+              <p class="text-sm font-semibold" data-i18n="themeTitle">Appearance</p>
+              <p class="text-xs text-slate-400" data-i18n="themeDesc">Switch between dark and light theme on this device.</p>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer shrink-0 ml-4">
+              <input type="checkbox" id="themeToggle" class="sr-only peer">
+              <div class="w-11 h-6 bg-slate-700 rounded-full peer peer-checked:bg-indigo-600 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+            </label>
+          </div>
+
+          <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-950/60 border border-slate-800">
+            <div>
               <p class="text-sm font-semibold" data-i18n="pinTitle">Device PIN lock</p>
               <p class="text-xs text-slate-400" data-i18n="pinDesc">Optional 4-digit code for this device only. Local convenience lock, not a substitute for account security.</p>
             </div>
@@ -570,7 +621,7 @@
         settingsPartnerTitle:'Partner settings', settingsOrgTitle:'Organization settings', partnerANameLabel:'Partner A name', partnerBNameLabel:'Partner B name', shareALabel:'Share A %', shareBLabel:'Share B %',
         baseCurrencyLabel:'Base currency', taxRateLabel:'Tax reserve rate', defaultLangLabel:'Default language', storageModeLabel:'Storage mode', storageModeValue:'Synced to your account (Supabase)',
         filterProject:'Filter by project', filterStatus:'Filter by status', taxReserveCalc:'Tax reserve from income', receiptModalTitle:'Receipt preview', editTransactionTitle:'Edit transaction', btnSaveChanges:'Save changes', btnDeleteTx:'Delete',
-        settingsSecurityTitle:'Security & sync', pinTitle:'Device PIN lock', pinDesc:'Optional 4-digit code for this device only. Local convenience lock, not a substitute for account security.',
+        settingsSecurityTitle:'Security & sync', themeTitle:'Appearance', themeDesc:'Switch between dark and light theme on this device.', pinTitle:'Device PIN lock', pinDesc:'Optional 4-digit code for this device only. Local convenience lock, not a substitute for account security.',
         syncTitle:'Cloud sync between partners', syncDesc:'Active — transactions sync live between partners via Supabase.', syncActiveBadge:'Active',
         btnResetDb:'Delete all transactions', btnSettingsLocked:'🔒 Settings locked — tap to unlock', btnSettingsUnlocked:'🔓 Settings unlocked — tap to lock',
         settingsLockHint:"Settings are locked by default so you don't change them by accident. Unlock to edit, then it locks again next time you open Settings.", confirmReset:'Reset all local data for this session?',
@@ -609,7 +660,7 @@
         settingsPartnerTitle:'Ustawienia partnerów', settingsOrgTitle:'Ustawienia organizacji', partnerANameLabel:'Nazwa partnera A', partnerBNameLabel:'Nazwa partnera B', shareALabel:'Udział A %', shareBLabel:'Udział B %',
         baseCurrencyLabel:'Waluta bazowa', taxRateLabel:'Stawka rezerwy podatkowej', defaultLangLabel:'Język domyślny', storageModeLabel:'Tryb zapisu', storageModeValue:'Synchronizowane z Twoim kontem (Supabase)',
         filterProject:'Filtruj po projekcie', filterStatus:'Filtruj po statusie', taxReserveCalc:'Rezerwa podatkowa z przychodu', receiptModalTitle:'Podgląd paragonu', editTransactionTitle:'Edytuj transakcję', btnSaveChanges:'Zapisz zmiany', btnDeleteTx:'Usuń',
-        settingsSecurityTitle:'Bezpieczeństwo i synchronizacja', pinTitle:'Blokada PIN urządzenia', pinDesc:'Opcjonalny 4-cyfrowy kod tylko dla tego urządzenia. Lokalna wygoda, nie zabezpieczenie konta.',
+        settingsSecurityTitle:'Bezpieczeństwo i synchronizacja', themeTitle:'Wygląd', themeDesc:'Przełącz między ciemnym a jasnym motywem na tym urządzeniu.', pinTitle:'Blokada PIN urządzenia', pinDesc:'Opcjonalny 4-cyfrowy kod tylko dla tego urządzenia. Lokalna wygoda, nie zabezpieczenie konta.',
         syncTitle:'Synchronizacja w chmurze między partnerami', syncDesc:'Aktywna — transakcje synchronizują się na żywo między partnerami przez Supabase.', syncActiveBadge:'Aktywna',
         btnResetDb:'Usuń wszystkie transakcje', btnSettingsLocked:'🔒 Ustawienia zablokowane — dotknij, aby odblokować', btnSettingsUnlocked:'🔓 Ustawienia odblokowane — dotknij, aby zablokować',
         settingsLockHint:'Ustawienia są domyślnie zablokowane, aby uniknąć przypadkowej zmiany. Odblokuj, aby edytować — zablokują się ponownie przy następnym otwarciu.', confirmReset:'Zresetować wszystkie lokalne dane tej sesji?',
@@ -648,7 +699,7 @@
         settingsPartnerTitle:'Налаштування партнерів', settingsOrgTitle:'Налаштування організації', partnerANameLabel:'Ім’я партнера A', partnerBNameLabel:'Ім’я партнера B', shareALabel:'Частка A %', shareBLabel:'Частка B %',
         baseCurrencyLabel:'Базова валюта', taxRateLabel:'Ставка податкового резерву', defaultLangLabel:'Мова за замовчуванням', storageModeLabel:'Режим збереження', storageModeValue:'Синхронізовано з вашим акаунтом (Supabase)',
         filterProject:'Фільтр за проєктом', filterStatus:'Фільтр за статусом', taxReserveCalc:'Податковий резерв з доходу', receiptModalTitle:'Перегляд чека', editTransactionTitle:'Редагувати транзакцію', btnSaveChanges:'Зберегти зміни', btnDeleteTx:'Видалити',
-        settingsSecurityTitle:'Безпека та синхронізація', pinTitle:'PIN-блокування пристрою', pinDesc:'Необов’язковий 4-значний код лише для цього пристрою. Локальна зручність, не захист акаунта.',
+        settingsSecurityTitle:'Безпека та синхронізація', themeTitle:'Вигляд', themeDesc:'Перемикайте темну та світлу тему на цьому пристрої.', pinTitle:'PIN-блокування пристрою', pinDesc:'Необов’язковий 4-значний код лише для цього пристрою. Локальна зручність, не захист акаунта.',
         syncTitle:'Хмарна синхронізація між партнерами', syncDesc:'Активна — транзакції синхронізуються наживо між партнерами через Supabase.', syncActiveBadge:'Активна',
         btnResetDb:'Видалити всі транзакції', btnSettingsLocked:'🔒 Налаштування заблоковані — торкніться, щоб розблокувати', btnSettingsUnlocked:'🔓 Налаштування розблоковані — торкніться, щоб заблокувати',
         settingsLockHint:'Налаштування заблоковані за замовчуванням, щоб ви випадково їх не змінили. Розблокуйте для редагування — вони знову заблокуються при наступному відкритті.', confirmReset:'Скинути всі локальні дані цієї сесії?',
@@ -937,6 +988,24 @@
       sel.innerHTML = '<option value="">—</option>' + names.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('');
       if (names.includes(current)) sel.value = current;
     }
+
+    // Theme (dark/light) is a local device preference, not org data, so it's
+    // stored in localStorage and applied independently of the Settings lock —
+    // the <html class="dark"|"light"> flip is also done inline in <head> to
+    // avoid a flash of the wrong theme before this script runs.
+    function applyTheme(theme){
+      document.documentElement.classList.toggle('light', theme === 'light');
+      document.documentElement.classList.toggle('dark', theme !== 'light');
+      const toggle = $('themeToggle');
+      if (toggle) toggle.checked = theme === 'light';
+      try { localStorage.setItem('sb_theme', theme); } catch (e) {}
+    }
+    function initTheme(){
+      let saved = 'dark';
+      try { saved = localStorage.getItem('sb_theme') || 'dark'; } catch (e) {}
+      applyTheme(saved);
+    }
+    initTheme();
 
     let settingsLocked = true;
 
@@ -1834,6 +1903,8 @@
     $('closeEditModal').addEventListener('click', () => closeModal('editModal'));
 
     $('pinToggle').addEventListener('change', e => { state.pinEnabled = e.target.checked; });
+
+    $('themeToggle').addEventListener('change', e => { applyTheme(e.target.checked ? 'light' : 'dark'); });
 
     $('btnResetDb').addEventListener('click', async () => {
       if (!confirm(i18n[state.lang].confirmReset || 'Reset all local data for this session?')) return;
