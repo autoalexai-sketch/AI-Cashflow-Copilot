@@ -120,10 +120,12 @@
         </div>
         <button id="btnForgotPassword" class="text-xs text-slate-400 hover:text-slate-200 underline text-center w-full" data-i18n="btnForgotPassword">Forgot password?</button>
       </div>
-      <div class="flex justify-center gap-4 text-xs text-slate-500">
+      <div class="flex justify-center gap-4 text-xs text-slate-500 flex-wrap">
         <a href="/pricing.html" class="hover:text-slate-300 underline" data-i18n="footerPricing">Pricing</a>
         <a href="/privacy.html" class="hover:text-slate-300 underline" data-i18n="footerPrivacy">Privacy Policy</a>
         <a href="/terms.html" class="hover:text-slate-300 underline" data-i18n="footerTerms">Terms of Use</a>
+        <a href="/help.html" class="hover:text-slate-300 underline" data-i18n="footerHelp">Guide</a>
+        <a href="mailto:support@ai-consilium.com" class="hover:text-slate-300 underline" data-i18n="footerSupport">Support</a>
       </div>
     </div>
   </div>
@@ -522,6 +524,14 @@
             <span class="shrink-0 ml-4 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-semibold border border-emerald-500/20" data-i18n="syncActiveBadge">Active</span>
           </div>
 
+          <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-950/60 border border-slate-800">
+            <div>
+              <p class="text-sm font-semibold" data-i18n="helpFooterTitle">Help & guide</p>
+              <p class="text-xs text-slate-400" data-i18n="helpFooterDesc">Replay the quick tour, or read the full written guide.</p>
+            </div>
+            <button id="btnReplayTour" class="shrink-0 ml-4 px-4 py-2 rounded-2xl bg-slate-800 hover:bg-slate-700 font-semibold text-sm" data-i18n="btnReplayTour">Replay tour</button>
+          </div>
+
           <div class="pt-2 flex flex-col sm:flex-row gap-3">
             <button id="btnResetDb" class="flex-1 px-4 py-2.5 rounded-2xl bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500/20 font-semibold text-sm" data-i18n="btnResetDb">Reset local data</button>
             <button id="btnSettingsLock" class="flex-1 px-4 py-2.5 rounded-2xl bg-slate-800 hover:bg-slate-700 font-semibold text-sm">🔒 Settings locked — tap to unlock</button>
@@ -533,10 +543,12 @@
 
     <footer class="mt-8 pt-6 border-t border-slate-800 text-xs text-slate-500 space-y-2">
       <p data-i18n="footerDisclaimer">SplitBooks is a bookkeeping and expense-tracking tool for business partners. It does not provide financial, tax, investment, or legal advice, and is not a payment processor or licensed financial institution. You are responsible for your own tax and legal compliance.</p>
-      <div class="flex gap-4">
+      <div class="flex gap-4 flex-wrap">
         <a href="/pricing.html" class="hover:text-slate-300 underline" data-i18n="footerPricing">Pricing</a>
         <a href="/privacy.html" class="hover:text-slate-300 underline" data-i18n="footerPrivacy">Privacy Policy</a>
         <a href="/terms.html" class="hover:text-slate-300 underline" data-i18n="footerTerms">Terms of Use</a>
+        <a href="/help.html" class="hover:text-slate-300 underline" data-i18n="footerHelp">Guide</a>
+        <a href="mailto:support@ai-consilium.com" class="hover:text-slate-300 underline" data-i18n="footerSupport">Support</a>
       </div>
     </footer>
   </div>
@@ -550,7 +562,6 @@
       <div id="receiptModalBody" class="text-sm text-slate-300"></div>
     </div>
   </div>
-
 
   <div id="editModal" class="fixed inset-0 modal-backdrop hidden items-center justify-center p-4 z-50">
     <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full p-6">
@@ -637,7 +648,16 @@
         newProjectPrompt:'Project name:', projectExists:'A project with this name already exists.',
         deleteProjectConfirm:'Delete project "{name}"? This cannot be undone.', projectDeleted:'Project deleted.', deleteProjectTitle:'Delete project',
         footerDisclaimer:'SplitBooks is a bookkeeping and expense-tracking tool for business partners. It does not provide financial, tax, investment, or legal advice, and is not a payment processor or licensed financial institution. You are responsible for your own tax and legal compliance.',
-        footerPrivacy:'Privacy Policy', footerTerms:'Terms of Use', footerPricing:'Pricing'
+        footerPrivacy:'Privacy Policy', footerTerms:'Terms of Use', footerPricing:'Pricing', footerHelp:'Guide', footerSupport:'Support',
+        tourWelcomeTitle:'Quick tour of SplitBooks', tourWelcomeDesc:"Take 30 seconds to see where everything is. You can skip anytime — find this tour again in Settings.",
+        tourDashboardTitle:'Dashboard', tourDashboardDesc:'Your overview — income, expenses, tax reserve, and net profit at a glance.',
+        tourTransactionsTitle:'Transactions', tourTransactionsDesc:'Add income, expenses, transfers, and partner draws here, and attach receipts.',
+        tourProjectsTitle:'Projects', tourProjectsDesc:'Group transactions by job or project to see which one is actually profitable.',
+        tourReceiptsTitle:'Receipts', tourReceiptsDesc:'All attached receipts and photos in one searchable place.',
+        tourMonthlyTitle:'Monthly Close', tourMonthlyDesc:'Export a report, send it to your partner, then lock the month so nothing changes retroactively.',
+        tourSettingsTitle:'Settings', tourSettingsDesc:'Tax rate, partner names, theme, invites, and security all live here.',
+        tourNext:'Next', tourBack:'Back', tourSkip:'Skip', tourDone:'Got it', tourStepOf:'Step {n} of {total}', btnReplayTour:'Replay tour',
+        helpFooterTitle:'Help & guide', helpFooterDesc:'Replay the quick tour, or read the full written guide.'
       },
       pl: {
         uiState:'Na żywo · zsynchronizowane', appTitle:'SplitBooks', subtitle:'Wspólny system finansowy dla partnerów, projektów, paragonów i zamknięcia miesiąca.',
@@ -676,7 +696,16 @@
         newProjectPrompt:'Nazwa projektu:', projectExists:'Projekt o tej nazwie już istnieje.',
         deleteProjectConfirm:'Usunąć projekt "{name}"? Tej operacji nie można cofnąć.', projectDeleted:'Projekt usunięty.', deleteProjectTitle:'Usuń projekt',
         footerDisclaimer:'SplitBooks to narzędzie księgowe do śledzenia wspólnych wydatków dla wspólników. Nie świadczy usług doradztwa finansowego, podatkowego, inwestycyjnego ani prawnego i nie jest instytucją płatniczą ani licencjonowaną instytucją finansową. Użytkownik odpowiada za własne rozliczenia podatkowe i zgodność z prawem.',
-        footerPrivacy:'Polityka prywatności', footerTerms:'Regulamin', footerPricing:'Cennik'
+        footerPrivacy:'Polityka prywatności', footerTerms:'Regulamin', footerPricing:'Cennik', footerHelp:'Poradnik', footerSupport:'Pomoc',
+        tourWelcomeTitle:'Krótkie zwiedzanie SplitBooks', tourWelcomeDesc:'30 sekund, żeby zobaczyć, gdzie co jest. Możesz pominąć w każdej chwili — ten przewodnik znajdziesz też w Ustawieniach.',
+        tourDashboardTitle:'Panel', tourDashboardDesc:'Twój przegląd — przychody, koszty, rezerwa podatkowa i zysk netto na pierwszy rzut oka.',
+        tourTransactionsTitle:'Transakcje', tourTransactionsDesc:'Tu dodajesz przychody, koszty, przelewy i wypłaty dla wspólników oraz załączasz paragony.',
+        tourProjectsTitle:'Projekty', tourProjectsDesc:'Grupuj transakcje wg projektu, żeby zobaczyć, który faktycznie przynosi zysk.',
+        tourReceiptsTitle:'Paragony', tourReceiptsDesc:'Wszystkie załączone paragony i zdjęcia w jednym miejscu.',
+        tourMonthlyTitle:'Zamknięcie miesiąca', tourMonthlyDesc:'Wyeksportuj raport, wyślij do wspólnika, a potem zablokuj miesiąc, żeby nic się już nie zmieniło.',
+        tourSettingsTitle:'Ustawienia', tourSettingsDesc:'Stawka podatkowa, dane wspólników, motyw, zaproszenia i bezpieczeństwo — wszystko tutaj.',
+        tourNext:'Dalej', tourBack:'Wstecz', tourSkip:'Pomiń', tourDone:'Rozumiem', tourStepOf:'Krok {n} z {total}', btnReplayTour:'Pokaż przewodnik ponownie',
+        helpFooterTitle:'Pomoc i poradnik', helpFooterDesc:'Uruchom krótki przewodnik ponownie albo przeczytaj pełny poradnik.'
       },
       uk: {
         uiState:'Наживо · синхронізовано', appTitle:'SplitBooks', subtitle:'Спільний фінансовий контроль для партнерів, проєктів, чеків і закриття місяця.',
@@ -715,7 +744,16 @@
         newProjectPrompt:'Назва проєкту:', projectExists:'Проєкт з такою назвою вже існує.',
         deleteProjectConfirm:'Видалити проєкт "{name}"? Цю дію не можна скасувати.', projectDeleted:'Проєкт видалено.', deleteProjectTitle:'Видалити проєкт',
         footerDisclaimer:'SplitBooks — інструмент для обліку та відстеження спільних витрат бізнес-партнерів. Сервіс не надає фінансових, податкових, інвестиційних чи юридичних консультацій і не є платіжною установою чи ліцензованою фінансовою організацією. Ви самостійно відповідаєте за податкову та юридичну відповідність.',
-        footerPrivacy:'Політика конфіденційності', footerTerms:'Умови використання', footerPricing:'Тарифи'
+        footerPrivacy:'Політика конфіденційності', footerTerms:'Умови використання', footerPricing:'Тарифи', footerHelp:'Посібник', footerSupport:'Підтримка',
+        tourWelcomeTitle:'Коротка екскурсія по SplitBooks', tourWelcomeDesc:'30 секунд, щоб побачити, де що є. Можна пропустити в будь-який момент — цю екскурсію завжди можна знайти в Налаштуваннях.',
+        tourDashboardTitle:'Панель', tourDashboardDesc:'Ваш огляд — дохід, витрати, податковий резерв і чистий прибуток одним поглядом.',
+        tourTransactionsTitle:'Транзакції', tourTransactionsDesc:'Тут додаєте дохід, витрати, перекази та виплати партнерам, а також прикріплюєте чеки.',
+        tourProjectsTitle:'Проєкти', tourProjectsDesc:'Групуйте транзакції за проєктом, щоб бачити, який з них насправді прибутковий.',
+        tourReceiptsTitle:'Чеки', tourReceiptsDesc:'Усі прикріплені чеки та фото в одному місці.',
+        tourMonthlyTitle:'Закриття місяця', tourMonthlyDesc:'Експортуйте звіт, надішліть партнеру, потім заблокуйте місяць, щоб нічого заднім числом не змінилося.',
+        tourSettingsTitle:'Налаштування', tourSettingsDesc:'Податкова ставка, імена партнерів, тема, запрошення та безпека — все тут.',
+        tourNext:'Далі', tourBack:'Назад', tourSkip:'Пропустити', tourDone:'Зрозуміло', tourStepOf:'Крок {n} з {total}', btnReplayTour:'Показати екскурсію знову',
+        helpFooterTitle:'Допомога та посібник', helpFooterDesc:'Запустіть коротку екскурсію знову або прочитайте повний посібник.'
       }
     };
 
@@ -838,6 +876,7 @@
       populateFilters();
       populateProjectSelect();
       refreshUI();
+      maybeStartTour();
     }
 
     function showAuthScreen(){
@@ -1617,6 +1656,108 @@
       el.classList.add('hidden');
       el.classList.remove('flex');
     }
+
+    // --- First-login onboarding tour ---
+    // A short, dismissable walkthrough of the main nav tabs. Shown once
+    // automatically (tracked via localStorage, a local device preference like
+    // the theme toggle — not org data), and replayable anytime from
+    // Settings > "Replay tour".
+    const TOUR_STEPS = [
+      { view: null, titleKey: 'tourWelcomeTitle', descKey: 'tourWelcomeDesc' },
+      { view: 'dashboard', titleKey: 'tourDashboardTitle', descKey: 'tourDashboardDesc' },
+      { view: 'transactions', titleKey: 'tourTransactionsTitle', descKey: 'tourTransactionsDesc' },
+      { view: 'projects', titleKey: 'tourProjectsTitle', descKey: 'tourProjectsDesc' },
+      { view: 'receipts', titleKey: 'tourReceiptsTitle', descKey: 'tourReceiptsDesc' },
+      { view: 'monthly', titleKey: 'tourMonthlyTitle', descKey: 'tourMonthlyDesc' },
+      { view: 'settings', titleKey: 'tourSettingsTitle', descKey: 'tourSettingsDesc' }
+    ];
+    let tourStep = 0;
+
+    function maybeStartTour(){
+      let seen = false;
+      try { seen = localStorage.getItem('sb_tour_seen') === '1'; } catch (e) {}
+      if (!seen) startTour();
+    }
+
+    function startTour(){
+      tourStep = 0;
+      renderTourStep();
+    }
+
+    function endTour(){
+      const overlay = $('tourOverlay');
+      if (overlay) overlay.remove();
+      try { localStorage.setItem('sb_tour_seen', '1'); } catch (e) {}
+    }
+
+    function renderTourStep(){
+      const step = TOUR_STEPS[tourStep];
+      const t = i18n[state.lang];
+      if (step.view) setView(step.view);
+
+      const existing = $('tourOverlay');
+      if (existing) existing.remove();
+
+      const overlay = document.createElement('div');
+      overlay.id = 'tourOverlay';
+      overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(2,6,23,.7);';
+
+      const targetEl = step.view ? document.querySelector('.tab[data-view="' + step.view + '"]') : null;
+      const rect = targetEl ? targetEl.getBoundingClientRect() : null;
+
+      if (rect) {
+        overlay.style.background = 'transparent';
+        const hole = document.createElement('div');
+        const pad = 6;
+        hole.style.cssText = 'position:fixed;top:' + (rect.top - pad) + 'px;left:' + (rect.left - pad) + 'px;'
+          + 'width:' + (rect.width + pad * 2) + 'px;height:' + (rect.height + pad * 2) + 'px;'
+          + 'border-radius:14px;box-shadow:0 0 0 9999px rgba(2,6,23,.75);pointer-events:none;border:2px solid #6366f1;';
+        overlay.appendChild(hole);
+      }
+
+      const card = document.createElement('div');
+      card.className = 'glass border border-slate-800 rounded-3xl p-5 shadow-2xl';
+      card.style.cssText = 'position:fixed;z-index:10000;width:calc(100% - 32px);max-width:22rem;';
+      if (rect) {
+        const top = Math.min(rect.bottom + 14, window.innerHeight - 220);
+        const left = Math.max(16, Math.min(rect.left, window.innerWidth - 22 * 16 - 16));
+        card.style.top = top + 'px';
+        card.style.left = left + 'px';
+      } else {
+        card.style.top = '50%';
+        card.style.left = '50%';
+        card.style.transform = 'translate(-50%,-50%)';
+      }
+
+      const isFirst = tourStep === 0;
+      const isLast = tourStep === TOUR_STEPS.length - 1;
+      const stepOfHtml = step.view
+        ? '<p class="text-xs text-indigo-400 font-semibold mb-1">' + escapeHtml((t.tourStepOf || 'Step {n} of {total}').replace('{n}', String(tourStep)).replace('{total}', String(TOUR_STEPS.length - 1))) + '</p>'
+        : '';
+      card.innerHTML = stepOfHtml
+        + '<h3 class="text-lg font-bold mb-1">' + escapeHtml(t[step.titleKey] || '') + '</h3>'
+        + '<p class="text-sm text-slate-300 mb-4">' + escapeHtml(t[step.descKey] || '') + '</p>'
+        + '<div class="flex items-center justify-between gap-2">'
+        + '<button id="tourSkipBtn" class="text-xs text-slate-400 hover:text-slate-200 underline">' + escapeHtml(t.tourSkip || 'Skip') + '</button>'
+        + '<div class="flex gap-2">'
+        + (!isFirst ? '<button id="tourBackBtn" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-sm font-semibold">' + escapeHtml(t.tourBack || 'Back') + '</button>' : '')
+        + '<button id="tourNextBtn" class="px-3 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-sm font-semibold">' + escapeHtml(isLast ? (t.tourDone || 'Got it') : (t.tourNext || 'Next')) + '</button>'
+        + '</div></div>';
+      overlay.appendChild(card);
+      document.body.appendChild(overlay);
+
+      $('tourSkipBtn').addEventListener('click', endTour);
+      const backBtn = $('tourBackBtn');
+      if (backBtn) backBtn.addEventListener('click', () => { tourStep--; renderTourStep(); });
+      $('tourNextBtn').addEventListener('click', () => {
+        if (isLast) { endTour(); return; }
+        tourStep++;
+        renderTourStep();
+      });
+    }
+
+    const replayTourBtn = $('btnReplayTour');
+    if (replayTourBtn) replayTourBtn.addEventListener('click', startTour);
 
     document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => setView(b.dataset.view)));
     document.querySelectorAll('[data-lang]').forEach(b => b.addEventListener('click', () => { state.lang = b.dataset.lang; $('defaultLang').value = state.lang; applyLang(); refreshUI(); }));
