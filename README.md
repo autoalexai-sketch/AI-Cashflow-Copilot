@@ -5,7 +5,7 @@ _(Originally built under the working name "AI Cashflow Copilot"; renamed to Spli
 Shared cashflow & profit-split tool for small business partnerships —
 projects, receipts, tax reserve, monthly close.
 
-Live app: **https://ai-cashflow-copilot-v2.pages.dev** · **https://splitbooks.pl** · **https://splitbooks.eu**
+Live app: **https://splitbooks.pl** · **https://splitbooks.eu**
 
 Legal: [Privacy Policy](https://splitbooks.pl/privacy.html) · [Terms of Use](https://splitbooks.pl/terms.html) (templates — see "Legal pages" below before relying on them publicly)
 
@@ -52,13 +52,14 @@ role doesn't allow.
 ## Tech stack
 
 - **Frontend:** single self-contained `splitbooks.html`
-  (vanilla JS, no build step). This is the exact file uploaded to Cloudflare
-  Pages as `index.html` on deploy.
+  (vanilla JS, no build step). This is the exact file uploaded to Netlify
+  as `index.html` on deploy.
 - **Backend:** [Supabase](https://supabase.com) — Postgres, Auth, Storage
   (receipts bucket), and Realtime (live transaction sync).
-- **Hosting:** [Cloudflare Pages](https://pages.cloudflare.com) (static,
-  Direct Upload deploys), with custom domains `splitbooks.pl` and
-  `splitbooks.eu` (registered at home.pl, DNS managed via Cloudflare).
+- **Hosting:** [Netlify](https://www.netlify.com) (static, manual
+  Netlify Drop deploys — no git integration, no build step), with custom
+  domains `splitbooks.pl` and `splitbooks.eu` (registered at home.pl, DNS
+  managed via Netlify).
 
 ## Legal pages
 
@@ -75,7 +76,7 @@ Poland/EU user base) before being treated as final.
 
 | File | Purpose |
 |---|---|
-| `splitbooks.html` | The full app — UI + Supabase client logic. Deployed to Cloudflare Pages as-is (renamed to `index.html` at deploy time). |
+| `splitbooks.html` | The full app — UI + Supabase client logic. Deployed to Netlify as-is (renamed to `index.html` at deploy time). |
 | `privacy.html` | Privacy Policy (EN + PL), linked from the app footer. Template — see "Legal pages" above. |
 | `terms.html` | Terms of Use, including the "not financial/legal/tax advice" and "not a payment institution" disclaimers (EN + PL). Template — see "Legal pages" above. |
 | `supabase_001_schema_and_rls.sql` | Base schema and RLS policies (tables, roles, base security model). |
@@ -100,11 +101,14 @@ don't assume "it has SELECT so it must be fine".
 ## Deployment
 
 The app is a single static HTML file with no build step. Deploying means
-zipping `splitbooks.html` as `index.html` (together with `privacy.html` and
-`terms.html`) and uploading via Cloudflare Pages' Direct Upload flow to the
-`ai-cashflow-copilot-v2` project. Supabase URL/key are embedded in the client
-as the anon (publishable) key, which is safe to expose — all real access
-control happens via RLS on the server side.
+copying `splitbooks.html` to `index.html` and dragging the full site
+folder (`index.html`, `privacy.html`, `terms.html`, `pricing.html`,
+`help.html`, and the supporting static assets) onto Netlify Drop
+(https://app.netlify.com/projects/mellifluous-kitten-92626e/deploys).
+Netlify Drop deploys are not incremental — every file in the site must be
+included in each drop, not just the ones that changed. Supabase URL/key
+are embedded in the client as the anon (publishable) key, which is safe to
+expose — all real access control happens via RLS on the server side.
 
 ## Status
 
@@ -113,7 +117,9 @@ All 9 stages of the original development plan are complete (see
 
 - Self-editable partner display names.
 - Realtime transaction sync between partners.
-- Migration of hosting from Netlify to Cloudflare Pages.
+- Migrated hosting from Cloudflare Pages back to Netlify (current live
+  host — Cloudflare Pages was found out of sync with the domains' actual
+  DNS records).
 - Renamed the project to SplitBooks; connected custom domains
   `splitbooks.pl` and `splitbooks.eu`.
 - Added Privacy Policy and Terms of Use pages, plus an in-app footer
