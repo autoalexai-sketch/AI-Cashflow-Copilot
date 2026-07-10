@@ -329,15 +329,8 @@
             <div>
               <label class="text-xs text-slate-400" data-i18n="labelCategory">Category</label>
               <select id="category" class="select w-full rounded-2xl px-4 py-3 mt-1">
-                <option value="Income" data-i18n="catIncome">Income</option>
-                <option value="Materials" data-i18n="catMaterials">Materials</option>
-                <option value="Fuel" data-i18n="catFuel">Fuel</option>
-                <option value="Labor Employee" data-i18n="catLaborEmployee">Labor Employee</option>
                 <option value="Partner Draw A" id="optPartnerDrawA">Partner A</option>
                 <option value="Partner Draw B" id="optPartnerDrawB">Partner B</option>
-                <option value="Accounting" data-i18n="catAccounting">Accounting</option>
-                <option value="Marketing" data-i18n="catMarketing">Marketing</option>
-                <option value="Equipment" data-i18n="catEquipment">Equipment</option>
               </select>
             </div>
             <div>
@@ -489,6 +482,20 @@
         </div>
 
         <div class="xl:col-span-2 glass border border-slate-800 rounded-3xl p-5 card space-y-4">
+          <h2 class="text-lg font-bold" data-i18n="categoriesTitle">Categories</h2>
+          <p class="text-xs text-slate-400" data-i18n="categoriesSubtitle">Add, rename, or remove the categories shown in the transaction form.</p>
+          <div class="flex flex-col md:flex-row gap-2">
+            <input id="newCategoryName" class="input w-full rounded-2xl px-4 py-2.5 mt-1 md:mt-0" data-i18n-placeholder="newCategoryNamePlaceholder" placeholder="Category name">
+            <select id="newCategoryDirection" class="select rounded-2xl px-4 py-2.5">
+              <option value="expense" data-i18n="dirExpense">Expense</option>
+              <option value="income" data-i18n="dirIncome">Income</option>
+            </select>
+            <button id="btnAddCategory" class="px-4 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 font-semibold shrink-0" data-i18n="btnAddCategory">+ Add</button>
+          </div>
+          <div id="categoriesList" class="space-y-2"></div>
+        </div>
+
+        <div class="xl:col-span-2 glass border border-slate-800 rounded-3xl p-5 card space-y-4">
           <h2 class="text-lg font-bold flex items-center gap-2">
             <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
             <span data-i18n="settingsSecurityTitle">Security & sync</span>
@@ -583,15 +590,8 @@
         </div>
         <div><label class="text-xs text-slate-400" data-i18n="labelCategory">Category</label>
           <select id="editCategory" class="select w-full rounded-2xl px-4 py-3 mt-1">
-            <option value="Income" data-i18n="catIncome">Income</option>
-            <option value="Materials" data-i18n="catMaterials">Materials</option>
-            <option value="Fuel" data-i18n="catFuel">Fuel</option>
-            <option value="Labor Employee" data-i18n="catLaborEmployee">Labor Employee</option>
             <option value="Partner Draw A" id="editOptPartnerDrawA">Partner A</option>
             <option value="Partner Draw B" id="editOptPartnerDrawB">Partner B</option>
-            <option value="Accounting" data-i18n="catAccounting">Accounting</option>
-            <option value="Marketing" data-i18n="catMarketing">Marketing</option>
-            <option value="Equipment" data-i18n="catEquipment">Equipment</option>
           </select>
         </div>
         <div><label class="text-xs text-slate-400" data-i18n="labelStatus">Status</label>
@@ -625,6 +625,7 @@
         phAmount:'0.00', phProject:'e.g. Kowalski / Floriańska 12', phDescription:'Short note',
         optAll:'All', optIncome:'Income', optExpense:'Expense', optTransfer:'Transfer', optDraw:'Draw', optBank:'Bank', optCash:'Cash', optTaxReserve:'Tax Reserve',
         catIncome:'Income', catMaterials:'Materials', catFuel:'Fuel', catLaborEmployee:'Labor Employee', catAccounting:'Accounting', catMarketing:'Marketing', catEquipment:'Equipment',
+        categoriesTitle:'Categories', categoriesSubtitle:'Add, rename, or remove the categories shown in the transaction form.', newCategoryNamePlaceholder:'Category name', dirIncome:'Income', dirExpense:'Expense', btnAddCategory:'+ Add', categoryExists:'A category with this name already exists.', categoryInUseError:'Cannot delete: this category is used by existing transactions.', deleteCategoryConfirm:'Delete category "{name}"? This cannot be undone.', deleteCategoryTitle:'Delete category', categoryDeleted:'Category deleted.', noCategories:'No categories yet',
         statusPending:'pending', statusVerified:'verified', statusRejected:'rejected',
         btnSaveTx:'Save transaction', btnReset:'Reset', btnNewProject:'+ New project', btnExportPdf:'Export PDF', btnExportExcel:'Export Excel', btnSendReport:'Send to partners', btnLockMonth:'Lock month', btnUnlockMonth:'Unlock month',
         projectsTitle:'Projects', projectsSubtitle:'See which object is profitable and which one eats margin.', noProjects:'No projects yet', receiptsTitle:'Receipts', noReceipts:'No receipts yet', receiptLoading:'Loading…',
@@ -645,7 +646,7 @@
         monthAlreadyLocked:'This month is already locked.', monthLockedBadge:'This month is locked — no further changes are possible.', monthLockedSuccess:'Month locked.',
         monthUnlockConfirm:'Unlock the current month? Transactions dated in this month can be added and edited again.', monthUnlockedSuccess:'Month unlocked.',
         taxRateBadgeLabel:'Rate', taxRateOwnerOnlyNote:'Only the workspace owner can change this.', taxRateSaved:'Tax rate saved.',
-        newProjectPrompt:'Project name:', projectExists:'A project with this name already exists.',
+        newProjectPrompt:'Project name:', projectExists:'A project with this name already exists.', newCategoryPrompt:'Category name:',
         deleteProjectConfirm:'Delete project "{name}"? This cannot be undone.', projectDeleted:'Project deleted.', deleteProjectTitle:'Delete project',
         footerDisclaimer:'SplitBooks is a bookkeeping and expense-tracking tool for business partners. It does not provide financial, tax, investment, or legal advice, and is not a payment processor or licensed financial institution. You are responsible for your own tax and legal compliance.',
         footerPrivacy:'Privacy Policy', footerTerms:'Terms of Use', footerPricing:'Pricing', footerHelp:'Guide', footerSupport:'Support',
@@ -673,6 +674,7 @@
         phAmount:'0.00', phProject:'np. Kowalski / Floriańska 12', phDescription:'Krótka notatka',
         optAll:'Wszystkie', optIncome:'Przychód', optExpense:'Koszt', optTransfer:'Transfer', optDraw:'Wypłata', optBank:'Bank', optCash:'Kasa', optTaxReserve:'Rezerwa podatkowa',
         catIncome:'Przychód', catMaterials:'Materiały', catFuel:'Paliwo', catLaborEmployee:'Pracownik', catAccounting:'Księgowość', catMarketing:'Marketing', catEquipment:'Sprzęt',
+        categoriesTitle:'Kategorie', categoriesSubtitle:'Dodawaj, zmieniaj nazwę lub usuwaj kategorie widoczne w formularzu transakcji.', newCategoryNamePlaceholder:'Nazwa kategorii', dirIncome:'Przychód', dirExpense:'Wydatek', btnAddCategory:'+ Dodaj', categoryExists:'Kategoria o tej nazwie już istnieje.', categoryInUseError:'Nie można usunąć: ta kategoria jest używana w istniejących transakcjach.', deleteCategoryConfirm:'Usunąć kategorię "{name}"? Tej operacji nie można cofnąć.', deleteCategoryTitle:'Usuń kategorię', categoryDeleted:'Kategoria usunięta.', noCategories:'Brak kategorii',
         statusPending:'oczekuje', statusVerified:'potwierdzony', statusRejected:'odrzucony',
         btnSaveTx:'Zapisz transakcję', btnReset:'Reset', btnNewProject:'+ Nowy projekt', btnExportPdf:'Eksportuj PDF', btnExportExcel:'Eksportuj Excel', btnSendReport:'Wyślij do partnerów', btnLockMonth:'Zablokuj miesiąc', btnUnlockMonth:'Odblokuj miesiąc',
         projectsTitle:'Projekty', projectsSubtitle:'Zobacz, które zlecenie jest rentowne, a które zjada marżę.', noProjects:'Brak projektów', receiptsTitle:'Paragony', noReceipts:'Brak paragonów', receiptLoading:'Ładowanie…',
@@ -693,7 +695,7 @@
         monthAlreadyLocked:'Ten miesiąc jest już zablokowany.', monthLockedBadge:'Ten miesiąc jest zablokowany — zmiany nie są już możliwe.', monthLockedSuccess:'Miesiąc zablokowany.',
         monthUnlockConfirm:'Odblokować bieżący miesiąc? Transakcje z tego miesiąca będzie można ponownie dodawać i edytować.', monthUnlockedSuccess:'Miesiąc odblokowany.',
         taxRateBadgeLabel:'Stawka', taxRateOwnerOnlyNote:'Tylko właściciel workspace może to zmienić.', taxRateSaved:'Stawka podatkowa zapisana.',
-        newProjectPrompt:'Nazwa projektu:', projectExists:'Projekt o tej nazwie już istnieje.',
+        newProjectPrompt:'Nazwa projektu:', projectExists:'Projekt o tej nazwie już istnieje.', newCategoryPrompt:'Nazwa kategorii:',
         deleteProjectConfirm:'Usunąć projekt "{name}"? Tej operacji nie można cofnąć.', projectDeleted:'Projekt usunięty.', deleteProjectTitle:'Usuń projekt',
         footerDisclaimer:'SplitBooks to narzędzie księgowe do śledzenia wspólnych wydatków dla wspólników. Nie świadczy usług doradztwa finansowego, podatkowego, inwestycyjnego ani prawnego i nie jest instytucją płatniczą ani licencjonowaną instytucją finansową. Użytkownik odpowiada za własne rozliczenia podatkowe i zgodność z prawem.',
         footerPrivacy:'Polityka prywatności', footerTerms:'Regulamin', footerPricing:'Cennik', footerHelp:'Poradnik', footerSupport:'Pomoc',
@@ -721,6 +723,7 @@
         phAmount:'0.00', phProject:'напр. Kowalski / Floriańska 12', phDescription:'Коротка нотатка',
         optAll:'Всі', optIncome:'Дохід', optExpense:'Витрата', optTransfer:'Переведення', optDraw:'Виплата', optBank:'Банк', optCash:'Каса', optTaxReserve:'Податковий резерв',
         catIncome:'Дохід', catMaterials:'Матеріали', catFuel:'Паливо', catLaborEmployee:'Працівник', catAccounting:'Бухгалтерія', catMarketing:'Маркетинг', catEquipment:'Обладнання',
+        categoriesTitle:'Категорії', categoriesSubtitle:'Додавайте, перейменовуйте або видаляйте категорії у формі транзакції.', newCategoryNamePlaceholder:'Назва категорії', dirIncome:'Дохід', dirExpense:'Витрата', btnAddCategory:'+ Додати', categoryExists:'Категорія з такою назвою вже існує.', categoryInUseError:'Неможливо видалити: ця категорія використовується в існуючих транзакціях.', deleteCategoryConfirm:'Видалити категорію "{name}"? Цю дію не можна скасувати.', deleteCategoryTitle:'Видалити категорію', categoryDeleted:'Категорію видалено.', noCategories:'Ще немає категорій',
         statusPending:'очікує', statusVerified:'підтверджено', statusRejected:'відхилено',
         btnSaveTx:'Зберегти транзакцію', btnReset:'Скинути', btnNewProject:'+ Новий проєкт', btnExportPdf:'Експортувати PDF', btnExportExcel:'Експортувати Excel', btnSendReport:'Надіслати партнерам', btnLockMonth:'Заблокувати місяць', btnUnlockMonth:'Розблокувати місяць',
         projectsTitle:'Проєкти', projectsSubtitle:'Дивіться, який об’єкт прибутковий, а який з’їдає маржу.', noProjects:'Ще немає проєктів', receiptsTitle:'Чеки', noReceipts:'Ще немає чеків', receiptLoading:'Завантаження…',
@@ -741,7 +744,7 @@
         monthAlreadyLocked:'Цей місяць вже заблокований.', monthLockedBadge:'Цей місяць заблоковано — зміни більше не можливі.', monthLockedSuccess:'Місяць заблоковано.',
         monthUnlockConfirm:'Розблокувати поточний місяць? Транзакції цього місяця знову можна буде додавати й редагувати.', monthUnlockedSuccess:'Місяць розблоковано.',
         taxRateBadgeLabel:'Ставка', taxRateOwnerOnlyNote:'Лише власник робочого простору може це змінити.', taxRateSaved:'Податкову ставку збережено.',
-        newProjectPrompt:'Назва проєкту:', projectExists:'Проєкт з такою назвою вже існує.',
+        newProjectPrompt:'Назва проєкту:', projectExists:'Проєкт з такою назвою вже існує.', newCategoryPrompt:'Назва категорії:',
         deleteProjectConfirm:'Видалити проєкт "{name}"? Цю дію не можна скасувати.', projectDeleted:'Проєкт видалено.', deleteProjectTitle:'Видалити проєкт',
         footerDisclaimer:'SplitBooks — інструмент для обліку та відстеження спільних витрат бізнес-партнерів. Сервіс не надає фінансових, податкових, інвестиційних чи юридичних консультацій і не є платіжною установою чи ліцензованою фінансовою організацією. Ви самостійно відповідаєте за податкову та юридичну відповідність.',
         footerPrivacy:'Політика конфіденційності', footerTerms:'Умови використання', footerPricing:'Тарифи', footerHelp:'Посібник', footerSupport:'Підтримка',
@@ -769,6 +772,7 @@
       taxRate:10,
       txs:[],
       projects:[],
+      categories:[],
       deleteRequests:[],
       monthLocked:false,
       editId:null,
@@ -867,6 +871,7 @@
         await loadMembers();
         await loadTransactions();
         await loadProjects();
+        await loadCategories();
         await loadDeleteRequests();
         await checkMonthLocked();
         subscribeToTransactions();
@@ -875,6 +880,7 @@
       }
       populateFilters();
       populateProjectSelect();
+      populateCategorySelect();
       refreshUI();
       maybeStartTour();
     }
@@ -928,6 +934,16 @@
         .from('memberships')
         .insert({ org_id: org.id, user_id: state.user.id, role: 'owner', display_name: state.user.email.split('@')[0], share_percent: 50 });
       if (memErr) throw memErr;
+
+      const DEFAULT_CATEGORIES = [
+        ['Income', 'income'], ['Materials', 'expense'], ['Fuel', 'expense'],
+        ['Labor Employee', 'expense'], ['Accounting', 'expense'],
+        ['Marketing', 'expense'], ['Equipment', 'expense']
+      ];
+      const { error: catErr } = await supabaseClient
+        .from('categories')
+        .insert(DEFAULT_CATEGORIES.map(([name, direction]) => ({ org_id: org.id, name, direction, created_by: state.user.id })));
+      if (catErr) console.warn('Could not seed default categories:', catErr.message);
 
       state.orgId = org.id;
       state.role = 'owner';
@@ -988,6 +1004,9 @@
           recalcPartnerBalances();
         })
         .subscribe();
+      // Categories change far less often than transactions, so they're not
+      // part of the realtime subscription above — reloaded on next login/tab
+      // switch instead, same cadence as projects.
     }
 
     function unsubscribeFromTransactions(){
@@ -1011,6 +1030,21 @@
       state.projects = data || [];
     }
 
+    // Categories used to be a fixed, hardcoded list. Now they're per-org rows
+    // in Supabase (categories_select RLS: is_org_member(org_id)), so partners
+    // can add/rename/remove their own categories. "Partner Draw A/B" stay
+    // hardcoded in the HTML <select> — they're tied to balance attribution
+    // logic in partnerSlotFor() and must never be renamed or deleted.
+    async function loadCategories(){
+      const { data, error } = await supabaseClient
+        .from('categories')
+        .select('id, name, direction')
+        .eq('org_id', state.orgId)
+        .order('name', { ascending: true });
+      if (error) { console.warn('Could not load categories:', error.message); return; }
+      state.categories = data || [];
+    }
+
     // The transaction form's Project field used to be free text, which meant
     // two transactions for "the same" project could silently diverge by a typo
     // and get split across two project cards. Now it's a select sourced from
@@ -1027,6 +1061,90 @@
       sel.innerHTML = '<option value="">—</option>' + names.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('');
       if (names.includes(current)) sel.value = current;
     }
+
+    // The 7 categories that shipped before this feature existed still have
+    // translated EN/PL/UK labels (catIncome, catMaterials, etc.) in the i18n
+    // object. Categories a user adds themselves are freeform text (like
+    // project names) and just display as typed, in whatever language.
+    const CATEGORY_I18N_KEYS = {
+      'Income': 'catIncome', 'Materials': 'catMaterials', 'Fuel': 'catFuel',
+      'Labor Employee': 'catLaborEmployee', 'Accounting': 'catAccounting',
+      'Marketing': 'catMarketing', 'Equipment': 'catEquipment'
+    };
+    function categoryLabel(name){
+      const t = i18n[state.lang];
+      const key = CATEGORY_I18N_KEYS[name];
+      return (key && t[key]) || name;
+    }
+
+    // "Partner Draw A/B" are two real <option> elements already in the HTML
+    // (ids optPartnerDrawA/B and editOptPartnerDrawA/B) — captured by
+    // reference before the <select> is cleared, then re-appended, so they
+    // keep working with refreshPartnerCategoryLabels() exactly as before.
+    // Everything else comes from state.categories (per-org, Supabase-backed).
+    function populateCategorySelect(){
+      const names = state.categories.map(c => c.name).sort((a, b) => a.localeCompare(b));
+      const optionsHtml = names.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(categoryLabel(n))}</option>`).join('');
+      [
+        { selId: 'category', drawAId: 'optPartnerDrawA', drawBId: 'optPartnerDrawB' },
+        { selId: 'editCategory', drawAId: 'editOptPartnerDrawA', drawBId: 'editOptPartnerDrawB' }
+      ].forEach(({ selId, drawAId, drawBId }) => {
+        const sel = $(selId);
+        if (!sel) return;
+        const current = sel.value;
+        const drawA = $(drawAId);
+        const drawB = $(drawBId);
+        sel.innerHTML = optionsHtml;
+        if (drawA) sel.appendChild(drawA);
+        if (drawB) sel.appendChild(drawB);
+        if ([...sel.options].some(o => o.value === current)) sel.value = current;
+      });
+      refreshPartnerCategoryLabels();
+    }
+
+    function renderCategoriesList(){
+      const box = $('categoriesList');
+      if (!box) return;
+      const t = i18n[state.lang];
+      if (!state.categories.length) {
+        box.innerHTML = `<div class="text-sm text-slate-500">${t.noCategories || 'No categories yet'}</div>`;
+        return;
+      }
+      const isOwner = state.role === 'owner';
+      box.innerHTML = state.categories.map(c => {
+        const dirText = c.direction === 'income' ? (t.dirIncome || 'Income') : (t.dirExpense || 'Expense');
+        const dirClass = c.direction === 'income' ? 'text-emerald-400' : 'text-rose-400';
+        const deleteBtn = isOwner
+          ? `<button class="text-slate-500 hover:text-rose-400 text-xs" title="${escapeHtml(t.deleteCategoryTitle || 'Delete category')}" onclick="deleteCategory('${c.id}', '${safeOnclickArg(c.name)}')">&#10005;</button>`
+          : '';
+        return `
+        <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-950/60 border border-slate-800">
+          <div class="text-sm">${escapeHtml(categoryLabel(c.name))}</div>
+          <div class="flex items-center gap-3">
+            <span class="text-xs ${dirClass}">${dirText}</span>
+            ${deleteBtn}
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    window.deleteCategory = async function(id, name){
+      const t = i18n[state.lang];
+      const confirmMsg = (t.deleteCategoryConfirm || 'Delete category "{name}"? This cannot be undone.').replace('{name}', name);
+      if (!confirm(confirmMsg)) return;
+      const { error } = await supabaseClient.from('categories').delete().eq('id', id);
+      if (error) {
+        if (error.message && error.message.includes('CATEGORY_IN_USE')) {
+          alert(t.categoryInUseError || 'Cannot delete: this category is used by existing transactions.');
+        } else {
+          notifyError('Could not delete category.', error);
+        }
+        return;
+      }
+      await loadCategories();
+      populateCategorySelect();
+      renderCategoriesList();
+    };
 
     // Theme (dark/light) is a local device preference, not org data, so it's
     // stored in localStorage and applied independently of the Settings lock —
@@ -1762,19 +1880,16 @@
     document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => setView(b.dataset.view)));
     document.querySelectorAll('[data-lang]').forEach(b => b.addEventListener('click', () => { state.lang = b.dataset.lang; $('defaultLang').value = state.lang; applyLang(); refreshUI(); }));
 
-    const CATEGORY_TYPE_MAP = {
-      'Income': 'income',
-      'Materials': 'expense',
-      'Fuel': 'expense',
-      'Labor Employee': 'expense',
-      'Partner Draw A': 'draw',
-      'Partner Draw B': 'draw',
-      'Accounting': 'expense',
-      'Marketing': 'expense',
-      'Equipment': 'expense'
-    };
+    // Categories are now data (state.categories), not a fixed map, so the
+    // direction lookup reads each category's own `direction` column instead
+    // of a hardcoded table. "Partner Draw A/B" stay special-cased here too.
+    function categoryDirection(name){
+      if (name === 'Partner Draw A' || name === 'Partner Draw B') return 'draw';
+      const found = state.categories.find(c => c.name === name);
+      return found ? found.direction : null;
+    }
     $('category').addEventListener('input', () => {
-      const mapped = CATEGORY_TYPE_MAP[$('category').value];
+      const mapped = categoryDirection($('category').value);
       if (mapped) $('direction').value = mapped;
     });
 
@@ -2074,6 +2189,25 @@
       renderProjects();
     });
 
+    $('btnAddCategory').addEventListener('click', async () => {
+      const name = ($('newCategoryName').value || '').trim();
+      if (!name) return;
+      const direction = $('newCategoryDirection').value;
+      const { error } = await supabaseClient.from('categories').insert({ org_id: state.orgId, name, direction, created_by: state.user.id });
+      if (error) {
+        const msg = error.code === '23505'
+          ? (i18n[state.lang].categoryExists || 'A category with this name already exists.')
+          : null;
+        if (msg) { alert(msg); return; }
+        notifyError('Could not create category.', error);
+        return;
+      }
+      $('newCategoryName').value = '';
+      await loadCategories();
+      populateCategorySelect();
+      renderCategoriesList();
+    });
+
     $('btnSettingsLock').addEventListener('click', () => applySettingsLock(!settingsLocked));
 
     $('btnGenerateInvite').addEventListener('click', async () => {
@@ -2121,6 +2255,7 @@
       renderMonthLockUI();
       refreshTaxRateUI();
       refreshPartnerNameUI();
+      renderCategoriesList();
       renderPreview();
       populateFilters();
       renderTxTable();
