@@ -69,6 +69,7 @@
     .lang-pill { cursor:pointer; }
     .tx-row:hover { background: rgba(15,23,42,.9); }
     .modal-backdrop { background: rgba(2,6,23,.85); }
+    input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor:pointer; }
 
     /* Light theme — overrides the dark defaults above when <html> has class="light". */
     html.light, html.light body { background:#f8fafc; }
@@ -98,6 +99,7 @@
     html.light .hover\:text-slate-200:hover { color:#0f172a; }
     html.light .hover\:text-slate-300:hover { color:#1e293b; }
     html.light .border-slate-800 { border-color:#e2e8f0; }
+    html.light input[type="date"]::-webkit-calendar-picker-indicator { filter: none; }
   </style>
 </head>
 <body class="text-slate-100 min-h-screen flex flex-col">
@@ -1669,6 +1671,7 @@
       });
       $('tx-list-sub').textContent = state.lang === 'pl' ? 'najnowsze na górze' : state.lang === 'uk' ? 'новіші зверху' : 'latest first';
       populateFilters();
+      populateCategorySelect();
       recalcPartnerBalances();
       renderTxTable();
     }
