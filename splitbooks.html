@@ -44,7 +44,11 @@
   </script>
   <link rel="manifest" href="/manifest.json" />
   <link rel="icon" href="/icon.svg" type="image/svg+xml" />
-  <link rel="apple-touch-icon" href="/icon.svg" />
+  <link rel="icon" href="/icon-192.png" sizes="192x192" type="image/png" />
+  <!-- iOS Safari's "Add to Home Screen" ignores SVG entirely for this tag —
+       it needs a real PNG or it silently falls back to a screenshot/blank
+       icon, which is why the icon was inconsistent on phones. -->
+  <link rel="apple-touch-icon" href="/icon-192.png" />
   <meta name="theme-color" content="#4f46e5" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
