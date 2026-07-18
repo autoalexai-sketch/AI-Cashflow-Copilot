@@ -293,24 +293,6 @@
             <div class="text-xs badge px-3 py-1 rounded-xl" id="tx-count">0 transactions</div>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div>
-              <label class="text-xs text-slate-400" data-i18n="filterProject">Filter by project</label>
-              <select id="filterProject" class="select w-full rounded-2xl px-4 py-3 mt-1">
-                <option value="" data-i18n="optAll">All</option>
-              </select>
-            </div>
-            <div>
-              <label class="text-xs text-slate-400" data-i18n="filterStatus">Filter by status</label>
-              <select id="filterStatus" class="select w-full rounded-2xl px-4 py-3 mt-1">
-                <option value="" data-i18n="optAll">All</option>
-                <option value="pending" data-i18n="statusPending">pending</option>
-                <option value="verified" data-i18n="statusVerified">verified</option>
-                <option value="rejected" data-i18n="statusRejected">rejected</option>
-              </select>
-            </div>
-          </div>
-
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label class="text-xs text-slate-400" data-i18n="labelDate">Date</label>
@@ -398,6 +380,25 @@
             <h3 class="text-lg font-bold" data-i18n="txListTitle">Transaction list</h3>
             <div class="text-xs text-slate-400" id="tx-list-sub">latest first</div>
           </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label class="text-xs text-slate-400" data-i18n="filterProject">Filter by project</label>
+              <select id="filterProject" class="select w-full rounded-2xl px-4 py-3 mt-1">
+                <option value="" data-i18n="optAll">All</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs text-slate-400" data-i18n="filterStatus">Filter by status</label>
+              <select id="filterStatus" class="select w-full rounded-2xl px-4 py-3 mt-1">
+                <option value="" data-i18n="optAll">All</option>
+                <option value="pending" data-i18n="statusPending">pending</option>
+                <option value="verified" data-i18n="statusVerified">verified</option>
+                <option value="rejected" data-i18n="statusRejected">rejected</option>
+              </select>
+            </div>
+          </div>
+
           <!-- Desktop/tablet: full table. Hidden below md so Status/Actions
                are never scrolled out of view on narrow phones — see the
                card list below for small screens instead. -->
@@ -448,6 +449,8 @@
           <div class="flex flex-wrap gap-3">
             <button id="exportPdf" class="px-4 py-2 rounded-2xl bg-sky-600 hover:bg-sky-500 font-semibold" data-i18n="btnExportPdf">Export PDF</button>
             <button id="exportExcel" class="px-4 py-2 rounded-2xl bg-sky-700 hover:bg-sky-600 font-semibold" data-i18n="btnExportExcel">Export Excel</button>
+            <button id="exportPdfByProject" class="px-4 py-2 rounded-2xl bg-indigo-600 hover:bg-indigo-500 font-semibold" data-i18n="btnExportPdfByProject">Export PDF by project</button>
+            <button id="exportExcelByProject" class="px-4 py-2 rounded-2xl bg-indigo-700 hover:bg-indigo-600 font-semibold" data-i18n="btnExportExcelByProject">Export Excel by project</button>
             <button id="sendReport" class="px-4 py-2 rounded-2xl bg-emerald-600 hover:bg-emerald-500 font-semibold" data-i18n="btnSendReport">Send to partners</button>
             <button id="lockMonth" class="px-4 py-2 rounded-2xl bg-rose-600 hover:bg-rose-500 font-semibold" data-i18n="btnLockMonth">Lock month</button>
             <button id="unlockMonth" class="hidden px-4 py-2 rounded-2xl bg-slate-700 hover:bg-slate-600 font-semibold" data-i18n="btnUnlockMonth">Unlock month</button>
@@ -700,7 +703,7 @@
         catIncome:'Income', catMaterials:'Materials', catFuel:'Fuel', catLaborEmployee:'Labor Employee', catAccounting:'Accounting', catMarketing:'Marketing', catEquipment:'Equipment',
         categoriesTitle:'Categories', categoriesSubtitle:'Add, rename, or remove the categories shown in the transaction form.', newCategoryNamePlaceholder:'Category name', dirIncome:'Income', dirExpense:'Expense', btnAddCategory:'+ Add', categoryExists:'A category with this name already exists.', categoryInUseError:'Cannot delete: this category is used by existing transactions.', deleteCategoryConfirm:'Delete category "{name}"? This cannot be undone.', deleteCategoryTitle:'Delete category', categoryDeleted:'Category deleted.', noCategories:'No categories yet',
         statusPending:'pending', statusVerified:'verified', statusRejected:'rejected',
-        btnSaveTx:'Save transaction', btnReset:'Reset', btnNewProject:'+ New project', btnExportPdf:'Export PDF', btnExportExcel:'Export Excel', btnSendReport:'Send to partners', btnLockMonth:'Lock month', btnUnlockMonth:'Unlock month',
+        btnSaveTx:'Save transaction', btnReset:'Reset', btnNewProject:'+ New project', btnExportPdf:'Export PDF', btnExportExcel:'Export Excel', btnExportPdfByProject:'Export PDF by project', btnExportExcelByProject:'Export Excel by project', grandTotalLabel:'Grand total', btnSendReport:'Send to partners', btnLockMonth:'Lock month', btnUnlockMonth:'Unlock month',
         projectsTitle:'Projects', projectsSubtitle:'See which object is profitable and which one eats margin.', noProjects:'No projects yet', receiptsTitle:'Receipts', noReceipts:'No receipts yet', receiptLoading:'Loading…',
         monthlyTitle:'Monthly close', monthlySubtitle:'Export the report as PDF or Excel, send it to both partners, then lock the month.', monthlyIncome:'Income', monthlyExpenses:'Expenses', monthlyTax:'Tax reserve', monthlyDistrib:'Distributable',
         settingsPartnerTitle:'Partner settings', settingsOrgTitle:'Organization settings', partnerANameLabel:'Partner A name', partnerBNameLabel:'Partner B name', shareALabel:'Share A %', shareBLabel:'Share B %',
@@ -750,7 +753,7 @@
         catIncome:'Przychód', catMaterials:'Materiały', catFuel:'Paliwo', catLaborEmployee:'Pracownik', catAccounting:'Księgowość', catMarketing:'Marketing', catEquipment:'Sprzęt',
         categoriesTitle:'Kategorie', categoriesSubtitle:'Dodawaj, zmieniaj nazwę lub usuwaj kategorie widoczne w formularzu transakcji.', newCategoryNamePlaceholder:'Nazwa kategorii', dirIncome:'Przychód', dirExpense:'Wydatek', btnAddCategory:'+ Dodaj', categoryExists:'Kategoria o tej nazwie już istnieje.', categoryInUseError:'Nie można usunąć: ta kategoria jest używana w istniejących transakcjach.', deleteCategoryConfirm:'Usunąć kategorię "{name}"? Tej operacji nie można cofnąć.', deleteCategoryTitle:'Usuń kategorię', categoryDeleted:'Kategoria usunięta.', noCategories:'Brak kategorii',
         statusPending:'oczekuje', statusVerified:'potwierdzony', statusRejected:'odrzucony',
-        btnSaveTx:'Zapisz transakcję', btnReset:'Reset', btnNewProject:'+ Nowy projekt', btnExportPdf:'Eksportuj PDF', btnExportExcel:'Eksportuj Excel', btnSendReport:'Wyślij do partnerów', btnLockMonth:'Zablokuj miesiąc', btnUnlockMonth:'Odblokuj miesiąc',
+        btnSaveTx:'Zapisz transakcję', btnReset:'Reset', btnNewProject:'+ Nowy projekt', btnExportPdf:'Eksportuj PDF', btnExportExcel:'Eksportuj Excel', btnExportPdfByProject:'Eksportuj PDF według projektów', btnExportExcelByProject:'Eksportuj Excel według projektów', grandTotalLabel:'Razem', btnSendReport:'Wyślij do partnerów', btnLockMonth:'Zablokuj miesiąc', btnUnlockMonth:'Odblokuj miesiąc',
         projectsTitle:'Projekty', projectsSubtitle:'Zobacz, które zlecenie jest rentowne, a które zjada marżę.', noProjects:'Brak projektów', receiptsTitle:'Paragony', noReceipts:'Brak paragonów', receiptLoading:'Ładowanie…',
         monthlyTitle:'Zamknięcie miesiąca', monthlySubtitle:'Wyeksportuj raport do PDF lub Excela, wyślij do partnerów i zablokuj miesiąc.', monthlyIncome:'Przychody', monthlyExpenses:'Koszty', monthlyTax:'Rezerwa podatkowa', monthlyDistrib:'Do podziału',
         settingsPartnerTitle:'Ustawienia partnerów', settingsOrgTitle:'Ustawienia organizacji', partnerANameLabel:'Nazwa partnera A', partnerBNameLabel:'Nazwa partnera B', shareALabel:'Udział A %', shareBLabel:'Udział B %',
@@ -800,7 +803,7 @@
         catIncome:'Дохід', catMaterials:'Матеріали', catFuel:'Паливо', catLaborEmployee:'Працівник', catAccounting:'Бухгалтерія', catMarketing:'Маркетинг', catEquipment:'Обладнання',
         categoriesTitle:'Категорії', categoriesSubtitle:'Додавайте, перейменовуйте або видаляйте категорії у формі транзакції.', newCategoryNamePlaceholder:'Назва категорії', dirIncome:'Дохід', dirExpense:'Витрата', btnAddCategory:'+ Додати', categoryExists:'Категорія з такою назвою вже існує.', categoryInUseError:'Неможливо видалити: ця категорія використовується в існуючих транзакціях.', deleteCategoryConfirm:'Видалити категорію "{name}"? Цю дію не можна скасувати.', deleteCategoryTitle:'Видалити категорію', categoryDeleted:'Категорію видалено.', noCategories:'Ще немає категорій',
         statusPending:'очікує', statusVerified:'підтверджено', statusRejected:'відхилено',
-        btnSaveTx:'Зберегти транзакцію', btnReset:'Скинути', btnNewProject:'+ Новий проєкт', btnExportPdf:'Експортувати PDF', btnExportExcel:'Експортувати Excel', btnSendReport:'Надіслати партнерам', btnLockMonth:'Заблокувати місяць', btnUnlockMonth:'Розблокувати місяць',
+        btnSaveTx:'Зберегти транзакцію', btnReset:'Скинути', btnNewProject:'+ Новий проєкт', btnExportPdf:'Експортувати PDF', btnExportExcel:'Експортувати Excel', btnExportPdfByProject:'Експортувати PDF за проєктами', btnExportExcelByProject:'Експортувати Excel за проєктами', grandTotalLabel:'Загалом', btnSendReport:'Надіслати партнерам', btnLockMonth:'Заблокувати місяць', btnUnlockMonth:'Розблокувати місяць',
         projectsTitle:'Проєкти', projectsSubtitle:'Дивіться, який об’єкт прибутковий, а який з’їдає маржу.', noProjects:'Ще немає проєктів', receiptsTitle:'Чеки', noReceipts:'Ще немає чеків', receiptLoading:'Завантаження…',
         monthlyTitle:'Закриття місяця', monthlySubtitle:'Експортуйте звіт у PDF або Excel, надішліть партнерам і заблокуйте місяць.', monthlyIncome:'Дохід', monthlyExpenses:'Витрати', monthlyTax:'Податковий резерв', monthlyDistrib:'До розподілу',
         settingsPartnerTitle:'Налаштування партнерів', settingsOrgTitle:'Налаштування організації', partnerANameLabel:'Ім’я партнера A', partnerBNameLabel:'Ім’я партнера B', shareALabel:'Частка A %', shareBLabel:'Частка B %',
@@ -835,8 +838,18 @@
       }
     };
 
+    // Language is a per-device preference (same pattern as the tour/What's
+    // New "seen" flags below) — remembered in localStorage, not synced
+    // through the org in Supabase, so it survives reloads on this browser.
+    function getStoredLang(){
+      try { return localStorage.getItem('sb_lang') || 'en'; } catch (e) { return 'en'; }
+    }
+    function storeLang(lang){
+      try { localStorage.setItem('sb_lang', lang); } catch (e) {}
+    }
+
     const state = {
-      lang:'en',
+      lang: getStoredLang(),
       user:null,
       orgId:null,
       role:null,
@@ -1766,17 +1779,38 @@
       const amount = Number($('withdrawAmount').value || 0);
       if (!amount || amount <= 0) return;
       const category = withdrawSlot === 'owner' ? 'Partner Draw A' : 'Partner Draw B';
+      const date = new Date().toISOString().slice(0,10);
+      const account = $('withdrawAccount').value;
+      const description = $('withdrawDescription').value || '—';
+
+      // LOCAL PREVIEW ONLY: this demo has no real logged-in Supabase user
+      // (state.user.id = 'demo'), so a real insert() would just fail
+      // silently against RLS / a fake org_id. Push the draw straight into
+      // state.txs instead, so the button is actually testable offline.
+      if (state.previewMode) {
+        state.txs.unshift({
+          id: 'preview-' + Date.now(), date, project: '—', amount, type: 'draw', status: 'verified',
+          creator: state.user.email, createdByUserId: state.user.id, partnerSlot: withdrawSlot,
+          category, account, description, receipt: null
+        });
+        populateFilters();
+        renderTxTable();
+        recalcPartnerBalances();
+        closeModal('withdrawModal');
+        return;
+      }
+
       const row = {
         org_id: state.orgId,
         created_by_user_id: state.user.id,
-        date: new Date().toISOString().slice(0,10),
+        date,
         project: '—',
         amount,
         type: 'draw',
         status: 'verified',
         category,
-        account: $('withdrawAccount').value,
-        description: $('withdrawDescription').value || '—',
+        account,
+        description,
         receipt_path: null
       };
       try {
@@ -1839,6 +1873,7 @@
 
     function applyLang(){
       const t = i18n[state.lang];
+      $('defaultLang').value = state.lang;
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.dataset.i18n;
         if (t[key] !== undefined) el.textContent = t[key];
@@ -2117,7 +2152,7 @@
     if (replayWhatsNewBtn) replayWhatsNewBtn.addEventListener('click', openWhatsNew);
 
     document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => setView(b.dataset.view)));
-    document.querySelectorAll('[data-lang]').forEach(b => b.addEventListener('click', () => { state.lang = b.dataset.lang; $('defaultLang').value = state.lang; applyLang(); refreshUI(); }));
+    document.querySelectorAll('[data-lang]').forEach(b => b.addEventListener('click', () => { state.lang = b.dataset.lang; storeLang(state.lang); $('defaultLang').value = state.lang; applyLang(); refreshUI(); }));
 
     // Categories are now data (state.categories), not a fixed map, so the
     // direction lookup reads each category's own `direction` column instead
@@ -2233,6 +2268,7 @@
 
     $('defaultLang').addEventListener('change', e => {
       state.lang = e.target.value;
+      storeLang(state.lang);
       applyLang();
       refreshUI();
     });
@@ -2321,6 +2357,99 @@
       XLSX.utils.book_append_sheet(wb, ws, 'Report');
       XLSX.writeFile(wb, `splitbooks-report-${r.date}.xlsx`);
       alert(i18n[state.lang].reportGenerated || 'Report downloaded.');
+    });
+
+    // Groups all transactions by project (same grouping convention as renderProjects()),
+    // for the standalone "Export by project" PDF/Excel report. Transactions with no
+    // project stay out of this report, matching how the Projects tab already works.
+    function buildProjectGroups(){
+      const byProject = {};
+      state.txs.forEach(t => {
+        const name = (t.project || '').trim();
+        if (!name) return;
+        if (!byProject[name]) byProject[name] = { income: 0, cost: 0, txs: [] };
+        if (t.type === 'income') byProject[name].income += t.amount;
+        if (t.type === 'expense') byProject[name].cost += t.amount;
+        byProject[name].txs.push(t);
+      });
+      const projects = Object.keys(byProject).sort().map(name => {
+        const g = byProject[name];
+        return {
+          name,
+          income: g.income,
+          cost: g.cost,
+          net: g.income - g.cost,
+          txs: g.txs.map(t => [t.date, fmt(t.amount), t.type, t.status])
+        };
+      });
+      const grandIncome = projects.reduce((s, p) => s + p.income, 0);
+      const grandCost = projects.reduce((s, p) => s + p.cost, 0);
+      return {
+        date: new Date().toISOString().slice(0, 10),
+        projects,
+        grandIncome,
+        grandCost,
+        grandNet: grandIncome - grandCost
+      };
+    }
+
+    $('exportPdfByProject').addEventListener('click', () => {
+      const r = buildProjectGroups();
+      const t = i18n[state.lang];
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      doc.setFontSize(16);
+      doc.text(`SplitBooks — Report by project (${r.date})`, 14, 18);
+      let y = 26;
+      if (!r.projects.length) {
+        doc.setFontSize(11);
+        doc.text(t.noProjects || 'No projects yet', 14, y);
+      } else {
+        r.projects.forEach(p => {
+          doc.setFontSize(12);
+          doc.text(p.name, 14, y);
+          doc.setFontSize(9);
+          doc.text(`${t.projSummaryIncome} ${fmt(p.income)}  ·  ${t.projSummaryCost} ${fmt(p.cost)}  ·  ${t.projSummaryNet} ${fmt(p.net)}`, 14, y + 5);
+          doc.autoTable({
+            startY: y + 9,
+            head: [[t.thDate, t.thAmount, t.thType, t.thStatus]],
+            body: p.txs,
+            styles: { fontSize: 8 },
+            headStyles: { fillColor: [79, 70, 229] },
+            margin: { left: 14, right: 14 }
+          });
+          y = doc.lastAutoTable.finalY + 10;
+          if (y > 260) { doc.addPage(); y = 20; }
+        });
+        doc.setFontSize(12);
+        doc.text(`${t.grandTotalLabel || 'Grand total'}: ${t.projSummaryIncome} ${fmt(r.grandIncome)}  ·  ${t.projSummaryCost} ${fmt(r.grandCost)}  ·  ${t.projSummaryNet} ${fmt(r.grandNet)}`, 14, y);
+      }
+      doc.save(`splitbooks-report-by-project-${r.date}.pdf`);
+      alert(t.reportGenerated || 'Report downloaded.');
+    });
+
+    $('exportExcelByProject').addEventListener('click', () => {
+      const r = buildProjectGroups();
+      const t = i18n[state.lang];
+      const rows = [ ['SplitBooks — Report by project', r.date], [] ];
+      if (!r.projects.length) {
+        rows.push([t.noProjects || 'No projects yet']);
+      } else {
+        r.projects.forEach(p => {
+          rows.push([p.name]);
+          rows.push([t.projSummaryIncome, fmt(p.income), t.projSummaryCost, fmt(p.cost), t.projSummaryNet, fmt(p.net)]);
+          rows.push([t.thDate, t.thAmount, t.thType, t.thStatus]);
+          p.txs.forEach(row => rows.push(row));
+          rows.push([]);
+        });
+        rows.push([t.grandTotalLabel || 'Grand total']);
+        rows.push([t.projSummaryIncome, fmt(r.grandIncome), t.projSummaryCost, fmt(r.grandCost), t.projSummaryNet, fmt(r.grandNet)]);
+      }
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.aoa_to_sheet(rows);
+      XLSX.utils.book_append_sheet(wb, ws, 'By project');
+      XLSX.writeFile(wb, `splitbooks-report-by-project-${r.date}.xlsx`);
+      alert(t.reportGenerated || 'Report downloaded.');
     });
 
     $('sendReport').addEventListener('click', () => {
