@@ -1,0 +1,33 @@
+name: Deploy to Cloudflare Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      # Собираем чистый бандл сайта (без docs/sql/служебных файлов)
+      - name: Prepare site directory
+        run: |
+          mkdir -p _site
+          rsync -av \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='_site' \
+            --exclude='*.md' \
+            --exclude='*.sql' \
+            ./ _site/
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: 33629195b33c5fd6d97096644551e0dd
+          command: pages deploy _site --project-name=ai-cashflow-copilot-v2 --branch=main
