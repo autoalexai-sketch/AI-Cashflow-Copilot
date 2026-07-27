@@ -118,6 +118,35 @@
   footer a { color: #5c584c; text-decoration: none; margin-right: 16px; }
   footer a:hover { text-decoration: underline; }
 
+
+  /* Макеты интерфейса — не картинки, а вёрстка: переводятся вместе со страницей,
+     остаются чёткими на любом экране и почти ничего не весят. */
+  .shots { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
+  .shot { background: #0f172a; border-radius: 16px; padding: 16px; box-shadow: 0 14px 40px rgba(40,36,28,.16); border: 1px solid #1e293b; }
+  .shot-cap { font-size: 13.5px; color: #6b6659; margin-top: 10px; text-align: center; }
+  .s-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .s-title { color: #f1f5f9; font-weight: 700; font-size: 14px; }
+  .s-pill { font-size: 10px; color: #a4b0c2; background: rgba(148,163,184,.12); padding: 3px 8px; border-radius: 999px; }
+  .s-kpis { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
+  .s-kpi { background: rgba(2,6,23,.6); border: 1px solid #1e293b; border-radius: 11px; padding: 9px 11px; }
+  .s-kpi .l { font-size: 10px; color: #8b98ab; }
+  .s-kpi .v { font-size: 16px; font-weight: 800; margin-top: 2px; letter-spacing: -.02em; }
+  .c-in { color: #34d399; } .c-out { color: #fb7185; } .c-tax { color: #fbbf24; } .c-net { color: #38bdf8; }
+  .s-row { background: rgba(2,6,23,.6); border: 1px solid #1e293b; border-radius: 11px; padding: 9px 11px; margin-bottom: 7px; }
+  .s-row .top { display: flex; justify-content: space-between; align-items: baseline; }
+  .s-name { color: #e2e8f0; font-size: 12.5px; font-weight: 600; }
+  .s-sub { color: #8b98ab; font-size: 10.5px; margin-top: 2px; }
+  .s-amt { font-size: 13px; font-weight: 800; }
+  .s-split { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+  .s-part { background: rgba(2,6,23,.6); border: 1px solid #1e293b; border-radius: 11px; padding: 10px; }
+  .s-part .who { color: #f1f5f9; font-size: 12px; font-weight: 700; margin-bottom: 6px; }
+  .s-line { display: flex; justify-content: space-between; font-size: 10.5px; color: #a4b0c2; margin-bottom: 3px; }
+  .s-line b { color: #e2e8f0; font-weight: 700; }
+  .s-total { border-top: 1px solid #1e293b; margin-top: 5px; padding-top: 5px; }
+  .s-total b { color: #34d399; }
+  .s-ghost { color: #6b7f96; font-weight: 500; }
+  @media (max-width: 760px) { .shots { grid-template-columns: 1fr; } }
+
   [data-i18n-block] { display: none; }
   [data-i18n-block].on { display: block; }
 
@@ -175,6 +204,49 @@
         <div class="step"><div class="n">1</div><h3>Zapisujesz wpływy i wydatki</h3><p>Kwota, projekt, gotówka czy przelew, zdjęcie paragonu. Zajmuje 10 sekund — z telefonu, od razu po zdarzeniu.</p></div>
         <div class="step"><div class="n">2</div><h3>Wspólnik widzi to samo</h3><p>Na jego telefonie liczby zmieniają się od razu. Nie trzeba nic wysyłać ani przypominać.</p></div>
         <div class="step"><div class="n">3</div><h3>Na koniec miesiąca — gotowy podział</h3><p>Ile zarobiliście, ile odłożyć na podatek, komu ile się należy i kto ile już wypłacił. Zamykasz miesiąc jednym kliknięciem.</p></div>
+      </div>
+    </section>
+
+
+    <section class="block">
+      <h2>Tak to wygląda</h2>
+      <p class="sub">Prawdziwe ekrany aplikacji — te same liczby widzą obaj wspólnicy.</p>
+      <div class="shots">
+        <div>
+          <div class="shot">
+            <div class="s-head"><span class="s-title">Panel</span><span class="s-pill">Lipiec</span></div>
+            <div class="s-kpis">
+              <div class="s-kpi"><div class="l">Przychody</div><div class="v c-in">12 400 zł</div></div>
+              <div class="s-kpi"><div class="l">Koszty</div><div class="v c-out">4 850 zł</div></div>
+              <div class="s-kpi"><div class="l">Rezerwa</div><div class="v c-tax">755 zł</div></div>
+              <div class="s-kpi"><div class="l">Zysk netto</div><div class="v c-net">6 795 zł</div></div>
+            </div>
+            <div class="s-row"><div class="top"><span class="s-name">Oleksandr · 50%</span><span class="s-amt c-net">+1 397 zł</span></div><div class="s-sub">należne 3 397 zł · wypłacone 2 000 zł</div></div>
+            <div class="s-row"><div class="top"><span class="s-name">Bruno · 50%</span><span class="s-amt c-net">+3 397 zł</span></div><div class="s-sub">należne 3 397 zł · wypłacone 0 zł</div></div>
+          </div>
+          <p class="shot-cap">Panel: ile weszło, ile wyszło i komu ile się należy.</p>
+        </div>
+        <div>
+          <div class="shot">
+            <div class="s-head"><span class="s-title">Kowalski — czyszczenie kostki</span><span class="s-pill">Projekt</span></div>
+            <div class="s-row"><div class="top"><span class="s-name">Wynik projektu</span><span class="s-amt c-in">+5 200 zł</span></div><div class="s-sub">Przychody 8 400 zł · Koszty 3 200 zł</div></div>
+            <div class="s-split">
+              <div class="s-part">
+                <div class="who">Oleksandr · 50%</div>
+                <div class="s-line"><span>za pracę</span><b>1 200 zł</b></div>
+                <div class="s-line"><span>udział w zysku</span><b>1 690 zł <span class="s-ghost">(1 850)</span></b></div>
+                <div class="s-line s-total"><span>razem</span><b>2 890 zł</b></div>
+              </div>
+              <div class="s-part">
+                <div class="who">Bruno · 50%</div>
+                <div class="s-line"><span>za pracę</span><b>600 zł</b></div>
+                <div class="s-line"><span>udział w zysku</span><b>1 690 zł <span class="s-ghost">(1 850)</span></b></div>
+                <div class="s-line s-total"><span>razem</span><b>2 290 zł</b></div>
+              </div>
+            </div>
+          </div>
+          <p class="shot-cap">Podział w projekcie. W nawiasie — prognoza z oczekującymi.</p>
+        </div>
       </div>
     </section>
 
@@ -269,6 +341,49 @@
       </div>
     </section>
 
+
+    <section class="block">
+      <h2>Ось як це виглядає</h2>
+      <p class="sub">Справжні екрани застосунку — ті самі цифри бачать обидва партнери.</p>
+      <div class="shots">
+        <div>
+          <div class="shot">
+            <div class="s-head"><span class="s-title">Панель</span><span class="s-pill">Липень</span></div>
+            <div class="s-kpis">
+              <div class="s-kpi"><div class="l">Дохід</div><div class="v c-in">12 400 zł</div></div>
+              <div class="s-kpi"><div class="l">Витрати</div><div class="v c-out">4 850 zł</div></div>
+              <div class="s-kpi"><div class="l">Резерв</div><div class="v c-tax">755 zł</div></div>
+              <div class="s-kpi"><div class="l">Чистий прибуток</div><div class="v c-net">6 795 zł</div></div>
+            </div>
+            <div class="s-row"><div class="top"><span class="s-name">Oleksandr · 50%</span><span class="s-amt c-net">+1 397 zł</span></div><div class="s-sub">нараховано 3 397 zł · виведено 2 000 zł</div></div>
+            <div class="s-row"><div class="top"><span class="s-name">Bruno · 50%</span><span class="s-amt c-net">+3 397 zł</span></div><div class="s-sub">нараховано 3 397 zł · виведено 0 zł</div></div>
+          </div>
+          <p class="shot-cap">Панель: скільки надійшло, скільки витрачено і кому скільки належить.</p>
+        </div>
+        <div>
+          <div class="shot">
+            <div class="s-head"><span class="s-title">Kowalski — czyszczenie kostki</span><span class="s-pill">Проєкт</span></div>
+            <div class="s-row"><div class="top"><span class="s-name">Результат проєкту</span><span class="s-amt c-in">+5 200 zł</span></div><div class="s-sub">Дохід 8 400 zł · Витрати 3 200 zł</div></div>
+            <div class="s-split">
+              <div class="s-part">
+                <div class="who">Oleksandr · 50%</div>
+                <div class="s-line"><span>за роботу</span><b>1 200 zł</b></div>
+                <div class="s-line"><span>частка прибутку</span><b>1 690 zł <span class="s-ghost">(1 850)</span></b></div>
+                <div class="s-line s-total"><span>разом</span><b>2 890 zł</b></div>
+              </div>
+              <div class="s-part">
+                <div class="who">Bruno · 50%</div>
+                <div class="s-line"><span>за роботу</span><b>600 zł</b></div>
+                <div class="s-line"><span>частка прибутку</span><b>1 690 zł <span class="s-ghost">(1 850)</span></b></div>
+                <div class="s-line s-total"><span>разом</span><b>2 290 zł</b></div>
+              </div>
+            </div>
+          </div>
+          <p class="shot-cap">Розподіл у проєкті. У дужках — прогноз з очікуючими.</p>
+        </div>
+      </div>
+    </section>
+
     <section class="block">
       <h2>Що ви отримуєте</h2>
       <div class="feats">
@@ -357,6 +472,49 @@
         <div class="step"><div class="n">1</div><h3>Log money in and out</h3><p>Amount, project, cash or transfer, photo of the receipt. Ten seconds from your phone, right when it happens.</p></div>
         <div class="step"><div class="n">2</div><h3>Your partner sees the same</h3><p>Numbers update on their phone instantly. Nothing to send, nothing to remind about.</p></div>
         <div class="step"><div class="n">3</div><h3>Month end — the split is ready</h3><p>What you earned, what to set aside for tax, who is owed what, and who already took money out. Close the month in one click.</p></div>
+      </div>
+    </section>
+
+
+    <section class="block">
+      <h2>Here is what it looks like</h2>
+      <p class="sub">Real screens from the app — both partners see the same numbers.</p>
+      <div class="shots">
+        <div>
+          <div class="shot">
+            <div class="s-head"><span class="s-title">Dashboard</span><span class="s-pill">July</span></div>
+            <div class="s-kpis">
+              <div class="s-kpi"><div class="l">Income</div><div class="v c-in">12 400 zł</div></div>
+              <div class="s-kpi"><div class="l">Expenses</div><div class="v c-out">4 850 zł</div></div>
+              <div class="s-kpi"><div class="l">Tax reserve</div><div class="v c-tax">755 zł</div></div>
+              <div class="s-kpi"><div class="l">Net profit</div><div class="v c-net">6 795 zł</div></div>
+            </div>
+            <div class="s-row"><div class="top"><span class="s-name">Oleksandr · 50%</span><span class="s-amt c-net">+1 397 zł</span></div><div class="s-sub">earned 3 397 zł · withdrawn 2 000 zł</div></div>
+            <div class="s-row"><div class="top"><span class="s-name">Bruno · 50%</span><span class="s-amt c-net">+3 397 zł</span></div><div class="s-sub">earned 3 397 zł · withdrawn 0 zł</div></div>
+          </div>
+          <p class="shot-cap">Dashboard: what came in, what went out, who is owed what.</p>
+        </div>
+        <div>
+          <div class="shot">
+            <div class="s-head"><span class="s-title">Kowalski — czyszczenie kostki</span><span class="s-pill">Project</span></div>
+            <div class="s-row"><div class="top"><span class="s-name">Project result</span><span class="s-amt c-in">+5 200 zł</span></div><div class="s-sub">Income 8 400 zł · Expenses 3 200 zł</div></div>
+            <div class="s-split">
+              <div class="s-part">
+                <div class="who">Oleksandr · 50%</div>
+                <div class="s-line"><span>for work</span><b>1 200 zł</b></div>
+                <div class="s-line"><span>profit share</span><b>1 690 zł <span class="s-ghost">(1 850)</span></b></div>
+                <div class="s-line s-total"><span>total</span><b>2 890 zł</b></div>
+              </div>
+              <div class="s-part">
+                <div class="who">Bruno · 50%</div>
+                <div class="s-line"><span>for work</span><b>600 zł</b></div>
+                <div class="s-line"><span>profit share</span><b>1 690 zł <span class="s-ghost">(1 850)</span></b></div>
+                <div class="s-line s-total"><span>total</span><b>2 290 zł</b></div>
+              </div>
+            </div>
+          </div>
+          <p class="shot-cap">Split inside a project. In brackets — forecast with pending.</p>
+        </div>
       </div>
     </section>
 
