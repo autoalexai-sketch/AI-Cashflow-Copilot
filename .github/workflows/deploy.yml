@@ -1,4 +1,4 @@
-name: Deploy to Cloudflare Pages
+﻿name: Deploy to Cloudflare Pages
 
 on:
   push:
@@ -11,9 +11,9 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      # Собираем чистый бандл сайта (без docs/sql/служебных файлов)
+      # ĐˇĐľĐ±Đ¸Ń€Đ°ĐµĐĽ Ń‡Đ¸ŃŃ‚Ń‹Đą Đ±Đ°Đ˝Đ´Đ» ŃĐ°ĐąŃ‚Đ° (Đ±ĐµĐ· docs/sql/ŃĐ»ŃĐ¶ĐµĐ±Đ˝Ń‹Ń… Ń„Đ°ĐąĐ»ĐľĐ˛)
       - name: Prepare site directory
         run: |
           mkdir -p _site
@@ -26,7 +26,7 @@ jobs:
             ./ _site/
 
       - name: Deploy to Cloudflare Pages
-        uses: cloudflare/wrangler-action@v3
+        uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: 33629195b33c5fd6d97096644551e0dd
