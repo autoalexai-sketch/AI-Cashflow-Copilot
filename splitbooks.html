@@ -639,6 +639,7 @@
         <button id="closeProjectTxModal" class="px-3 py-1 rounded-xl bg-slate-800">×</button>
       </div>
       <div id="projectTxModalSummary" class="text-xs text-slate-500 mb-4"></div>
+      <div id="projectTxModalSplit" class="mb-4"></div>
       <div id="projectTxModalList" class="space-y-2 max-h-[420px] overflow-auto scrollbar"></div>
     </div>
   </div>
@@ -692,7 +693,7 @@
         btnForgotPassword:'Forgot password?', forgotPasswordTitle:'Reset your password', forgotPasswordDesc:"Enter your email — we'll send a link to set a new password.", btnSendResetLink:'Send reset link', resetPasswordTitle:'Set a new password', btnSaveNewPassword:'Save new password', placeholderConfirmPassword:'Confirm password (for Sign Up)', placeholderNewPassword:'New password',
         monthlyCloseBtn:'Monthly Close', tabDashboard:'Dashboard', tabTransactions:'Transactions', tabProjects:'Projects', tabReceipts:'Receipts', tabMonthly:'Monthly Close', tabSettings:'Settings',
         mIncomeLabel:'Total Income', mExpenseLabel:'Total Expenses', mTaxLabel:'Tax Reserve', mProfitLabel:'Net Profit', cashflowTitle:'Cashflow overview', cashflowSubtitle:'Bank, cash and reserve balances in one place.', currentMonth:'Current month',
-        bankLabel:'Bank Account', cashLabel:'Cash Box', reserveLabel:'Virtual Tax Buffer', splitTitle:'Partner balance', earnedShare:'Earned share', withdrawnDraws:'Withdrawn draws', remainingLabel:'Remaining', withdrawBtn:'Withdraw', drawHistoryTitle:'Withdrawal history', noWithdrawals:'No withdrawals yet', projSummaryIncome:'income', projSummaryCost:'cost', projSummaryNet:'net', projSummaryTxCount:'transaction(s)', projNoTransactions:'No transactions',
+        bankLabel:'Bank Account', cashLabel:'Cash Box', reserveLabel:'Virtual Tax Buffer', splitTitle:'Partner balance', earnedShare:'Earned share', withdrawnDraws:'Withdrawn draws', remainingLabel:'Remaining', withdrawBtn:'Withdraw', drawHistoryTitle:'Withdrawal history', noWithdrawals:'No withdrawals yet', projSummaryIncome:'income', projSummaryCost:'cost', projSummaryNet:'net', projSummaryTxCount:'transaction(s)', projNoTransactions:'No transactions', projSplitTitle:'Partner split', projSplitLabor:'Paid for work', projSplitShare:'Profit share', projSplitTotal:'Total for project', projSplitForecastNote:'figures in ( ) include pending transactions',
         whatsNewTitle:"What's new", whatsNewGotIt:'Got it', whatsNewWithdrawTitle:'Withdraw button on partner balances', whatsNewWithdrawDesc:'Each partner balance card now has a Withdraw button, plus a clickable history showing who withdrew how much and when.', whatsNewProjectDetailTitle:'Tap a project to see its transactions', whatsNewProjectDetailDesc:'Click any project card to open the full list of transactions filed under it.',
         pendingTxTitle:'Pending — not yet paid', pendingTxSubtitle:"Recorded but not verified. These don't affect any balance or profit yet — mark as paid once the money actually moves.", noPendingTx:'Nothing pending — everything recorded has been verified.', btnMarkPaid:'Mark as paid', thDescription:'Description',
         txTitle:'Transactions', txSubtitle:'Create income, expense, draw, and verify with receipts.', txPreviewTitle:'Preview', txListTitle:'Transaction list',
@@ -742,7 +743,7 @@
         btnForgotPassword:'Nie pamiętasz hasła?', forgotPasswordTitle:'Zresetuj hasło', forgotPasswordDesc:'Podaj swój e-mail — wyślemy link do ustawienia nowego hasła.', btnSendResetLink:'Wyślij link resetujący', resetPasswordTitle:'Ustaw nowe hasło', btnSaveNewPassword:'Zapisz nowe hasło', placeholderConfirmPassword:'Potwierdź hasło (przy rejestracji)', placeholderNewPassword:'Nowe hasło',
         monthlyCloseBtn:'Zamknięcie miesiąca', tabDashboard:'Dashboard', tabTransactions:'Transakcje', tabProjects:'Projekty', tabReceipts:'Paragony', tabMonthly:'Zamknięcie miesiąca', tabSettings:'Ustawienia',
         mIncomeLabel:'Przychody', mExpenseLabel:'Koszty', mTaxLabel:'Rezerwa podatkowa', mProfitLabel:'Zysk netto', cashflowTitle:'Przegląd przepływów pieniężnych', cashflowSubtitle:'Konto bankowe, kasa i rezerwa podatkowa w jednym miejscu.', currentMonth:'Bieżący miesiąc',
-        bankLabel:'Konto bankowe', cashLabel:'Kasa', reserveLabel:'Wirtualna rezerwa podatkowa', splitTitle:'Saldo partnerów', earnedShare:'Należna część', withdrawnDraws:'Wypłacone środki', remainingLabel:'Pozostało', withdrawBtn:'Wypłać', drawHistoryTitle:'Historia wypłat', noWithdrawals:'Brak wypłat', projSummaryIncome:'przychód', projSummaryCost:'koszt', projSummaryNet:'netto', projSummaryTxCount:'transakcji', projNoTransactions:'Brak transakcji',
+        bankLabel:'Konto bankowe', cashLabel:'Kasa', reserveLabel:'Wirtualna rezerwa podatkowa', splitTitle:'Saldo partnerów', earnedShare:'Należna część', withdrawnDraws:'Wypłacone środki', remainingLabel:'Pozostało', withdrawBtn:'Wypłać', drawHistoryTitle:'Historia wypłat', noWithdrawals:'Brak wypłat', projSummaryIncome:'przychód', projSummaryCost:'koszt', projSummaryNet:'netto', projSummaryTxCount:'transakcji', projNoTransactions:'Brak transakcji', projSplitTitle:'Podział partnerów', projSplitLabor:'Wypłacono za pracę', projSplitShare:'Udział w zysku', projSplitTotal:'Razem za projekt', projSplitForecastNote:'kwoty w ( ) zawierają oczekujące transakcje',
         whatsNewTitle:'Co nowego', whatsNewGotIt:'Rozumiem', whatsNewWithdrawTitle:'Przycisk Wypłać na saldzie wspólników', whatsNewWithdrawDesc:'Każda karta salda wspólnika ma teraz przycisk Wypłać oraz klikalną historię, kto i ile wypłacił i kiedy.', whatsNewProjectDetailTitle:'Kliknij projekt, aby zobaczyć jego transakcje', whatsNewProjectDetailDesc:'Kliknij kartę projektu, aby zobaczyć pełną listę transakcji przypisanych do niego.',
         pendingTxTitle:'Oczekujące — jeszcze nie zapłacone', pendingTxSubtitle:'Zarejestrowane, ale niezweryfikowane. Nie wpływają jeszcze na żaden bilans ani zysk — oznacz jako zapłacone, gdy pieniądze faktycznie się przemieszczą.', noPendingTx:'Brak oczekujących — wszystko zostało zweryfikowane.', btnMarkPaid:'Oznacz jako zapłacone', thDescription:'Opis',
         txTitle:'Transakcje', txSubtitle:'Dodawaj przychody, koszty, wypłaty i potwierdzaj paragonami.', txPreviewTitle:'Podgląd', txListTitle:'Lista transakcji',
@@ -792,7 +793,7 @@
         btnForgotPassword:'Забули пароль?', forgotPasswordTitle:'Скидання пароля', forgotPasswordDesc:'Введіть email — надішлемо посилання для встановлення нового пароля.', btnSendResetLink:'Надіслати посилання', resetPasswordTitle:'Встановіть новий пароль', btnSaveNewPassword:'Зберегти новий пароль', placeholderConfirmPassword:'Підтвердіть пароль (для реєстрації)', placeholderNewPassword:'Новий пароль',
         monthlyCloseBtn:'Закриття місяця', tabDashboard:'Панель', tabTransactions:'Транзакції', tabProjects:'Проєкти', tabReceipts:'Чеки', tabMonthly:'Закриття місяця', tabSettings:'Налаштування',
         mIncomeLabel:'Дохід', mExpenseLabel:'Витрати', mTaxLabel:'Податковий резерв', mProfitLabel:'Чистий прибуток', cashflowTitle:'Огляд руху коштів', cashflowSubtitle:'Банк, каса і податковий резерв в одному місці.', currentMonth:'Поточний місяць',
-        bankLabel:'Банківський рахунок', cashLabel:'Каса', reserveLabel:'Віртуальний податковий буфер', splitTitle:'Баланс партнерів', earnedShare:'Нарахована частка', withdrawnDraws:'Виплачені кошти', remainingLabel:'Залишок', withdrawBtn:'Вивести', drawHistoryTitle:'Історія виплат', noWithdrawals:'Виплат ще немає', projSummaryIncome:'дохід', projSummaryCost:'витрати', projSummaryNet:'нетто', projSummaryTxCount:'транзакцій', projNoTransactions:'Немає транзакцій',
+        bankLabel:'Банківський рахунок', cashLabel:'Каса', reserveLabel:'Віртуальний податковий буфер', splitTitle:'Баланс партнерів', earnedShare:'Нарахована частка', withdrawnDraws:'Виплачені кошти', remainingLabel:'Залишок', withdrawBtn:'Вивести', drawHistoryTitle:'Історія виплат', noWithdrawals:'Виплат ще немає', projSummaryIncome:'дохід', projSummaryCost:'витрати', projSummaryNet:'нетто', projSummaryTxCount:'транзакцій', projNoTransactions:'Немає транзакцій', projSplitTitle:'Розподіл між партнерами', projSplitLabor:'Виплачено за роботу', projSplitShare:'Частка прибутку', projSplitTotal:'Разом за проєктом', projSplitForecastNote:'суми в ( ) враховують очікуючі транзакції',
         whatsNewTitle:'Що нового', whatsNewGotIt:'Зрозуміло', whatsNewWithdrawTitle:'Кнопка «Вивести» на балансі партнерів', whatsNewWithdrawDesc:'На кожній картці балансу партнера тепер є кнопка «Вивести» та клікабельна історія — хто скільки і коли вивів.', whatsNewProjectDetailTitle:'Натисніть на проєкт, щоб побачити його транзакції', whatsNewProjectDetailDesc:'Натисніть на картку проєкту, щоб відкрити повний список транзакцій, прив’язаних до нього.',
         pendingTxTitle:'Очікує — ще не сплачено', pendingTxSubtitle:'Записано, але не підтверджено. Це поки не впливає на жоден баланс чи прибуток — позначте як сплачено, коли гроші фактично підуть.', noPendingTx:'Нічого очікуваного — все записане підтверджено.', btnMarkPaid:'Позначити як сплачено', thDescription:'Опис',
         txTitle:'Транзакції', txSubtitle:'Додавайте дохід, витрати, виплати та підтверджуйте чеками.', txPreviewTitle:'Перегляд', txListTitle:'Список транзакцій',
@@ -1737,6 +1738,41 @@
       const t = i18n[state.lang];
       $('projectTxModalTitle').textContent = name;
       $('projectTxModalSummary').textContent = `${t.projSummaryIncome} ${fmt(income)} · ${t.projSummaryCost} ${fmt(cost)} · ${t.projSummaryNet} ${fmt(income - cost)} · ${txs.length} ${t.projSummaryTxCount}`;
+      // Partner split for this project (feature 2026-07-27): each partner is
+      // entitled to their labor draws filed under this project plus their
+      // share % of what remains after labor and the tax reserve. Main figures
+      // use verified transactions only; the parenthesised forecast adds
+      // pending ones. Mirrors the accounting in recalcPartnerBalances().
+      const splitFor = (statuses) => {
+        const ok = x => statuses.includes(x.status);
+        const inc = txs.filter(x => x.type === 'income' && ok(x)).reduce((s, x) => s + x.amount, 0);
+        const exp = txs.filter(x => x.type === 'expense' && ok(x)).reduce((s, x) => s + x.amount, 0);
+        const laborA = txs.filter(x => x.type === 'draw' && ok(x) && x.partnerSlot === 'owner').reduce((s, x) => s + x.amount, 0);
+        const laborB = txs.filter(x => x.type === 'draw' && ok(x) && x.partnerSlot === 'member').reduce((s, x) => s + x.amount, 0);
+        const net = inc - exp;
+        const reserve = Math.max(0, net) * state.taxRate / 100;
+        const remainder = net - reserve - laborA - laborB;
+        return { laborA, laborB, reserve,
+          shareA: remainder * state.partnerA.share / 100,
+          shareB: remainder * state.partnerB.share / 100 };
+      };
+      const sv = splitFor(['verified']);
+      const sf = splitFor(['verified', 'pending']);
+      const pair = (a, b) => fmt(a) + (Math.abs(b - a) > 0.005 ? ` <span class="text-slate-500 font-normal">(${fmt(b)})</span>` : '');
+      const partnerRow = (pname, share, labor, laborF, shareAmt, shareAmtF) => `
+        <div class="rounded-2xl border border-slate-800 bg-slate-950/60 p-3">
+          <div class="text-sm font-semibold mb-1">${escapeHtml(pname)} · ${share}%</div>
+          <div class="text-xs text-slate-400 flex justify-between gap-2"><span>${t.projSplitLabor}</span><span>${pair(labor, laborF)}</span></div>
+          <div class="text-xs text-slate-400 flex justify-between gap-2"><span>${t.projSplitShare}</span><span>${pair(shareAmt, shareAmtF)}</span></div>
+          <div class="text-sm font-bold flex justify-between gap-2 mt-1 border-t border-slate-800 pt-1"><span>${t.projSplitTotal}</span><span>${pair(labor + shareAmt, laborF + shareAmtF)}</span></div>
+        </div>`;
+      $('projectTxModalSplit').innerHTML = `
+        <div class="text-xs text-slate-400 font-semibold mb-2">${t.projSplitTitle}</div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          ${partnerRow(state.partnerA.name, state.partnerA.share, sv.laborA, sf.laborA, sv.shareA, sf.shareA)}
+          ${partnerRow(state.partnerB.name, state.partnerB.share, sv.laborB, sf.laborB, sv.shareB, sf.shareB)}
+        </div>
+        <div class="text-[11px] text-slate-500 mt-2">${t.monthlyTax}: ${pair(sv.reserve, sf.reserve)} · ${t.projSplitForecastNote}</div>`;
       const list = $('projectTxModalList');
       list.innerHTML = txs.length ? txs.map(tx => `
         <div class="rounded-2xl border border-slate-800 bg-slate-950/60 p-3">
