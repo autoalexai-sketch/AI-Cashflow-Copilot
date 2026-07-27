@@ -1,4 +1,4 @@
-﻿name: Deploy to Cloudflare Pages
+name: Deploy to Cloudflare Pages
 
 on:
   push:
@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      # ĐˇĐľĐ±Đ¸Ń€Đ°ĐµĐĽ Ń‡Đ¸ŃŃ‚Ń‹Đą Đ±Đ°Đ˝Đ´Đ» ŃĐ°ĐąŃ‚Đ° (Đ±ĐµĐ· docs/sql/ŃĐ»ŃĐ¶ĐµĐ±Đ˝Ń‹Ń… Ń„Đ°ĐąĐ»ĐľĐ˛)
+      # Собираем чистый бандл сайта (без docs/sql/служебных файлов)
       - name: Prepare site directory
         run: |
           mkdir -p _site
