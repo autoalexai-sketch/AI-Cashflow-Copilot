@@ -59,7 +59,6 @@
   <link rel="preconnect" href="https://cdn.tailwindcss.com" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.106.2/dist/umd/supabase.js" integrity="sha384-m/8UHFJHeU6nrCKP2hBnAseuvAKUmLF+8e5bWos5CJL023vuxX7kiVL5t8yjsJhV" crossorigin="anonymous"></script>
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   <style>
     html, body { background:#020617; }
     .glass { background: rgba(15,23,42,.72); backdrop-filter: blur(12px); }
@@ -109,10 +108,24 @@
        Project token is a write-only public key, safe to embed client-side. -->
   <script>
     !function(t,e){var o,n,p,r;e.__SV||(window.posthog && window.posthog.__loaded)||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init os ds Ie us vs ss ls capture calculateEventProperties register register_once register_for_session unregister unregister_for_session ws getFeatureFlag getFeatureFlagPayload getFeatureFlagResult isFeatureEnabled reloadFeatureFlags updateFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey displaySurvey cancelPendingSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException startExceptionAutocapture stopExceptionAutocapture loadToolbar get_property getSessionProperty bs ps createPersonProfile setInternalOrTestUser ys es $s opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing get_explicit_consent_status is_capturing clear_opt_in_out_capturing cs debug M gs getPageViewId captureTraceFeedback captureTraceMetric Qr".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
-    posthog.init('phc_mraT3w4Zk57A9qqLysCweuZ6GzNugBHgoK5QDyDKsJTn', {
+    // posthog.init() is what actually downloads array.js (~6 s of main-thread
+    // work on a mid-range phone - it was previously blocked by our CSP, so it
+    // never showed up in profiles). The inline snippet above only installs a
+    // stub that queues calls, so init can safely wait until the page is loaded
+    // and the browser is idle: nothing is lost, the queue flushes on arrival.
+    function initPostHogWhenIdle(){
+      const start = () => posthog.init('phc_mraT3w4Zk57A9qqLysCweuZ6GzNugBHgoK5QDyDKsJTn', {
         api_host: 'https://eu.i.posthog.com',
         defaults: '2026-01-30',
-    })
+        capture_performance: false
+      });
+      const schedule = () => (window.requestIdleCallback
+        ? requestIdleCallback(start, { timeout: 5000 })
+        : setTimeout(start, 2500));
+      if (document.readyState === 'complete') schedule();
+      else window.addEventListener('load', schedule, { once: true });
+    }
+    initPostHogWhenIdle();
   </script>
 </head>
 <body class="text-slate-100 min-h-screen flex flex-col">
@@ -996,6 +1009,7 @@
       unsubscribeFromTransactions();
       $('main-app').classList.add('hidden');
       $('auth-screen').classList.remove('hidden');
+      ensureTurnstile();
     }
 
     async function ensureOrganization(){
@@ -1448,6 +1462,20 @@
         </div>`;
       }).join('');
       applyLangToDynamicButtons();
+    }
+
+    // Turnstile costs ~1.5 s of main-thread time and is only ever needed on the
+    // sign-in screen, so its script is injected when that screen is shown
+    // instead of on every page load (returning users go straight to the app).
+    let turnstileLoading = false;
+    function ensureTurnstile(){
+      if (turnstileLoading || window.turnstile) return;
+      turnstileLoading = true;
+      const s = document.createElement('script');
+      s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+      s.async = true; s.defer = true;
+      s.onerror = () => { turnstileLoading = false; };
+      document.head.appendChild(s);
     }
 
     function getCaptchaToken(){ return document.querySelector('[name="cf-turnstile-response"]')?.value; }
