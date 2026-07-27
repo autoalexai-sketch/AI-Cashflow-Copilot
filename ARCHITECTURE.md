@@ -21,7 +21,7 @@
 
 **Source of truth — GitHub `main`.** Прод обновляется только из репозитория.
 
-- **Автодеплой**: push в `main` → GitHub Actions (`.github/workflows/deploy.yml`) → wrangler → Cloudflare Pages. Требует секрет `CLOUDFLARE_API_TOKEN` в GitHub repo secrets (токен с правом Cloudflare Pages — Edit). **Статус: секрет пока не добавлен, workflow падает — деплой идет вручную.**
+- **Автодеплой**: push в `main` → GitHub Actions (`.github/workflows/deploy.yml`) → wrangler → Cloudflare Pages. Требует секрет `CLOUDFLARE_API_TOKEN` в GitHub repo secrets (токен с правом Cloudflare Pages — Edit). **Статус: работает с 2026-07-27.** Секрет добавлен, экшены `actions/checkout@v7` + `cloudflare/wrangler-action@v4`. Деплой ≈30 сек. ⚠️ Не редактировать `deploy.yml` через PowerShell `Set-Content -Encoding UTF8` — пишет BOM, GitHub Actions падает с «Invalid workflow file».
 - **Ручной способ**: Cloudflare Dash → Workers & Pages → ai-cashflow-copilot-v2 → Create deployment → env Production → загрузить zip → Save and deploy.
 - Бандл = корень репо без `.git`, `.github`, `*.md`, `*.sql`. `index.html` и `splitbooks.html` — идентичные копии приложения.
 - Git-интеграцию Pages подключить нельзя: проект создан как direct upload (ограничение Cloudflare). Поэтому CI через wrangler.
@@ -76,8 +76,8 @@ CSP разрешает PostHog (`eu.i.posthog.com`, `eu-assets.i.posthog.com`) �
 
 ## Открытые вопросы / бэклог
 
-1. **`CLOUDFLARE_API_TOKEN` в GitHub Secrets** — без него автодеплой не работает, каждый деплой руками.
-2. **Cloudflare JS Detections** (`/cdn-cgi/challenge-platform/scripts/jsd/main.js`) — 5,1 с работы главного потока на каждой загрузке. Отключается в Security → Bots. Turnstile на входе останется, потеряется фоновое распознавание ботов-скрейперов. Решение не принято.
+1. ~~`CLOUDFLARE_API_TOKEN` в GitHub Secrets~~ — ✅ сделано 2026-07-27, автодеплой работает.
+2. **Cloudflare JS Detections** (`/cdn-cgi/challenge-platform/scripts/jsd/main.js`) — 5,1 с работы главного потока на каждой загрузке. **Решение: оставлено включённым** — на бесплатном тарифе отдельного тумблера нет, отключается только вместе с Bot fight mode целиком. Пересмотреть, если скорость начнёт мешать пользователям.
 3. **Tailwind через CDN** — компилирует стили в браузере (588 мс, 32 KB неиспользуемого CSS). Лечится предварительной сборкой CSS, но меняет процесс разработки.
 4. **Контраст** (доступность 91/100) — 9 замечаний по цветным суммам на темном фоне.
 
