@@ -156,8 +156,9 @@
       <h1>Wspólny biznes bez kłótni o pieniądze</h1>
       <p class="lead">Ty wziąłeś gotówkę od klienta. Wspólnik kupił materiały ze swojej karty. Kto komu ile jest winien na koniec miesiąca? SplitBooks liczy to za was — obaj widzicie te same liczby.</p>
       <div class="cta-row">
-        <a href="/demo" class="btn btn-primary">Zobacz demo (bez rejestracji)</a>
-        <a href="/app" class="btn btn-ghost">Załóż konto za darmo</a>
+        <a href="/demo?tour=1" class="btn btn-primary">Zobacz przewodnik (2 min)</a>
+        <a href="/demo" class="btn btn-ghost">Demo bez rejestracji</a>
+        <a href="/app" class="btn btn-ghost">Załóż konto</a>
       </div>
       <p class="cta-note">Bez karty. Bez instalacji. Działa w przeglądarce i na telefonie.</p>
     </div>
@@ -246,8 +247,9 @@
       <h1>Спільний бізнес без сварок про гроші</h1>
       <p class="lead">Ти взяв готівку від клієнта. Партнер купив матеріали своєю карткою. Хто кому скільки винен наприкінці місяця? SplitBooks рахує це за вас — обидва бачите однакові цифри.</p>
       <div class="cta-row">
-        <a href="/demo" class="btn btn-primary">Подивитись демо (без реєстрації)</a>
-        <a href="/app" class="btn btn-ghost">Створити акаунт безкоштовно</a>
+        <a href="/demo?tour=1" class="btn btn-primary">Подивитись екскурсію (2 хв)</a>
+        <a href="/demo" class="btn btn-ghost">Демо без реєстрації</a>
+        <a href="/app" class="btn btn-ghost">Створити акаунт</a>
       </div>
       <p class="cta-note">Без картки. Без встановлення. Працює у браузері та на телефоні.</p>
     </div>
@@ -336,8 +338,9 @@
       <h1>Business partners without money fights</h1>
       <p class="lead">You took cash from a client. Your partner bought materials with their own card. Who owes whom at the end of the month? SplitBooks does the math — you both see the same numbers.</p>
       <div class="cta-row">
-        <a href="/demo" class="btn btn-primary">See the demo (no signup)</a>
-        <a href="/app" class="btn btn-ghost">Create a free account</a>
+        <a href="/demo?tour=1" class="btn btn-primary">Take the tour (2 min)</a>
+        <a href="/demo" class="btn btn-ghost">Demo without signup</a>
+        <a href="/app" class="btn btn-ghost">Create account</a>
       </div>
       <p class="cta-note">No card. No install. Works in the browser and on your phone.</p>
     </div>
@@ -423,7 +426,7 @@
   <h2 data-t="finalH">Zobacz, zanim się zarejestrujesz</h2>
   <p class="sub" data-t="finalP">Demo z gotowymi danymi — otwiera się od razu, bez maila.</p>
   <div class="cta-row" style="justify-content:center">
-    <a href="/demo" class="btn btn-primary" data-t="finalBtn1">Otwórz demo</a>
+    <a href="/demo?tour=1" class="btn btn-primary" data-t="finalBtn1">Zobacz przewodnik</a>
     <a href="/app" class="btn btn-ghost" data-t="finalBtn2">Załóż konto</a>
   </div>
 </div>
@@ -444,9 +447,9 @@
 <script>
 (function () {
   var UI = {
-    pl: { navLogin: 'Zaloguj się', finalH: 'Zobacz, zanim się zarejestrujesz', finalP: 'Demo z gotowymi danymi — otwiera się od razu, bez maila.', finalBtn1: 'Otwórz demo', finalBtn2: 'Załóż konto', fPricing: 'Cennik', fHelp: 'Pomoc', fPrivacy: 'Prywatność', fTerms: 'Regulamin' },
-    uk: { navLogin: 'Увійти', finalH: 'Подивіться, перш ніж реєструватись', finalP: 'Демо з готовими даними — відкривається одразу, без пошти.', finalBtn1: 'Відкрити демо', finalBtn2: 'Створити акаунт', fPricing: 'Ціни', fHelp: 'Допомога', fPrivacy: 'Приватність', fTerms: 'Умови' },
-    en: { navLogin: 'Log in', finalH: 'Take a look before you sign up', finalP: 'Demo with sample data — opens instantly, no email needed.', finalBtn1: 'Open demo', finalBtn2: 'Create account', fPricing: 'Pricing', fHelp: 'Help', fPrivacy: 'Privacy', fTerms: 'Terms' }
+    pl: { navLogin: 'Zaloguj się', finalH: 'Zobacz, zanim się zarejestrujesz', finalP: 'Demo z gotowymi danymi — otwiera się od razu, bez maila.', finalBtn1: 'Zobacz przewodnik', finalBtn2: 'Załóż konto', fPricing: 'Cennik', fHelp: 'Pomoc', fPrivacy: 'Prywatność', fTerms: 'Regulamin' },
+    uk: { navLogin: 'Увійти', finalH: 'Подивіться, перш ніж реєструватись', finalP: 'Демо з готовими даними — відкривається одразу, без пошти.', finalBtn1: 'Подивитись екскурсію', finalBtn2: 'Створити акаунт', fPricing: 'Ціни', fHelp: 'Допомога', fPrivacy: 'Приватність', fTerms: 'Умови' },
+    en: { navLogin: 'Log in', finalH: 'Take a look before you sign up', finalP: 'Demo with sample data — opens instantly, no email needed.', finalBtn1: 'Take the tour', finalBtn2: 'Create account', fPricing: 'Pricing', fHelp: 'Help', fPrivacy: 'Privacy', fTerms: 'Terms' }
   };
 
   function pick() {

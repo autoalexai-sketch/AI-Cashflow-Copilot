@@ -2982,6 +2982,15 @@
     setView('projects');
     document.getElementById('demoBanner').classList.remove('hidden');
 
+    // Экскурсия. В обычном приложении она запускается из процедуры входа,
+    // которую демо не выполняет — поэтому запускаем здесь явно.
+    // ?tour=1 (кнопка с лендинга) показывает её даже тем, кто уже смотрел.
+    (function(){
+      const forced = new URLSearchParams(location.search).has('tour');
+      if (forced) { try { localStorage.removeItem('sb_tour_seen'); } catch (e) {} }
+      setTimeout(() => { try { forced ? startTour() : maybeStartTour(); } catch (e) {} }, 500);
+    })();
+
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
     }
