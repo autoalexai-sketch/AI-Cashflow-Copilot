@@ -719,7 +719,7 @@
         deleteRequestsTitle:'Pending delete requests', btnApprove:'Approve', btnReject:'Reject',
         deleteRequestConfirm:"You don't have permission to delete this directly. Send a delete request to the workspace owner for approval?",
         deleteRequestSent:'Delete request sent to the owner.', deleteRequestDuplicate:'A delete request for this transaction is already pending.',
-        reportGenerated:'Report downloaded.', monthLockConfirm:'Lock the current month? No further changes will be possible for transactions dated in this month.',
+        reportGenerated:'Report downloaded.',repTitle:'Report', repRate:'rate', repTotalRow:'TOTAL', monthLockConfirm:'Lock the current month? No further changes will be possible for transactions dated in this month.',
         monthAlreadyLocked:'This month is already locked.', monthLockedBadge:'This month is locked — no further changes are possible.', monthLockedSuccess:'Month locked.',
         monthUnlockConfirm:'Unlock the current month? Transactions dated in this month can be added and edited again.', monthUnlockedSuccess:'Month unlocked.',
         taxRateBadgeLabel:'Rate', taxRateOwnerOnlyNote:'Only the workspace owner can change this.', taxRateSaved:'Tax rate saved.',
@@ -769,7 +769,7 @@
         deleteRequestsTitle:'Oczekujące prośby o usunięcie', btnApprove:'Zatwierdź', btnReject:'Odrzuć',
         deleteRequestConfirm:'Nie masz uprawnień, by usunąć to bezpośrednio. Wysłać prośbę o usunięcie do właściciela workspace?',
         deleteRequestSent:'Prośba o usunięcie została wysłana do właściciela.', deleteRequestDuplicate:'Prośba o usunięcie tej transakcji już oczekuje.',
-        reportGenerated:'Raport pobrany.', monthLockConfirm:'Zablokować bieżący miesiąc? Zmiany transakcji z tego miesiąca nie będą już możliwe.',
+        reportGenerated:'Raport pobrany.',repTitle:'Raport', repRate:'stawka', repTotalRow:'RAZEM', monthLockConfirm:'Zablokować bieżący miesiąc? Zmiany transakcji z tego miesiąca nie będą już możliwe.',
         monthAlreadyLocked:'Ten miesiąc jest już zablokowany.', monthLockedBadge:'Ten miesiąc jest zablokowany — zmiany nie są już możliwe.', monthLockedSuccess:'Miesiąc zablokowany.',
         monthUnlockConfirm:'Odblokować bieżący miesiąc? Transakcje z tego miesiąca będzie można ponownie dodawać i edytować.', monthUnlockedSuccess:'Miesiąc odblokowany.',
         taxRateBadgeLabel:'Stawka', taxRateOwnerOnlyNote:'Tylko właściciel workspace może to zmienić.', taxRateSaved:'Stawka podatkowa zapisana.',
@@ -819,7 +819,7 @@
         deleteRequestsTitle:'Запити на видалення, що очікують', btnApprove:'Схвалити', btnReject:'Відхилити',
         deleteRequestConfirm:'У вас немає прав видалити це напряму. Надіслати запит на видалення власнику робочого простору?',
         deleteRequestSent:'Запит на видалення надіслано власнику.', deleteRequestDuplicate:'Запит на видалення цієї транзакції вже очікує.',
-        reportGenerated:'Звіт завантажено.', monthLockConfirm:'Заблокувати поточний місяць? Зміни транзакцій цього місяця більше не будуть можливі.',
+        reportGenerated:'Звіт завантажено.',repTitle:'Звіт', repRate:'ставка', repTotalRow:'РАЗОМ', monthLockConfirm:'Заблокувати поточний місяць? Зміни транзакцій цього місяця більше не будуть можливі.',
         monthAlreadyLocked:'Цей місяць вже заблокований.', monthLockedBadge:'Цей місяць заблоковано — зміни більше не можливі.', monthLockedSuccess:'Місяць заблоковано.',
         monthUnlockConfirm:'Розблокувати поточний місяць? Транзакції цього місяця знову можна буде додавати й редагувати.', monthUnlockedSuccess:'Місяць розблоковано.',
         taxRateBadgeLabel:'Ставка', taxRateOwnerOnlyNote:'Лише власник робочого простору може це змінити.', taxRateSaved:'Податкову ставку збережено.',
@@ -2335,27 +2335,96 @@
         distributable: $('monthDistrib').textContent,
         partnerA: { name: state.partnerA.name, earned: $('partnerAearned').textContent, withdrawn: $('partnerAwithdrawn').textContent, remaining: $('partnerAremaining').textContent },
         partnerB: { name: state.partnerB.name, earned: $('partnerBearned').textContent, withdrawn: $('partnerBwithdrawn').textContent, remaining: $('partnerBremaining').textContent },
-        txs: state.txs.map(t => [t.date, t.project || '', fmt(t.amount), t.type, t.status])
+        txs: state.txs.map(t => [t.date, t.project || '—', fmt(t.amount), typeLabel(t.type), statusLabel(t.status)])
       };
     }
 
     function buildMonthlyReportText(){
       const r = buildMonthlyReportData();
+      const L = reportLabels();
       const lines = [
-        `SplitBooks — Report (${r.date})`,
+        `${L.title} (${r.date})`,
         '',
-        `Income: ${r.income}`,
-        `Expenses: ${r.expenses}`,
-        `Tax reserve: ${r.tax} (rate: ${r.taxRate}%)`,
-        `Distributable: ${r.distributable}`,
+        `${L.income}: ${r.income}`,
+        `${L.expenses}: ${r.expenses}`,
+        `${L.tax}: ${r.tax} (${L.rate}: ${r.taxRate}%)`,
+        `${L.distributable}: ${r.distributable}`,
         '',
-        `${r.partnerA.name}: earned ${r.partnerA.earned}, withdrawn ${r.partnerA.withdrawn}, remaining ${r.partnerA.remaining}`,
-        `${r.partnerB.name}: earned ${r.partnerB.earned}, withdrawn ${r.partnerB.withdrawn}, remaining ${r.partnerB.remaining}`,
+        `${r.partnerA.name}: ${L.earned} ${r.partnerA.earned}, ${L.withdrawn} ${r.partnerA.withdrawn}, ${L.remaining} ${r.partnerA.remaining}`,
+        `${r.partnerB.name}: ${L.earned} ${r.partnerB.earned}, ${L.withdrawn} ${r.partnerB.withdrawn}, ${L.remaining} ${r.partnerB.remaining}`,
         '',
-        'Transactions:'
+        `${L.txs}:`
       ];
       r.txs.forEach(row => lines.push(row.join('  ')));
       return lines.join('\n');
+    }
+
+    // jsPDF's built-in fonts are Latin-1 only: Ukrainian text rendered as
+    // garbage and Polish diacritics (ł, ą, ę, ś, ż) were dropped. These are
+    // Roboto subsets (Latin + Latin Ext-A + Cyrillic, ~28 KB each) served
+    // from our own origin and registered with jsPDF on first PDF export.
+    let pdfFontPromise = null;
+    function loadPdfFonts(){
+      if (pdfFontPromise) return pdfFontPromise;
+      const toBase64 = buf => {
+        const bytes = new Uint8Array(buf);
+        let bin = '';
+        for (let i = 0; i < bytes.length; i += 8192) {
+          bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 8192));
+        }
+        return btoa(bin);
+      };
+      const grab = url => fetch(url).then(r => {
+        if (!r.ok) throw new Error('Failed to load font ' + url);
+        return r.arrayBuffer();
+      }).then(toBase64);
+      pdfFontPromise = Promise.all([grab('/sb-regular.ttf'), grab('/sb-bold.ttf')])
+        .catch(e => { pdfFontPromise = null; throw e; });
+      return pdfFontPromise;
+    }
+
+    // Registers the Unicode font on a fresh jsPDF doc and makes it active.
+    // Falls back to the built-in font if the files cannot be fetched, so an
+    // export never fails outright - it just loses non-Latin glyphs.
+    async function applyPdfFont(doc){
+      try {
+        const [reg, bold] = await loadPdfFonts();
+        doc.addFileToVFS('SBSans-Regular.ttf', reg);
+        doc.addFont('SBSans-Regular.ttf', 'SBSans', 'normal');
+        doc.addFileToVFS('SBSans-Bold.ttf', bold);
+        doc.addFont('SBSans-Bold.ttf', 'SBSans', 'bold');
+        doc.setFont('SBSans', 'normal');
+        return 'SBSans';
+      } catch (e) {
+        return 'helvetica';
+      }
+    }
+
+    // Marks the given zero-based columns as currency from `startRow` down, so
+    // Excel shows "1 234,00 PLN" while the underlying value stays numeric.
+    function applyAmountFormat(ws, cols, fromRow, toRow){
+      const fmtStr = '#,##0.00" ' + (state.currency || 'PLN') + '"';
+      for (let r = fromRow; r <= toRow; r++) {
+        cols.forEach(c => {
+          const cell = ws[XLSX.utils.encode_cell({ r, c })];
+          if (cell && typeof cell.v === 'number') { cell.t = 'n'; cell.z = fmtStr; }
+        });
+      }
+    }
+
+    // Report labels in the user's current language, shared by the PDF, Excel
+    // and e-mail exports so all three stay consistent.
+    function reportLabels(){
+      const t = i18n[state.lang];
+      return {
+        title: `SplitBooks — ${t.repTitle || 'Report'}`,
+        income: t.monthlyIncome, expenses: t.monthlyExpenses,
+        tax: t.monthlyTax, rate: t.repRate || 'rate', distributable: t.monthlyDistrib,
+        earned: t.earnedShare, withdrawn: t.withdrawnDraws, remaining: t.remainingLabel,
+        txs: t.txTitle, total: t.repTotalRow || 'TOTAL',
+        head: [t.thDate, t.thProject, t.thAmount, t.thType, t.thStatus],
+        done: t.reportGenerated || 'Report downloaded.'
+      };
     }
 
     // Export libraries (~300 KB) are only needed when the user actually
@@ -2381,52 +2450,66 @@
     $('exportPdf').addEventListener('click', async () => {
       try { await ensureExportLibs(); } catch (e) { alert(e.message); return; }
       const r = buildMonthlyReportData();
+      const L = reportLabels();
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
+      const font = await applyPdfFont(doc);
+      doc.setFont(font, 'bold');
       doc.setFontSize(16);
-      doc.text(`SplitBooks — Report (${r.date})`, 14, 18);
+      doc.text(`${L.title} (${r.date})`, 14, 18);
+      doc.setFont(font, 'normal');
       doc.setFontSize(11);
       const summary = [
-        `Income: ${r.income}    Expenses: ${r.expenses}`,
-        `Tax reserve: ${r.tax} (rate: ${r.taxRate}%)    Distributable: ${r.distributable}`,
+        `${L.income}: ${r.income}    ${L.expenses}: ${r.expenses}`,
+        `${L.tax}: ${r.tax} (${L.rate}: ${r.taxRate}%)    ${L.distributable}: ${r.distributable}`,
         '',
-        `${r.partnerA.name}: earned ${r.partnerA.earned}, withdrawn ${r.partnerA.withdrawn}, remaining ${r.partnerA.remaining}`,
-        `${r.partnerB.name}: earned ${r.partnerB.earned}, withdrawn ${r.partnerB.withdrawn}, remaining ${r.partnerB.remaining}`
+        `${r.partnerA.name}: ${L.earned} ${r.partnerA.earned}, ${L.withdrawn} ${r.partnerA.withdrawn}, ${L.remaining} ${r.partnerA.remaining}`,
+        `${r.partnerB.name}: ${L.earned} ${r.partnerB.earned}, ${L.withdrawn} ${r.partnerB.withdrawn}, ${L.remaining} ${r.partnerB.remaining}`
       ];
       doc.text(summary, 14, 28);
       doc.autoTable({
         startY: 28 + summary.length * 6 + 4,
-        head: [[i18n[state.lang].thDate, i18n[state.lang].thProject, i18n[state.lang].thAmount, i18n[state.lang].thType, i18n[state.lang].thStatus]],
+        head: [L.head],
         body: r.txs,
-        styles: { fontSize: 9 },
-        headStyles: { fillColor: [37, 99, 235] }
+        styles: { font, fontStyle: 'normal', fontSize: 9, cellPadding: 2 },
+        headStyles: { font, fontStyle: 'bold', fillColor: [37, 99, 235], textColor: 255 },
+        columnStyles: { 2: { halign: 'right' } },
+        margin: { left: 14, right: 14 }
       });
       doc.save(`splitbooks-report-${r.date}.pdf`);
-      alert(i18n[state.lang].reportGenerated || 'Report downloaded.');
+      alert(L.done);
     });
 
     $('exportExcel').addEventListener('click', async () => {
       try { await ensureExportLibs(); } catch (e) { alert(e.message); return; }
       const r = buildMonthlyReportData();
-      const summaryRows = [
-        ['SplitBooks — Report', r.date],
+      const L = reportLabels();
+      // Amounts go in as real numbers (not "1 000,00 PLN" strings) so the user
+      // can sum and filter them in Excel; currency is shown via a cell format.
+      const rows = [
+        [L.title, r.date],
         [],
-        ['Income', r.income],
-        ['Expenses', r.expenses],
-        ['Tax reserve', `${r.tax} (rate: ${r.taxRate}%)`],
-        ['Distributable', r.distributable],
+        [L.income, r.income],
+        [L.expenses, r.expenses],
+        [`${L.tax} (${L.rate} ${r.taxRate}%)`, r.tax],
+        [L.distributable, r.distributable],
         [],
-        [r.partnerA.name, 'earned', r.partnerA.earned, 'withdrawn', r.partnerA.withdrawn, 'remaining', r.partnerA.remaining],
-        [r.partnerB.name, 'earned', r.partnerB.earned, 'withdrawn', r.partnerB.withdrawn, 'remaining', r.partnerB.remaining],
+        ['', L.earned, L.withdrawn, L.remaining],
+        [r.partnerA.name, r.partnerA.earned, r.partnerA.withdrawn, r.partnerA.remaining],
+        [r.partnerB.name, r.partnerB.earned, r.partnerB.withdrawn, r.partnerB.remaining],
         [],
-        [i18n[state.lang].thDate, i18n[state.lang].thProject, i18n[state.lang].thAmount, i18n[state.lang].thType, i18n[state.lang].thStatus],
-        ...r.txs
+        [L.txs],
+        L.head,
+        ...state.txs.map(t => [t.date, t.project || '—', t.amount, typeLabel(t.type), statusLabel(t.status)])
       ];
       const wb = XLSX.utils.book_new();
-      const ws = XLSX.utils.aoa_to_sheet(summaryRows);
+      const ws = XLSX.utils.aoa_to_sheet(rows);
+      ws['!cols'] = [{ wch: 26 }, { wch: 30 }, { wch: 16 }, { wch: 14 }, { wch: 16 }];
+      applyAmountFormat(ws, [1, 2, 3], 2, 9);
+      applyAmountFormat(ws, [2], 13, rows.length - 1);
       XLSX.utils.book_append_sheet(wb, ws, 'Report');
       XLSX.writeFile(wb, `splitbooks-report-${r.date}.xlsx`);
-      alert(i18n[state.lang].reportGenerated || 'Report downloaded.');
+      alert(L.done);
     });
 
     // Groups all transactions by project (same grouping convention as renderProjects()),
@@ -2449,7 +2532,8 @@
           income: g.income,
           cost: g.cost,
           net: g.income - g.cost,
-          txs: g.txs.map(t => [t.date, fmt(t.amount), t.type, t.status])
+          txs: g.txs.map(t => [t.date, fmt(t.amount), typeLabel(t.type), statusLabel(t.status)]),
+          rawTxs: g.txs.map(t => [t.date, t.amount, typeLabel(t.type), statusLabel(t.status)])
         };
       });
       const grandIncome = projects.reduce((s, p) => s + p.income, 0);
@@ -2467,61 +2551,76 @@
       try { await ensureExportLibs(); } catch (e) { alert(e.message); return; }
       const r = buildProjectGroups();
       const t = i18n[state.lang];
+      const L = reportLabels();
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
+      const font = await applyPdfFont(doc);
+      doc.setFont(font, 'bold');
       doc.setFontSize(16);
-      doc.text(`SplitBooks — Report by project (${r.date})`, 14, 18);
+      doc.text(`${L.title} — ${t.tabProjects || 'Projects'} (${r.date})`, 14, 18);
+      doc.setFont(font, 'normal');
       let y = 26;
       if (!r.projects.length) {
         doc.setFontSize(11);
         doc.text(t.noProjects || 'No projects yet', 14, y);
       } else {
         r.projects.forEach(p => {
+          if (y > 250) { doc.addPage(); y = 20; }
+          doc.setFont(font, 'bold');
           doc.setFontSize(12);
           doc.text(p.name, 14, y);
+          doc.setFont(font, 'normal');
           doc.setFontSize(9);
           doc.text(`${t.projSummaryIncome} ${fmt(p.income)}  ·  ${t.projSummaryCost} ${fmt(p.cost)}  ·  ${t.projSummaryNet} ${fmt(p.net)}`, 14, y + 5);
           doc.autoTable({
             startY: y + 9,
             head: [[t.thDate, t.thAmount, t.thType, t.thStatus]],
             body: p.txs,
-            styles: { fontSize: 8 },
-            headStyles: { fillColor: [79, 70, 229] },
+            styles: { font, fontStyle: 'normal', fontSize: 8, cellPadding: 2 },
+            headStyles: { font, fontStyle: 'bold', fillColor: [79, 70, 229], textColor: 255 },
+            columnStyles: { 1: { halign: 'right' } },
             margin: { left: 14, right: 14 }
           });
           y = doc.lastAutoTable.finalY + 10;
-          if (y > 260) { doc.addPage(); y = 20; }
         });
+        if (y > 265) { doc.addPage(); y = 20; }
+        doc.setFont(font, 'bold');
         doc.setFontSize(12);
         doc.text(`${t.grandTotalLabel || 'Grand total'}: ${t.projSummaryIncome} ${fmt(r.grandIncome)}  ·  ${t.projSummaryCost} ${fmt(r.grandCost)}  ·  ${t.projSummaryNet} ${fmt(r.grandNet)}`, 14, y);
       }
       doc.save(`splitbooks-report-by-project-${r.date}.pdf`);
-      alert(t.reportGenerated || 'Report downloaded.');
+      alert(L.done);
     });
 
     $('exportExcelByProject').addEventListener('click', async () => {
       try { await ensureExportLibs(); } catch (e) { alert(e.message); return; }
       const r = buildProjectGroups();
       const t = i18n[state.lang];
-      const rows = [ ['SplitBooks — Report by project', r.date], [] ];
+      const L = reportLabels();
+      const rows = [ [`${L.title} — ${t.tabProjects || 'Projects'}`, r.date], [] ];
+      const amountCells = [];
       if (!r.projects.length) {
         rows.push([t.noProjects || 'No projects yet']);
       } else {
         r.projects.forEach(p => {
           rows.push([p.name]);
-          rows.push([t.projSummaryIncome, fmt(p.income), t.projSummaryCost, fmt(p.cost), t.projSummaryNet, fmt(p.net)]);
+          rows.push([t.projSummaryIncome, p.income, t.projSummaryCost, p.cost, t.projSummaryNet, p.net]);
+          amountCells.push([rows.length - 1, [1, 3, 5]]);
           rows.push([t.thDate, t.thAmount, t.thType, t.thStatus]);
-          p.txs.forEach(row => rows.push(row));
+          p.rawTxs.forEach(row => { rows.push(row); amountCells.push([rows.length - 1, [1]]); });
           rows.push([]);
         });
         rows.push([t.grandTotalLabel || 'Grand total']);
-        rows.push([t.projSummaryIncome, fmt(r.grandIncome), t.projSummaryCost, fmt(r.grandCost), t.projSummaryNet, fmt(r.grandNet)]);
+        rows.push([t.projSummaryIncome, r.grandIncome, t.projSummaryCost, r.grandCost, t.projSummaryNet, r.grandNet]);
+        amountCells.push([rows.length - 1, [1, 3, 5]]);
       }
       const wb = XLSX.utils.book_new();
       const ws = XLSX.utils.aoa_to_sheet(rows);
+      ws['!cols'] = [{ wch: 30 }, { wch: 16 }, { wch: 14 }, { wch: 16 }, { wch: 12 }, { wch: 16 }];
+      amountCells.forEach(([row, cols]) => applyAmountFormat(ws, cols, row, row));
       XLSX.utils.book_append_sheet(wb, ws, 'By project');
       XLSX.writeFile(wb, `splitbooks-report-by-project-${r.date}.xlsx`);
-      alert(t.reportGenerated || 'Report downloaded.');
+      alert(L.done);
     });
 
     $('sendReport').addEventListener('click', () => {
