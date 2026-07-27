@@ -114,11 +114,14 @@
     // stub that queues calls, so init can safely wait until the page is loaded
     // and the browser is idle: nothing is lost, the queue flushes on arrival.
     function initPostHogWhenIdle(){
-      const start = () => posthog.init('phc_mraT3w4Zk57A9qqLysCweuZ6GzNugBHgoK5QDyDKsJTn', {
+      const start = () => { posthog.init('phc_mraT3w4Zk57A9qqLysCweuZ6GzNugBHgoK5QDyDKsJTn', {
         api_host: 'https://eu.i.posthog.com',
         defaults: '2026-01-30',
         capture_performance: false
       });
+        // Пользователь мог войти раньше, чем инициализировалась аналитика.
+        try { if (window.state && state.user) posthog.identify(state.user.id, { email: state.user.email }); } catch (e) {}
+      };
       const schedule = () => (window.requestIdleCallback
         ? requestIdleCallback(start, { timeout: 5000 })
         : setTimeout(start, 2500));
@@ -944,6 +947,18 @@
       el.classList.add('text-emerald-400');
     }
 
+    // Безопасный вызов PostHog: пока init отложен, методы-заглушки ещё не
+    // навешаны (window.posthog — просто массив). Аналитика никогда не должна
+    // ронять приложение, тем более путь входа.
+    function ph(method){
+      try {
+        const args = Array.prototype.slice.call(arguments, 1);
+        if (window.posthog && typeof window.posthog[method] === 'function') {
+          window.posthog[method].apply(window.posthog, args);
+        }
+      } catch (e) { /* аналитика не критична */ }
+    }
+
     function checkUserSession(){
       supabaseClient.auth.onAuthStateChange((event, session) => {
         // Supabase logs the user into a temporary session when they follow a
@@ -971,10 +986,10 @@
       }
       loginInFlightFor = user.id;
       state.user = user;
-      if (window.posthog) posthog.identify(user.id, { email: user.email });
       $('user-display').textContent = user.email;
       $('auth-screen').classList.add('hidden');
       $('main-app').classList.remove('hidden');
+      ph('identify', user.id, { email: user.email });
       try {
         await ensureOrganization();
         // Independent lookups - run in parallel instead of a 6-step waterfall.
@@ -1813,7 +1828,7 @@
     // statusLabel/txStatusClass helpers as the main transaction table so
     // amounts, translated type/status labels and coloring stay consistent.
     window.openProjectTransactions = function(name){
-      if (window.posthog) posthog.capture('project_card_opened');
+      ph('capture', 'project_card_opened');
       const txs = state.txs.filter(t => (t.project || '').trim() === name);
       const income = txs.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
       const cost = txs.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
@@ -1935,7 +1950,7 @@
         const { error } = await supabaseClient.from('transactions').insert(row);
         if (error) { notifyError('Could not record withdrawal.', error); return; }
         // No amount sent to analytics — only that the feature was used.
-        if (window.posthog) posthog.capture('partner_withdrawal_recorded', { partner_slot: withdrawSlot });
+        ph('capture', 'partner_withdrawal_recorded', { partner_slot: withdrawSlot });
         await loadTransactions();
         populateFilters();
         renderTxTable();
@@ -2796,7 +2811,7 @@
         notifyError('Could not create project.', error);
         return;
       }
-      if (window.posthog) posthog.capture('project_created');
+      ph('capture', 'project_created');
       await loadProjects();
       populateProjectSelect();
       renderProjects();
@@ -2892,7 +2907,7 @@
     // Fires when someone actually installs the PWA ("Add to Home Screen" /
     // desktop install) — lets marketing see installs, not just visits.
     window.addEventListener('appinstalled', () => {
-      if (window.posthog) posthog.capture('pwa_installed');
+      ph('capture', 'pwa_installed');
     });
   </script>
 </body>
