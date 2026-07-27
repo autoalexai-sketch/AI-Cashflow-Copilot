@@ -1,0 +1,2952 @@
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script>
+    // Applied before first paint so a saved "light" preference doesn't flash dark first.
+    (function(){
+      try {
+        if (localStorage.getItem('sb_theme') === 'light') {
+          document.documentElement.classList.remove('dark');
+          document.documentElement.classList.add('light');
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <title>SplitBooks — Shared Cashflow & Profit-Split Tool for Business Partners</title>
+  <meta name="description" content="SplitBooks is a shared cashflow and profit-split tool for business partners — track income, expenses, partner draws, tax reserve, and monthly close together in real time." />
+  <link rel="canonical" href="https://splitbooks.pl/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://splitbooks.pl/" />
+  <meta property="og:site_name" content="SplitBooks" />
+  <meta property="og:title" content="SplitBooks — Shared Cashflow & Profit-Split Tool for Business Partners" />
+  <meta property="og:description" content="Shared cashflow and profit-split tool for business partners — income, expenses, partner draws, tax reserve, and monthly close, synced in real time." />
+  <meta property="og:image" content="https://splitbooks.pl/og-image.png" />
+  <meta property="og:image:width" content="393" />
+  <meta property="og:image:height" content="393" />
+  <meta property="og:image:alt" content="SplitBooks logo" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="SplitBooks — Shared Cashflow & Profit-Split Tool for Business Partners" />
+  <meta name="twitter:description" content="Shared cashflow and profit-split tool for business partners — income, expenses, partner draws, tax reserve, and monthly close, synced in real time." />
+  <meta name="twitter:image" content="https://splitbooks.pl/og-image.png" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "SplitBooks",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web",
+    "url": "https://splitbooks.pl/",
+    "description": "Shared cashflow and profit-split tool for business partners — income, expenses, partner draws, tax reserve, and monthly close, synced in real time.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "PLN" }
+  }
+  </script>
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/icon-192.png" sizes="192x192" type="image/png" />
+  <!-- iOS Safari's "Add to Home Screen" ignores SVG entirely for this tag —
+       it needs a real PNG or it silently falls back to a screenshot/blank
+       icon, which is why the icon was inconsistent on phones. -->
+  <link rel="apple-touch-icon" href="/icon-192.png" />
+  <meta name="theme-color" content="#4f46e5" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="SplitBooks" />
+  <link rel="preconnect" href="https://bgbcyncpdfnsrhvunzkv.supabase.co" crossorigin />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link rel="preconnect" href="https://cdn.tailwindcss.com" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.106.2/dist/umd/supabase.js" integrity="sha384-m/8UHFJHeU6nrCKP2hBnAseuvAKUmLF+8e5bWos5CJL023vuxX7kiVL5t8yjsJhV" crossorigin="anonymous"></script>
+  <style>
+    html, body { background:#020617; }
+    .glass { background: rgba(15,23,42,.72); backdrop-filter: blur(12px); }
+    .scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
+    .scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 9999px; }
+    .tab.active { color:#60a5fa; border-color:#60a5fa; }
+    .badge { border:1px solid rgba(96,165,250,.18); background: rgba(59,130,246,.08); }
+    .input, .select, .textarea { background:#111827; border:1px solid #334155; color:#e5e7eb; }
+    .input:focus, .select:focus, .textarea:focus { outline:none; border-color:#60a5fa; box-shadow:0 0 0 3px rgba(59,130,246,.15); }
+    .card { box-shadow: 0 10px 30px rgba(0,0,0,.25); }
+    .lang-pill { cursor:pointer; }
+    .tx-row:hover { background: rgba(15,23,42,.9); }
+    .modal-backdrop { background: rgba(2,6,23,.85); }
+    input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor:pointer; }
+
+
+    /* Тёмная тема: slate-500 (#64748b) на #0f172a давал ~4,0 - ниже нормы. */
+    .text-slate-500 { color:#8b98ab; }
+    .text-slate-400 { color:#a4b0c2; }
+    /* Light theme — overrides the dark defaults above when <html> has class="light". */
+    html.light, html.light body { background:#faf9f5; }
+    html.light body { color:#2a2a26; }
+    html.light .glass { background: rgba(255,254,251,.82); }
+    html.light .card { box-shadow: 0 8px 24px rgba(64,58,44,.07); }
+    html.light .modal-backdrop { background: rgba(52,48,40,.38); }
+    html.light .input, html.light .select, html.light .textarea { background:#fffefb; border:1px solid #ddd8cb; color:#2a2a26; }
+    html.light .input:focus, html.light .select:focus, html.light .textarea:focus { border-color:#6366f1; box-shadow:0 0 0 3px rgba(99,102,241,.15); }
+    html.light .badge { border:1px solid rgba(79,70,229,.22); background: rgba(79,70,229,.07); }
+    html.light .tx-row:hover { background: rgba(240,236,226,.7); }
+    html.light .scrollbar::-webkit-scrollbar-thumb { background: #d6d1c4; }
+    html.light .bg-slate-900 { background-color:#fffefb; }
+    html.light .bg-slate-950\/60 { background-color: rgba(244,241,233,.85); }
+    html.light .bg-slate-950\/80 { background-color: rgba(244,241,233,.92); }
+    html.light .bg-slate-950\/40 { background-color: rgba(244,241,233,.65); }
+    html.light .bg-slate-800 { background-color:#ece7db; }
+    html.light .bg-slate-700 { background-color:#ddd8cb; }
+    html.light .bg-slate-600 { background-color:#b8b2a3; }
+    html.light .hover\:bg-slate-700:hover { background-color:#ddd8cb; }
+    html.light .hover\:bg-slate-600:hover { background-color:#b8b2a3; }
+    html.light .text-slate-100 { color:#2a2a26; }
+    html.light .text-slate-200 { color:#33322c; }
+    html.light .text-slate-300 { color:#454339; }
+    html.light .text-slate-400 { color:#5c584c; }
+    html.light .text-slate-500 { color:#6b6659; }
+    html.light .hover\:text-slate-200:hover { color:#2a2a26; }
+    html.light .hover\:text-slate-300:hover { color:#33322c; }
+    html.light .border-slate-800 { border-color:#e6e1d5; }
+
+    /* Акцентные цвета рассчитаны на тёмный фон; на кремовом они давали контраст
+       1,3-2,8 при норме 4,5 (аудит Lighthouse). Здесь — тёмные варианты тех же
+       оттенков, все проверены на >= 4.5:1 к фону #faf9f5 / #f4f1e9. */
+    html.light .text-emerald-400, html.light .text-emerald-300 { color:#046c4e; }
+    html.light .text-rose-400, html.light .text-rose-300 { color:#b3123c; }
+    html.light .text-amber-400, html.light .text-amber-300 { color:#96590c; }
+    html.light .text-sky-400, html.light .text-sky-300 { color:#0263a1; }
+    html.light .text-fuchsia-300, html.light .text-fuchsia-400 { color:#9c1aa8; }
+    html.light .text-indigo-400, html.light .text-indigo-300 { color:#4338ca; }
+    html.light .text-blue-400 { color:#1d4ed8; }
+    html.light .tab.active { color:#1d4ed8; border-color:#1d4ed8; }
+
+    /* Белый текст на цветных кнопках: правило .text-slate-100 -> тёмный делало
+       надпись на индиго нечитаемой (контраст 2,83). */
+    html.light [class*="bg-indigo-5"], html.light [class*="bg-indigo-6"], html.light [class*="bg-indigo-7"],
+    html.light [class*="bg-emerald-5"], html.light [class*="bg-emerald-6"],
+    html.light [class*="bg-rose-5"], html.light [class*="bg-rose-6"],
+    html.light [class*="bg-sky-5"], html.light [class*="bg-sky-6"], html.light [class*="bg-sky-7"] { color:#ffffff; }
+    html.light .bg-indigo-600\/20, html.light .bg-indigo-600\/30 { background-color: rgba(79,70,229,.12); color:#3730a3; }
+    html.light .bg-rose-600\/20, html.light .bg-rose-600\/30 { background-color: rgba(190,18,60,.10); color:#9f1239; }
+    html.light .border-rose-600\/40 { border-color: rgba(190,18,60,.35); }
+    html.light .border-indigo-600\/40 { border-color: rgba(79,70,229,.35); }
+    html.light .text-rose-300, html.light .text-indigo-300 { color:#9f1239; }
+    /* Кнопки: в светлой теме берём на тон темнее, чтобы белая надпись
+       проходила AA и для мелкого текста (было 3,8-4,5). */
+    html.light .bg-emerald-600, html.light .bg-emerald-500 { background-color:#047857; }
+    html.light .hover\:bg-emerald-500:hover, html.light .hover\:bg-emerald-600:hover { background-color:#065f46; }
+    html.light .bg-sky-600, html.light .bg-sky-500 { background-color:#0369a1; }
+    html.light .hover\:bg-sky-500:hover, html.light .hover\:bg-sky-600:hover { background-color:#075985; }
+    html.light .bg-indigo-500 { background-color:#4f46e5; }
+    html.light .hover\:bg-indigo-500:hover { background-color:#4338ca; }
+    html.light .bg-amber-500 { background-color:#b45309; }
+    html.light .bg-rose-500 { background-color:#e11d48; }
+    html.light input[type="date"]::-webkit-calendar-picker-indicator { filter: none; }
+  </style>
+  <!-- PostHog (EU-hosted product analytics) — see privacy.html for disclosure.
+       Project token is a write-only public key, safe to embed client-side. -->
+  <script>
+    !function(t,e){var o,n,p,r;e.__SV||(window.posthog && window.posthog.__loaded)||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init os ds Ie us vs ss ls capture calculateEventProperties register register_once register_for_session unregister unregister_for_session ws getFeatureFlag getFeatureFlagPayload getFeatureFlagResult isFeatureEnabled reloadFeatureFlags updateFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey displaySurvey cancelPendingSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException startExceptionAutocapture stopExceptionAutocapture loadToolbar get_property getSessionProperty bs ps createPersonProfile setInternalOrTestUser ys es $s opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing get_explicit_consent_status is_capturing clear_opt_in_out_capturing cs debug M gs getPageViewId captureTraceFeedback captureTraceMetric Qr".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+    // posthog.init() is what actually downloads array.js (~6 s of main-thread
+    // work on a mid-range phone - it was previously blocked by our CSP, so it
+    // never showed up in profiles). The inline snippet above only installs a
+    // stub that queues calls, so init can safely wait until the page is loaded
+    // and the browser is idle: nothing is lost, the queue flushes on arrival.
+    function initPostHogWhenIdle(){
+      const start = () => { posthog.init('phc_mraT3w4Zk57A9qqLysCweuZ6GzNugBHgoK5QDyDKsJTn', {
+        api_host: 'https://eu.i.posthog.com',
+        defaults: '2026-01-30',
+        capture_performance: false
+      });
+        // Пользователь мог войти раньше, чем инициализировалась аналитика.
+        try { if (window.state && state.user) posthog.identify(state.user.id, { email: state.user.email }); } catch (e) {}
+      };
+      const schedule = () => (window.requestIdleCallback
+        ? requestIdleCallback(start, { timeout: 5000 })
+        : setTimeout(start, 2500));
+      if (document.readyState === 'complete') schedule();
+      else window.addEventListener('load', schedule, { once: true });
+    }
+    initPostHogWhenIdle();
+  </script>
+</head>
+<body class="text-slate-100 min-h-screen flex flex-col">
+
+  <div id="auth-screen" class="flex-1 flex items-center justify-center p-4">
+    <div class="glass border border-slate-800 rounded-3xl p-8 max-w-md w-full card space-y-6">
+      <div class="text-center">
+        <h2 class="text-2xl font-black bg-gradient-to-r from-sky-400 via-indigo-400 to-fuchsia-400 bg-clip-text text-transparent" data-i18n="appTitle">SplitBooks</h2>
+        <p class="text-slate-400 text-sm mt-2" data-i18n="authSubtitle">Sign in to access your shared workspace</p>
+      </div>
+      <div class="space-y-3">
+        <input id="authEmail" type="email" class="input w-full rounded-2xl px-4 py-3 text-sm" placeholder="your@email.com" />
+        <input id="authPassword" type="password" class="input w-full rounded-2xl px-4 py-3 text-sm" placeholder="Password" />
+        <input id="authPasswordConfirm" type="password" class="input w-full rounded-2xl px-4 py-3 text-sm" placeholder="Confirm password (for Sign Up)" data-i18n-placeholder="placeholderConfirmPassword" />
+        <div class="cf-turnstile" data-sitekey="0x4AAAAAADwsM0GGrGwJpZ7O" data-theme="dark"></div>
+        <div id="authError" class="text-xs text-rose-400 hidden"></div>
+        <div class="grid grid-cols-2 gap-3 pt-1">
+          <button id="btnEmailLogin" class="py-3 px-4 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm transition-all" data-i18n="btnLogin">Log In</button>
+          <button id="btnEmailSignup" class="py-3 px-4 rounded-2xl bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-400 border border-indigo-500/30 font-semibold text-sm transition-all" data-i18n="btnSignup">Sign Up</button>
+        </div>
+        <button id="btnForgotPassword" class="text-xs text-slate-400 hover:text-slate-200 underline text-center w-full" data-i18n="btnForgotPassword">Forgot password?</button>
+      </div>
+      <div class="flex justify-center gap-4 text-xs text-slate-500 flex-wrap">
+        <a href="/pricing.html" class="hover:text-slate-300 underline" data-i18n="footerPricing">Pricing</a>
+        <a href="/privacy.html" class="hover:text-slate-300 underline" data-i18n="footerPrivacy">Privacy Policy</a>
+        <a href="/terms.html" class="hover:text-slate-300 underline" data-i18n="footerTerms">Terms of Use</a>
+        <a href="/help.html" class="hover:text-slate-300 underline" data-i18n="footerHelp">Guide</a>
+        <a href="mailto:support@ai-consilium.com" class="hover:text-slate-300 underline">support@ai-consilium.com</a>
+      </div>
+    </div>
+  </div>
+
+  <div id="forgotPasswordModal" class="fixed inset-0 modal-backdrop hidden items-center justify-center p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-bold" data-i18n="forgotPasswordTitle">Reset your password</h3>
+        <button id="closeForgotPasswordModal" class="px-3 py-1 rounded-xl bg-slate-800">×</button>
+      </div>
+      <p class="text-sm text-slate-400 mb-3" data-i18n="forgotPasswordDesc">Enter your email — we'll send a link to set a new password.</p>
+      <input id="forgotPasswordEmail" type="email" class="input w-full rounded-2xl px-4 py-3 text-sm" placeholder="your@email.com" />
+      <div id="forgotPasswordMsg" class="text-xs mt-2 hidden"></div>
+      <button id="btnSendResetLink" class="mt-4 w-full py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 font-semibold text-sm" data-i18n="btnSendResetLink">Send reset link</button>
+    </div>
+  </div>
+
+  <div id="resetPasswordModal" class="fixed inset-0 modal-backdrop hidden items-center justify-center p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6">
+      <h3 class="text-lg font-bold mb-4" data-i18n="resetPasswordTitle">Set a new password</h3>
+      <input id="newPassword" type="password" class="input w-full rounded-2xl px-4 py-3 text-sm" placeholder="New password" data-i18n-placeholder="placeholderNewPassword" />
+      <input id="newPasswordConfirm" type="password" class="input w-full rounded-2xl px-4 py-3 text-sm mt-3" placeholder="Confirm new password" data-i18n-placeholder="placeholderConfirmPassword" />
+      <div id="resetPasswordMsg" class="text-xs mt-2 hidden"></div>
+      <button id="btnSaveNewPassword" class="mt-4 w-full py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 font-semibold text-sm" data-i18n="btnSaveNewPassword">Save new password</button>
+    </div>
+  </div>
+
+  <div id="main-app" class="max-w-7xl mx-auto p-4 md:p-8 w-full hidden">
+    <header class="glass border border-slate-800 rounded-3xl p-5 md:p-6 mb-6 card">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-3">
+            <div class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></div>
+            <div class="text-sm text-slate-400" id="ui-state" data-i18n="uiState">Live · synced</div>
+          </div>
+          <h1 class="text-2xl md:text-4xl font-black mt-2 bg-gradient-to-r from-sky-400 via-indigo-400 to-fuchsia-400 bg-clip-text text-transparent" data-i18n="appTitle">SplitBooks</h1>
+          <p class="text-slate-400 mt-2 max-w-3xl" id="subtitle" data-i18n="subtitle">Shared finance control for partners, projects, receipts and monthly closing.</p>
+        </div>
+        <div class="flex flex-wrap gap-2 items-center">
+          <div class="badge px-3 py-2 rounded-2xl text-sm flex items-center gap-2">
+            <span class="text-slate-400" data-i18n="activeUserLabel">Signed in as</span>
+            <span id="user-display" class="text-slate-200 font-semibold">—</span>
+          </div>
+          <button id="btnLogout" class="badge px-3 py-2 rounded-2xl text-sm font-semibold hover:text-rose-400" data-i18n="btnLogout">Sign out</button>
+          <div class="badge px-3 py-2 rounded-2xl text-sm flex items-center gap-2">
+            <span class="text-slate-400">Lang</span>
+            <div class="flex gap-1">
+              <button class="lang-pill px-2 py-1 rounded-lg bg-slate-800" data-lang="en">EN</button>
+              <button class="lang-pill px-2 py-1 rounded-lg bg-slate-800" data-lang="pl">PL</button>
+              <button class="lang-pill px-2 py-1 rounded-lg bg-slate-800" data-lang="uk">UK</button>
+            </div>
+          </div>
+          <button id="btnMonthlyClose" class="px-4 py-2 rounded-2xl bg-indigo-600 hover:bg-indigo-500 font-semibold" data-i18n="monthlyCloseBtn">Monthly Close</button>
+        </div>
+      </div>
+    </header>
+
+    <nav class="glass border border-slate-800 rounded-3xl p-2 mb-6 overflow-x-auto card">
+      <div class="flex gap-2 min-w-max">
+        <button class="tab active px-4 py-2 border-b-2 border-transparent" data-view="dashboard" data-i18n="tabDashboard">Dashboard</button>
+        <button class="tab px-4 py-2 border-b-2 border-transparent" data-view="transactions" data-i18n="tabTransactions">Transactions</button>
+        <button class="tab px-4 py-2 border-b-2 border-transparent" data-view="projects" data-i18n="tabProjects">Projects</button>
+        <button class="tab px-4 py-2 border-b-2 border-transparent" data-view="receipts" data-i18n="tabReceipts">Receipts</button>
+        <button class="tab px-4 py-2 border-b-2 border-transparent" data-view="monthly" data-i18n="tabMonthly">Monthly Close</button>
+        <button class="tab px-4 py-2 border-b-2 border-transparent" data-view="settings" data-i18n="tabSettings">Settings</button>
+      </div>
+    </nav>
+
+    <main class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+      <section id="view-dashboard" class="xl:col-span-12 space-y-6">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="glass border border-slate-800 rounded-3xl p-5 card"><div class="text-slate-400 text-xs" data-i18n="mIncomeLabel">Total Income</div><div class="text-2xl font-black text-emerald-400 mt-1" id="m-income">0.00 PLN</div></div>
+          <div class="glass border border-slate-800 rounded-3xl p-5 card"><div class="text-slate-400 text-xs" data-i18n="mExpenseLabel">Total Expenses</div><div class="text-2xl font-black text-rose-400 mt-1" id="m-expense">0.00 PLN</div></div>
+          <div class="glass border border-slate-800 rounded-3xl p-5 card"><div class="text-slate-400 text-xs" data-i18n="mTaxLabel">Tax Reserve</div><div class="text-2xl font-black text-amber-400 mt-1" id="m-tax">0.00 PLN</div><div id="taxRateBadgeDash" class="text-[11px] text-slate-500 mt-1"></div></div>
+          <div class="glass border border-slate-800 rounded-3xl p-5 card"><div class="text-slate-400 text-xs" data-i18n="mProfitLabel">Net Profit</div><div class="text-2xl font-black text-sky-400 mt-1" id="m-profit">0.00 PLN</div></div>
+        </div>
+
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          <div class="xl:col-span-2 glass border border-slate-800 rounded-3xl p-5 card">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <h2 class="text-lg font-bold" data-i18n="cashflowTitle">Cashflow overview</h2>
+                <p class="text-xs text-slate-400" data-i18n="cashflowSubtitle">Bank, cash and reserve balances in one place.</p>
+              </div>
+              <div class="text-xs text-slate-400" data-i18n="currentMonth">Current month</div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="rounded-2xl p-4 bg-slate-950/60 border border-slate-800">
+                <div class="text-xs text-slate-400" data-i18n="bankLabel">Bank Account</div>
+                <div class="text-xl font-bold text-emerald-300 mt-1" id="bank-balance">0.00 PLN</div>
+              </div>
+              <div class="rounded-2xl p-4 bg-slate-950/60 border border-slate-800">
+                <div class="text-xs text-slate-400" data-i18n="cashLabel">Cash Box</div>
+                <div class="text-xl font-bold text-amber-300 mt-1" id="cash-balance">0.00 PLN</div>
+              </div>
+              <div class="rounded-2xl p-4 bg-slate-950/60 border border-slate-800">
+                <div class="text-xs text-slate-400" data-i18n="reserveLabel">Virtual Tax Buffer</div>
+                <div class="text-xl font-bold text-fuchsia-300 mt-1" id="reserve-balance">0.00 PLN</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass border border-slate-800 rounded-3xl p-5 card">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-lg font-bold" data-i18n="splitTitle">Partner balance</h2>
+              <div class="text-xs badge px-3 py-1 rounded-xl" id="split-ratio">50 / 50</div>
+            </div>
+            <div class="space-y-4">
+              <div class="rounded-2xl p-4 bg-slate-950/60 border border-slate-800">
+                <div class="flex justify-between text-sm"><span id="partnerAName">Partner A</span><span class="text-slate-400" id="partnerAshare">50%</span></div>
+                <div class="mt-2 grid grid-cols-2 gap-2 text-xs">
+                  <div class="text-slate-400"><div data-i18n="earnedShare">Earned share</div><div class="text-slate-100 text-sm font-bold" id="partnerAearned">4,650.00 PLN</div></div>
+                  <div class="text-slate-400"><div data-i18n="withdrawnDraws">Withdrawn draws</div><div class="text-rose-400 text-sm font-bold underline cursor-pointer" id="partnerAwithdrawn" onclick="openDrawHistory('owner')">2,000.00 PLN</div></div>
+                </div>
+                <div class="mt-3 flex justify-between items-center border-t border-slate-800 pt-3"><span class="text-slate-400 text-xs" data-i18n="remainingLabel">Remaining</span><span class="text-sky-400 font-black" id="partnerAremaining">2,650.00 PLN</span></div>
+                <button class="mt-3 w-full px-3 py-2 rounded-xl bg-rose-600/20 border border-rose-600/40 text-rose-300 text-xs font-bold hover:bg-rose-600/30" onclick="openWithdrawModal('owner')" data-i18n="withdrawBtn">Withdraw</button>
+              </div>
+              <div class="rounded-2xl p-4 bg-slate-950/60 border border-slate-800">
+                <div class="flex justify-between text-sm"><span id="partnerBName">Partner B</span><span class="text-slate-400" id="partnerBshare">50%</span></div>
+                <div class="mt-2 grid grid-cols-2 gap-2 text-xs">
+                  <div class="text-slate-400"><div data-i18n="earnedShare">Earned share</div><div class="text-slate-100 text-sm font-bold" id="partnerBearned">4,650.00 PLN</div></div>
+                  <div class="text-slate-400"><div data-i18n="withdrawnDraws">Withdrawn draws</div><div class="text-rose-400 text-sm font-bold underline cursor-pointer" id="partnerBwithdrawn" onclick="openDrawHistory('member')">1,100.00 PLN</div></div>
+                </div>
+                <div class="mt-3 flex justify-between items-center border-t border-slate-800 pt-3"><span class="text-slate-400 text-xs" data-i18n="remainingLabel">Remaining</span><span class="text-sky-400 font-black" id="partnerBremaining">3,550.00 PLN</span></div>
+                <button class="mt-3 w-full px-3 py-2 rounded-xl bg-rose-600/20 border border-rose-600/40 text-rose-300 text-xs font-bold hover:bg-rose-600/30" onclick="openWithdrawModal('member')" data-i18n="withdrawBtn">Withdraw</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass border border-amber-700/40 rounded-3xl p-5 card">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h2 class="text-lg font-bold" data-i18n="pendingTxTitle">Pending — not yet paid</h2>
+              <p class="text-xs text-slate-400" data-i18n="pendingTxSubtitle">Recorded but not verified. These don't affect any balance or profit yet — mark as paid once the money actually moves.</p>
+            </div>
+            <div class="text-xs badge px-3 py-1 rounded-xl" id="pending-count">0</div>
+          </div>
+          <div id="pendingTxList" class="space-y-2"></div>
+        </div>
+      </section>
+
+      <section id="view-transactions" class="xl:col-span-12 hidden grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <div class="xl:col-span-2 glass border border-slate-800 rounded-3xl p-5 card">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h2 class="text-lg font-bold" data-i18n="txTitle">Transactions</h2>
+              <p class="text-xs text-slate-400" data-i18n="txSubtitle">Create income, expense, draw, and verify with receipts.</p>
+            </div>
+            <div class="text-xs badge px-3 py-1 rounded-xl" id="tx-count">0 transactions</div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="text-xs text-slate-400" data-i18n="labelDate">Date</label>
+              <input id="date" class="input w-full rounded-2xl px-4 py-3 mt-1" type="date" />
+            </div>
+            <div>
+              <label class="text-xs text-slate-400" data-i18n="labelAmount">Amount</label>
+              <input id="amount" class="input w-full rounded-2xl px-4 py-3 mt-1" type="number" placeholder="0.00" />
+            </div>
+            <div>
+              <label class="text-xs text-slate-400" data-i18n="labelDirection">Direction</label>
+              <select id="direction" class="select w-full rounded-2xl px-4 py-3 mt-1">
+                <option value="income" data-i18n="optIncome">Income</option>
+                <option value="expense" data-i18n="optExpense">Expense</option>
+                <option value="transfer" data-i18n="optTransfer">Transfer</option>
+                <option value="draw" data-i18n="optDraw">Draw</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs text-slate-400" data-i18n="labelAccount">Account</label>
+              <select id="account" class="select w-full rounded-2xl px-4 py-3 mt-1">
+                <option value="Bank" data-i18n="optBank">Bank</option>
+                <option value="Cash" data-i18n="optCash">Cash</option>
+                <option value="Tax Reserve" data-i18n="optTaxReserve">Tax Reserve</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs text-slate-400" data-i18n="labelProject">Project</label>
+              <select id="project" class="select w-full rounded-2xl px-4 py-3 mt-1">
+                <option value="">—</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs text-slate-400" data-i18n="labelCategory">Category</label>
+              <select id="category" class="select w-full rounded-2xl px-4 py-3 mt-1">
+                <option value="Partner Draw A" id="optPartnerDrawA">Partner A</option>
+                <option value="Partner Draw B" id="optPartnerDrawB">Partner B</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs text-slate-400" data-i18n="labelStatus">Status</label>
+              <select id="status" class="select w-full rounded-2xl px-4 py-3 mt-1">
+                <option value="pending" data-i18n="statusPending">pending</option>
+                <option value="verified" data-i18n="statusVerified">verified</option>
+                <option value="rejected" data-i18n="statusRejected">rejected</option>
+              </select>
+            </div>
+            <div class="md:col-span-2">
+              <label class="text-xs text-slate-400" data-i18n="labelDescription">Description</label>
+              <input id="description" class="input w-full rounded-2xl px-4 py-3 mt-1" placeholder="Short note" />
+            </div>
+            <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="text-xs text-slate-400" data-i18n="labelCreator">Recorded by</label>
+                <input id="creator" class="input w-full rounded-2xl px-4 py-3 mt-1" readonly />
+              </div>
+              <div>
+                <label class="text-xs text-slate-400" data-i18n="labelReceipt">Receipt / Photo</label>
+                <input id="receipt" type="file" accept="image/*,.pdf" class="input w-full rounded-2xl px-4 py-2.5 mt-1 file:mr-4 file:rounded-xl file:border-0 file:bg-sky-600 file:px-4 file:py-2 file:text-white" />
+              </div>
+            </div>
+            <div class="md:col-span-2 flex flex-wrap gap-3">
+              <button id="saveTx" class="px-5 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 font-semibold" data-i18n="btnSaveTx">Save transaction</button>
+              <button id="resetTx" class="px-5 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 font-semibold" data-i18n="btnReset">Reset</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass border border-slate-800 rounded-3xl p-5 card">
+          <h3 class="text-lg font-bold mb-4" data-i18n="txPreviewTitle">Preview</h3>
+          <div id="preview" class="space-y-3 text-sm"></div>
+          <div class="mt-6 rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
+            <div class="text-xs text-slate-400 mb-2" data-i18n="taxReserveCalc">Tax reserve from income</div>
+            <div class="text-2xl font-black text-amber-400" id="taxCalc">0.00 PLN</div>
+          </div>
+        </div>
+
+        <div id="deleteRequestsSection" class="xl:col-span-3 hidden glass border border-amber-700/40 rounded-3xl p-5 card">
+          <h3 class="text-lg font-bold mb-3" data-i18n="deleteRequestsTitle">Pending delete requests</h3>
+          <div id="deleteRequestsList" class="space-y-2"></div>
+        </div>
+
+        <div class="xl:col-span-3 glass border border-slate-800 rounded-3xl p-5 card">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-bold" data-i18n="txListTitle">Transaction list</h3>
+            <div class="text-xs text-slate-400" id="tx-list-sub">latest first</div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label class="text-xs text-slate-400" data-i18n="filterProject">Filter by project</label>
+              <select id="filterProject" class="select w-full rounded-2xl px-4 py-3 mt-1">
+                <option value="" data-i18n="optAll">All</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs text-slate-400" data-i18n="filterStatus">Filter by status</label>
+              <select id="filterStatus" class="select w-full rounded-2xl px-4 py-3 mt-1">
+                <option value="" data-i18n="optAll">All</option>
+                <option value="pending" data-i18n="statusPending">pending</option>
+                <option value="verified" data-i18n="statusVerified">verified</option>
+                <option value="rejected" data-i18n="statusRejected">rejected</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Desktop/tablet: full table. Hidden below md so Status/Actions
+               are never scrolled out of view on narrow phones — see the
+               card list below for small screens instead. -->
+          <div class="hidden md:block overflow-auto scrollbar max-h-[560px] rounded-2xl border border-slate-800">
+            <table class="min-w-full text-sm">
+              <thead class="bg-slate-950/80 text-slate-400 sticky top-0">
+                <tr>
+                  <th class="text-left p-3" data-i18n="thDate">Date</th>
+                  <th class="text-left p-3" data-i18n="thProject">Project</th>
+                  <th class="text-left p-3" data-i18n="thAmount">Amount</th>
+                  <th class="text-left p-3" data-i18n="thType">Type</th>
+                  <th class="text-left p-3" data-i18n="thStatus">Status</th>
+                  <th class="text-left p-3" data-i18n="thDescription">Description</th>
+                  <th class="text-left p-3" data-i18n="thActions">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="txTable" class="divide-y divide-slate-800 bg-slate-950/40"></tbody>
+            </table>
+          </div>
+          <!-- Mobile: stacked cards, every field and action always visible,
+               no horizontal scrolling required. -->
+          <div id="txCards" class="md:hidden space-y-2 max-h-[560px] overflow-auto scrollbar"></div>
+        </div>
+      </section>
+
+      <section id="view-projects" class="xl:col-span-12 hidden glass border border-slate-800 rounded-3xl p-5 card">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-lg font-bold" data-i18n="projectsTitle">Projects</h2>
+            <p class="text-xs text-slate-400" data-i18n="projectsSubtitle">See which object is profitable and which one eats margin.</p>
+          </div>
+          <button id="btnNewProject" class="px-4 py-2 rounded-2xl bg-indigo-600 hover:bg-indigo-500 font-semibold" data-i18n="btnNewProject">+ New project</button>
+        </div>
+        <div id="projectsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+      </section>
+
+      <section id="view-receipts" class="xl:col-span-12 hidden glass border border-slate-800 rounded-3xl p-5 card">
+        <h2 class="text-lg font-bold mb-4" data-i18n="receiptsTitle">Receipts</h2>
+        <div id="receiptsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+      </section>
+
+      <section id="view-monthly" class="xl:col-span-12 hidden glass border border-slate-800 rounded-3xl p-5 card">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
+          <div>
+            <h2 class="text-lg font-bold" data-i18n="monthlyTitle">Monthly close</h2>
+            <p class="text-xs text-slate-400" data-i18n="monthlySubtitle">Export the report as PDF or Excel, send it to both partners, then lock the month.</p>
+          </div>
+          <div class="flex flex-wrap gap-3">
+            <button id="exportPdf" class="px-4 py-2 rounded-2xl bg-sky-600 hover:bg-sky-500 font-semibold" data-i18n="btnExportPdf">Export PDF</button>
+            <button id="exportExcel" class="px-4 py-2 rounded-2xl bg-sky-700 hover:bg-sky-600 font-semibold" data-i18n="btnExportExcel">Export Excel</button>
+            <button id="exportPdfByProject" class="px-4 py-2 rounded-2xl bg-indigo-600 hover:bg-indigo-500 font-semibold" data-i18n="btnExportPdfByProject">Export PDF by project</button>
+            <button id="exportExcelByProject" class="px-4 py-2 rounded-2xl bg-indigo-700 hover:bg-indigo-600 font-semibold" data-i18n="btnExportExcelByProject">Export Excel by project</button>
+            <button id="sendReport" class="px-4 py-2 rounded-2xl bg-emerald-600 hover:bg-emerald-500 font-semibold" data-i18n="btnSendReport">Send to partners</button>
+            <button id="lockMonth" class="px-4 py-2 rounded-2xl bg-rose-600 hover:bg-rose-500 font-semibold" data-i18n="btnLockMonth">Lock month</button>
+            <button id="unlockMonth" class="hidden px-4 py-2 rounded-2xl bg-slate-700 hover:bg-slate-600 font-semibold" data-i18n="btnUnlockMonth">Unlock month</button>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div class="rounded-2xl bg-slate-950/60 border border-slate-800 p-4"><div class="text-xs text-slate-400" data-i18n="monthlyIncome">Income</div><div class="text-2xl font-black text-emerald-400 mt-1" id="monthIncome">18,640 PLN</div></div>
+          <div class="rounded-2xl bg-slate-950/60 border border-slate-800 p-4"><div class="text-xs text-slate-400" data-i18n="monthlyExpenses">Expenses</div><div class="text-2xl font-black text-rose-400 mt-1" id="monthExpense">9,740 PLN</div></div>
+          <div class="rounded-2xl bg-slate-950/60 border border-slate-800 p-4"><div class="text-xs text-slate-400" data-i18n="monthlyTax">Tax reserve</div><div class="text-2xl font-black text-amber-400 mt-1" id="monthTax">1,864 PLN</div><div id="taxRateBadgeMonthly" class="text-[11px] text-slate-500 mt-1"></div></div>
+          <div class="rounded-2xl bg-slate-950/60 border border-slate-800 p-4"><div class="text-xs text-slate-400" data-i18n="monthlyDistrib">Distributable</div><div class="text-2xl font-black text-sky-400 mt-1" id="monthDistrib">7,036 PLN</div></div>
+        </div>
+        <div class="mt-4 rounded-2xl border border-slate-800 bg-slate-950/60 p-4 text-sm text-slate-300" id="monthlySummary"></div>
+        <div id="monthLockedBadge" class="hidden mt-3 rounded-2xl border border-amber-700/40 bg-amber-500/10 p-3 text-sm text-amber-400" data-i18n="monthLockedBadge">This month is locked — no further changes are possible.</div>
+      </section>
+
+      <section id="view-settings" class="xl:col-span-12 hidden grid grid-cols-1 xl:grid-cols-2 gap-6">
+        <div class="glass border border-slate-800 rounded-3xl p-5 card space-y-4">
+          <h2 class="text-lg font-bold" data-i18n="settingsPartnerTitle">Partner settings</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div><label class="text-xs text-slate-400" data-i18n="partnerANameLabel">Partner A name</label><input id="setNameA" class="input w-full rounded-2xl px-4 py-3 mt-1" value="Partner A"></div>
+            <div><label class="text-xs text-slate-400" data-i18n="partnerBNameLabel">Partner B name</label><input id="setNameB" class="input w-full rounded-2xl px-4 py-3 mt-1" value="Partner B"></div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div><label class="text-xs text-slate-400" data-i18n="shareALabel">Share A %</label><input id="shareA" type="range" min="0" max="100" value="50" class="w-full"></div>
+            <div><label class="text-xs text-slate-400" data-i18n="shareBLabel">Share B %</label><div id="shareDisplay" class="text-2xl font-black text-indigo-400 mt-2">50 / 50</div></div>
+          </div>
+          <div class="pt-2 border-t border-slate-800 mt-2">
+            <p class="text-sm font-semibold" data-i18n="inviteTitle">Invite your partner</p>
+            <p class="text-xs text-slate-400 mb-2" data-i18n="inviteDesc">Generate a one-time link. Whoever opens it and signs up joins this same workspace instead of creating their own.</p>
+            <button id="btnGenerateInvite" class="px-4 py-2 rounded-2xl bg-indigo-600 hover:bg-indigo-500 font-semibold text-sm" data-i18n="btnGenerateInvite">Generate invite link</button>
+            <p id="inviteMemberNote" class="text-xs text-slate-400 hidden" data-i18n="inviteMemberNote">You joined this workspace via an invite from the owner.</p>
+            <div id="inviteLinkBox" class="hidden mt-3 flex flex-col sm:flex-row gap-2">
+              <input id="inviteLinkInput" class="input w-full rounded-2xl px-4 py-2.5 text-sm" readonly>
+              <button id="btnCopyInvite" class="px-4 py-2 rounded-2xl bg-slate-800 hover:bg-slate-700 font-semibold text-sm" data-i18n="btnCopyInvite">Copy</button>
+            </div>
+            <p id="inviteNote" class="text-xs text-emerald-400 mt-2 hidden"></p>
+          </div>
+        </div>
+        <div class="glass border border-slate-800 rounded-3xl p-5 card space-y-4">
+          <h2 class="text-lg font-bold" data-i18n="settingsOrgTitle">Organization settings</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div><label class="text-xs text-slate-400" data-i18n="baseCurrencyLabel">Base currency</label><select id="currency" class="select w-full rounded-2xl px-4 py-3 mt-1"><option>PLN</option><option>EUR</option><option>USD</option><option>UAH</option></select></div>
+            <div><label class="text-xs text-slate-400" data-i18n="taxRateLabel">Tax reserve rate</label><input id="taxRate" type="number" value="10" min="0" max="100" class="input w-full rounded-2xl px-4 py-3 mt-1"><p id="taxRateOwnerOnlyNote" class="text-xs text-slate-500 mt-1 hidden" data-i18n="taxRateOwnerOnlyNote">Only the workspace owner can change this.</p></div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div><label class="text-xs text-slate-400" data-i18n="defaultLangLabel">Default language</label><select id="defaultLang" class="select w-full rounded-2xl px-4 py-3 mt-1"><option value="en">English</option><option value="pl">Polski</option><option value="uk">Українська</option></select></div>
+            <div><label class="text-xs text-slate-400" data-i18n="storageModeLabel">Storage mode</label><div class="mt-2 text-sm text-slate-300" data-i18n="storageModeValue">Synced to your account (Supabase)</div></div>
+          </div>
+        </div>
+
+        <div class="xl:col-span-2 glass border border-slate-800 rounded-3xl p-5 card space-y-4">
+          <h2 class="text-lg font-bold" data-i18n="categoriesTitle">Categories</h2>
+          <p class="text-xs text-slate-400" data-i18n="categoriesSubtitle">Add, rename, or remove the categories shown in the transaction form.</p>
+          <div class="flex flex-col md:flex-row gap-2">
+            <input id="newCategoryName" class="input w-full rounded-2xl px-4 py-2.5 mt-1 md:mt-0" data-i18n-placeholder="newCategoryNamePlaceholder" placeholder="Category name">
+            <select id="newCategoryDirection" class="select rounded-2xl px-4 py-2.5">
+              <option value="expense" data-i18n="dirExpense">Expense</option>
+              <option value="income" data-i18n="dirIncome">Income</option>
+            </select>
+            <button id="btnAddCategory" class="px-4 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 font-semibold shrink-0" data-i18n="btnAddCategory">+ Add</button>
+          </div>
+          <div id="categoriesList" class="space-y-2"></div>
+        </div>
+
+        <div class="xl:col-span-2 glass border border-slate-800 rounded-3xl p-5 card space-y-4">
+          <h2 class="text-lg font-bold flex items-center gap-2">
+            <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+            <span data-i18n="settingsSecurityTitle">Security & sync</span>
+          </h2>
+
+          <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-950/60 border border-slate-800">
+            <div>
+              <p class="text-sm font-semibold" data-i18n="themeTitle">Appearance</p>
+              <p class="text-xs text-slate-400" data-i18n="themeDesc">Switch between dark and light theme on this device.</p>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer shrink-0 ml-4">
+              <input type="checkbox" id="themeToggle" class="sr-only peer">
+              <div class="w-11 h-6 bg-slate-700 rounded-full peer peer-checked:bg-indigo-600 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+            </label>
+          </div>
+
+          <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-950/60 border border-slate-800">
+            <div>
+              <p class="text-sm font-semibold" data-i18n="pinTitle">Device PIN lock</p>
+              <p class="text-xs text-slate-400" data-i18n="pinDesc">Optional 4-digit code for this device only. Local convenience lock, not a substitute for account security.</p>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer shrink-0 ml-4">
+              <input type="checkbox" id="pinToggle" class="sr-only peer">
+              <div class="w-11 h-6 bg-slate-700 rounded-full peer peer-checked:bg-indigo-600 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+            </label>
+          </div>
+
+          <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-950/60 border border-slate-800">
+            <div>
+              <p class="text-sm font-semibold" data-i18n="syncTitle">Cloud sync between partners</p>
+              <p class="text-xs text-slate-400" data-i18n="syncDesc">Active — transactions sync live between partners via Supabase.</p>
+            </div>
+            <span class="shrink-0 ml-4 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-semibold border border-emerald-500/20" data-i18n="syncActiveBadge">Active</span>
+          </div>
+
+          <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-950/60 border border-slate-800">
+            <div>
+              <p class="text-sm font-semibold" data-i18n="helpFooterTitle">Help & guide</p>
+              <p class="text-xs text-slate-400" data-i18n="helpFooterDesc">Replay the quick tour, or read the full written guide.</p>
+            </div>
+            <div class="shrink-0 ml-4 flex flex-col gap-2">
+              <button id="btnReplayTour" class="px-4 py-2 rounded-2xl bg-slate-800 hover:bg-slate-700 font-semibold text-sm" data-i18n="btnReplayTour">Replay tour</button>
+              <button id="btnShowWhatsNew" class="px-4 py-2 rounded-2xl bg-slate-800 hover:bg-slate-700 font-semibold text-sm" data-i18n="whatsNewTitle">What's new</button>
+            </div>
+          </div>
+
+          <div class="pt-2 flex flex-col sm:flex-row gap-3">
+            <button id="btnResetDb" class="flex-1 px-4 py-2.5 rounded-2xl bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500/20 font-semibold text-sm" data-i18n="btnResetDb">Reset local data</button>
+            <button id="btnSettingsLock" class="flex-1 px-4 py-2.5 rounded-2xl bg-slate-800 hover:bg-slate-700 font-semibold text-sm">🔒 Settings locked — tap to unlock</button>
+          </div>
+          <p class="text-xs text-slate-500" data-i18n="settingsLockHint">Settings are locked by default so you don't change them by accident. Unlock to edit, then it locks again next time you open Settings.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="mt-8 pt-6 border-t border-slate-800 text-xs text-slate-500 space-y-2">
+      <p data-i18n="footerDisclaimer">SplitBooks is a bookkeeping and expense-tracking tool for business partners. It does not provide financial, tax, investment, or legal advice, and is not a payment processor or licensed financial institution. You are responsible for your own tax and legal compliance.</p>
+      <div class="flex gap-4 flex-wrap">
+        <a href="/pricing.html" class="hover:text-slate-300 underline" data-i18n="footerPricing">Pricing</a>
+        <a href="/privacy.html" class="hover:text-slate-300 underline" data-i18n="footerPrivacy">Privacy Policy</a>
+        <a href="/terms.html" class="hover:text-slate-300 underline" data-i18n="footerTerms">Terms of Use</a>
+        <a href="/help.html" class="hover:text-slate-300 underline" data-i18n="footerHelp">Guide</a>
+        <a href="mailto:support@ai-consilium.com" class="hover:text-slate-300 underline">support@ai-consilium.com</a>
+      </div>
+    </footer>
+  </div>
+
+  <div id="receiptModal" class="fixed inset-0 modal-backdrop hidden items-center justify-center p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-lg w-full p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-bold" data-i18n="receiptModalTitle">Receipt preview</h3>
+        <button id="closeReceiptModal" class="px-3 py-1 rounded-xl bg-slate-800">×</button>
+      </div>
+      <div id="receiptModalBody" class="text-sm text-slate-300"></div>
+    </div>
+  </div>
+
+  <div id="editModal" class="fixed inset-0 modal-backdrop hidden items-center justify-center p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-bold" data-i18n="editTransactionTitle">Edit transaction</h3>
+        <button id="closeEditModal" class="px-3 py-1 rounded-xl bg-slate-800">×</button>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div><label class="text-xs text-slate-400" data-i18n="labelDate">Date</label><input id="editDate" type="date" class="input w-full rounded-2xl px-4 py-3 mt-1"></div>
+        <div><label class="text-xs text-slate-400" data-i18n="labelAmount">Amount</label><input id="editAmount" type="number" class="input w-full rounded-2xl px-4 py-3 mt-1"></div>
+        <div><label class="text-xs text-slate-400" data-i18n="labelProject">Project</label><input id="editProject" class="input w-full rounded-2xl px-4 py-3 mt-1"></div>
+        <div><label class="text-xs text-slate-400" data-i18n="labelDirection">Direction</label>
+          <select id="editDirection" class="select w-full rounded-2xl px-4 py-3 mt-1">
+            <option value="income" data-i18n="optIncome">Income</option>
+            <option value="expense" data-i18n="optExpense">Expense</option>
+            <option value="transfer" data-i18n="optTransfer">Transfer</option>
+            <option value="draw" data-i18n="optDraw">Draw</option>
+          </select>
+        </div>
+        <div><label class="text-xs text-slate-400" data-i18n="labelCategory">Category</label>
+          <select id="editCategory" class="select w-full rounded-2xl px-4 py-3 mt-1">
+            <option value="Partner Draw A" id="editOptPartnerDrawA">Partner A</option>
+            <option value="Partner Draw B" id="editOptPartnerDrawB">Partner B</option>
+          </select>
+        </div>
+        <div><label class="text-xs text-slate-400" data-i18n="labelStatus">Status</label>
+          <select id="editStatus" class="select w-full rounded-2xl px-4 py-3 mt-1">
+            <option value="pending" data-i18n="statusPending">pending</option>
+            <option value="verified" data-i18n="statusVerified">verified</option>
+            <option value="rejected" data-i18n="statusRejected">rejected</option>
+          </select>
+        </div>
+        <div class="md:col-span-2 flex gap-3 mt-2">
+          <button id="saveEdit" class="px-5 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 font-semibold" data-i18n="btnSaveChanges">Save changes</button>
+          <button id="deleteEdit" class="px-5 py-3 rounded-2xl bg-rose-600 hover:bg-rose-500 font-semibold" data-i18n="btnDeleteTx">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="projectTxModal" class="fixed inset-0 modal-backdrop hidden items-center justify-center p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full p-6 max-h-[90dvh] max-h-[90vh] flex flex-col overflow-hidden">
+      <div class="flex justify-between items-center mb-4 shrink-0">
+        <h3 class="text-lg font-bold" id="projectTxModalTitle">Project</h3>
+        <button id="closeProjectTxModal" class="px-3 py-1 rounded-xl bg-slate-800">×</button>
+      </div>
+      <div id="projectTxModalSummary" class="text-xs text-slate-500 mb-4 shrink-0"></div>
+      <div id="projectTxModalSplit" class="mb-4 shrink-0 max-h-[45dvh] overflow-y-auto scrollbar"></div>
+      <div id="projectTxModalList" class="space-y-2 flex-1 min-h-0 overflow-y-auto scrollbar"></div>
+    </div>
+  </div>
+
+  <div id="withdrawModal" class="fixed inset-0 modal-backdrop hidden items-center justify-center p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-bold" id="withdrawModalTitle">Withdraw</h3>
+        <button id="closeWithdrawModal" class="px-3 py-1 rounded-xl bg-slate-800">×</button>
+      </div>
+      <div class="space-y-4">
+        <div><label class="text-xs text-slate-400" data-i18n="labelAmount">Amount</label><input id="withdrawAmount" type="number" class="input w-full rounded-2xl px-4 py-3 mt-1"></div>
+        <div><label class="text-xs text-slate-400" data-i18n="labelAccount">Account</label>
+          <select id="withdrawAccount" class="select w-full rounded-2xl px-4 py-3 mt-1">
+            <option value="Bank" data-i18n="optBank">Bank</option>
+            <option value="Cash" data-i18n="optCash">Cash</option>
+          </select>
+        </div>
+        <div><label class="text-xs text-slate-400" data-i18n="labelDescription">Description</label><input id="withdrawDescription" class="input w-full rounded-2xl px-4 py-3 mt-1"></div>
+        <button id="submitWithdraw" class="w-full px-5 py-3 rounded-2xl bg-rose-600 hover:bg-rose-500 font-semibold" data-i18n="withdrawBtn">Withdraw</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="drawHistoryModal" class="fixed inset-0 modal-backdrop hidden items-center justify-center p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-bold" id="drawHistoryModalTitle">Withdrawal history</h3>
+        <button id="closeDrawHistoryModal" class="px-3 py-1 rounded-xl bg-slate-800">×</button>
+      </div>
+      <div id="drawHistoryModalList" class="space-y-2 max-h-[420px] overflow-auto scrollbar"></div>
+    </div>
+  </div>
+
+  <div id="whatsNewModal" class="fixed inset-0 modal-backdrop hidden items-center justify-center p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-lg w-full p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-bold" data-i18n="whatsNewTitle">What's new</h3>
+        <button id="closeWhatsNewModal" class="px-3 py-1 rounded-xl bg-slate-800">×</button>
+      </div>
+      <div id="whatsNewList" class="space-y-3 max-h-[420px] overflow-auto scrollbar"></div>
+      <button id="whatsNewGotIt" class="mt-4 w-full px-5 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 font-semibold" data-i18n="whatsNewGotIt">Got it</button>
+    </div>
+  </div>
+
+  <script>
+    const i18n = {
+      en: {
+        uiState:'Live · synced', appTitle:'SplitBooks', subtitle:'Shared finance control for partners, projects, receipts and monthly closing.',
+        activeUserLabel:'Signed in as', authSubtitle:'Sign in to access your shared workspace', btnLogin:'Log In', btnSignup:'Sign Up', btnLogout:'Sign out',
+        btnForgotPassword:'Forgot password?', forgotPasswordTitle:'Reset your password', forgotPasswordDesc:"Enter your email — we'll send a link to set a new password.", btnSendResetLink:'Send reset link', resetPasswordTitle:'Set a new password', btnSaveNewPassword:'Save new password', placeholderConfirmPassword:'Confirm password (for Sign Up)', placeholderNewPassword:'New password',
+        monthlyCloseBtn:'Monthly Close', tabDashboard:'Dashboard', tabTransactions:'Transactions', tabProjects:'Projects', tabReceipts:'Receipts', tabMonthly:'Monthly Close', tabSettings:'Settings',
+        mIncomeLabel:'Total Income', mExpenseLabel:'Total Expenses', mTaxLabel:'Tax Reserve', mProfitLabel:'Net Profit', cashflowTitle:'Cashflow overview', cashflowSubtitle:'Bank, cash and reserve balances in one place.', currentMonth:'Current month',
+        bankLabel:'Bank Account', cashLabel:'Cash Box', reserveLabel:'Virtual Tax Buffer', splitTitle:'Partner balance', earnedShare:'Earned share', withdrawnDraws:'Withdrawn draws', remainingLabel:'Remaining', withdrawBtn:'Withdraw', drawHistoryTitle:'Withdrawal history', noWithdrawals:'No withdrawals yet', projSummaryIncome:'income', projSummaryCost:'cost', projSummaryNet:'net', projSummaryTxCount:'transaction(s)', projNoTransactions:'No transactions', projSplitTitle:'Partner split', projSplitLabor:'Paid for work', projSplitShare:'Profit share', projSplitTotal:'Total for project', projSplitForecastNote:'figures in ( ) include pending transactions',
+        whatsNewTitle:"What's new", whatsNewGotIt:'Got it', whatsNewWithdrawTitle:'Withdraw button on partner balances', whatsNewWithdrawDesc:'Each partner balance card now has a Withdraw button, plus a clickable history showing who withdrew how much and when.', whatsNewProjectDetailTitle:'Tap a project to see its transactions', whatsNewProjectDetailDesc:'Click any project card to open the full list of transactions filed under it.',
+        pendingTxTitle:'Pending — not yet paid', pendingTxSubtitle:"Recorded but not verified. These don't affect any balance or profit yet — mark as paid once the money actually moves.", noPendingTx:'Nothing pending — everything recorded has been verified.', btnMarkPaid:'Mark as paid', thDescription:'Description',
+        txTitle:'Transactions', txSubtitle:'Create income, expense, draw, and verify with receipts.', txPreviewTitle:'Preview', txListTitle:'Transaction list',
+        thDate:'Date', thProject:'Project', thAmount:'Amount', thType:'Type', thStatus:'Status', thActions:'Actions',
+        labelDate:'Date', labelAmount:'Amount', labelDirection:'Direction', labelAccount:'Account', labelProject:'Project', labelCategory:'Category', labelStatus:'Status', labelDescription:'Description', labelCreator:'Recorded by', labelReceipt:'Receipt / Photo',
+        phAmount:'0.00', phProject:'e.g. Kowalski / Floriańska 12', phDescription:'Short note',
+        optAll:'All', optIncome:'Income', optExpense:'Expense', optTransfer:'Transfer', optDraw:'Draw', optBank:'Bank', optCash:'Cash', optTaxReserve:'Tax Reserve',
+        catIncome:'Income', catMaterials:'Materials', catFuel:'Fuel', catLaborEmployee:'Labor Employee', catAccounting:'Accounting', catMarketing:'Marketing', catEquipment:'Equipment',
+        categoriesTitle:'Categories', categoriesSubtitle:'Add, rename, or remove the categories shown in the transaction form.', newCategoryNamePlaceholder:'Category name', dirIncome:'Income', dirExpense:'Expense', btnAddCategory:'+ Add', categoryExists:'A category with this name already exists.', categoryInUseError:'Cannot delete: this category is used by existing transactions.', deleteCategoryConfirm:'Delete category "{name}"? This cannot be undone.', deleteCategoryTitle:'Delete category', categoryDeleted:'Category deleted.', noCategories:'No categories yet',
+        statusPending:'pending', statusVerified:'verified', statusRejected:'rejected',
+        btnSaveTx:'Save transaction', btnReset:'Reset', btnNewProject:'+ New project', btnExportPdf:'Export PDF', btnExportExcel:'Export Excel', btnExportPdfByProject:'Export PDF by project', btnExportExcelByProject:'Export Excel by project', grandTotalLabel:'Grand total', btnSendReport:'Send to partners', btnLockMonth:'Lock month', btnUnlockMonth:'Unlock month',
+        projectsTitle:'Projects', projectsSubtitle:'See which object is profitable and which one eats margin.', noProjects:'No projects yet', receiptsTitle:'Receipts', noReceipts:'No receipts yet', receiptLoading:'Loading…',
+        monthlyTitle:'Monthly close', monthlySubtitle:'Export the report as PDF or Excel, send it to both partners, then lock the month.', monthlyIncome:'Income', monthlyExpenses:'Expenses', monthlyTax:'Tax reserve', monthlyDistrib:'Distributable',
+        settingsPartnerTitle:'Partner settings', settingsOrgTitle:'Organization settings', partnerANameLabel:'Partner A name', partnerBNameLabel:'Partner B name', shareALabel:'Share A %', shareBLabel:'Share B %',
+        baseCurrencyLabel:'Base currency', taxRateLabel:'Tax reserve rate', defaultLangLabel:'Default language', storageModeLabel:'Storage mode', storageModeValue:'Synced to your account (Supabase)',
+        filterProject:'Filter by project', filterStatus:'Filter by status', taxReserveCalc:'Tax reserve from income', receiptModalTitle:'Receipt preview', editTransactionTitle:'Edit transaction', btnSaveChanges:'Save changes', btnDeleteTx:'Delete',
+        settingsSecurityTitle:'Security & sync', themeTitle:'Appearance', themeDesc:'Switch between dark and light theme on this device.', pinTitle:'Device PIN lock', pinDesc:'Optional 4-digit code for this device only. Local convenience lock, not a substitute for account security.',
+        syncTitle:'Cloud sync between partners', syncDesc:'Active — transactions sync live between partners via Supabase.', syncActiveBadge:'Active',
+        btnResetDb:'Delete all transactions', btnSettingsLocked:'🔒 Settings locked — tap to unlock', btnSettingsUnlocked:'🔓 Settings unlocked — tap to lock',
+        settingsLockHint:"Settings are locked by default so you don't change them by accident. Unlock to edit, then it locks again next time you open Settings.", confirmReset:'Reset all local data for this session?',
+        inviteTitle:'Invite your partner', inviteDesc:'Generate a one-time link. Whoever opens it and signs up joins this same workspace instead of creating their own.',
+        btnGenerateInvite:'Generate invite link', btnCopyInvite:'Copy', inviteCopied:'Link copied', inviteMemberNote:'You joined this workspace via an invite from the owner.',
+        deleteRequestsTitle:'Pending delete requests', btnApprove:'Approve', btnReject:'Reject',
+        deleteRequestConfirm:"You don't have permission to delete this directly. Send a delete request to the workspace owner for approval?",
+        deleteRequestSent:'Delete request sent to the owner.', deleteRequestDuplicate:'A delete request for this transaction is already pending.',
+        reportGenerated:'Report downloaded.',captchaNotReady:'Security check is still loading, please try again in a moment.',repTitle:'Report', repRate:'rate', repTotalRow:'TOTAL', monthLockConfirm:'Lock the current month? No further changes will be possible for transactions dated in this month.',
+        monthAlreadyLocked:'This month is already locked.', monthLockedBadge:'This month is locked — no further changes are possible.', monthLockedSuccess:'Month locked.',
+        monthUnlockConfirm:'Unlock the current month? Transactions dated in this month can be added and edited again.', monthUnlockedSuccess:'Month unlocked.',
+        taxRateBadgeLabel:'Rate', taxRateOwnerOnlyNote:'Only the workspace owner can change this.', taxRateSaved:'Tax rate saved.',
+        newProjectPrompt:'Project name:', projectExists:'A project with this name already exists.', newCategoryPrompt:'Category name:',
+        deleteProjectConfirm:'Delete project "{name}"? This cannot be undone.', projectDeleted:'Project deleted.', deleteProjectTitle:'Delete project',
+        footerDisclaimer:'SplitBooks is a bookkeeping and expense-tracking tool for business partners. It does not provide financial, tax, investment, or legal advice, and is not a payment processor or licensed financial institution. You are responsible for your own tax and legal compliance.',
+        footerPrivacy:'Privacy Policy', footerTerms:'Terms of Use', footerPricing:'Pricing', footerHelp:'Guide', footerSupport:'Support',
+        tourWelcomeTitle:'Quick tour of SplitBooks', tourWelcomeDesc:"Take 30 seconds to see where everything is. You can skip anytime — find this tour again in Settings.",
+        tourDashboardTitle:'Dashboard', tourDashboardDesc:'Your overview — income, expenses, tax reserve, and net profit at a glance. Partner balances live here too, with a Withdraw button and a clickable history of who withdrew how much.',
+        tourTransactionsTitle:'Transactions', tourTransactionsDesc:'Add income, expenses, transfers, and partner draws here, and attach receipts.',
+        tourProjectsTitle:'Projects', tourProjectsDesc:'Group transactions by job or project to see which one is actually profitable. Tap any project card to open the full list of its transactions.',
+        tourReceiptsTitle:'Receipts', tourReceiptsDesc:'All attached receipts and photos in one searchable place.',
+        tourMonthlyTitle:'Monthly Close', tourMonthlyDesc:'Export a report, send it to your partner, then lock the month so nothing changes retroactively.',
+        tourSettingsTitle:'Settings', tourSettingsDesc:'Tax rate, partner names, theme, invites, and security all live here.',
+        tourNext:'Next', tourBack:'Back', tourSkip:'Skip', tourDone:'Got it', tourStepOf:'Step {n} of {total}', btnReplayTour:'Replay tour',
+        helpFooterTitle:'Help & guide', helpFooterDesc:'Replay the quick tour, or read the full written guide.'
+      },
+      pl: {
+        uiState:'Na żywo · zsynchronizowane', appTitle:'SplitBooks', subtitle:'Wspólny system finansowy dla partnerów, projektów, paragonów i zamknięcia miesiąca.',
+        activeUserLabel:'Zalogowano jako', authSubtitle:'Zaloguj się, aby uzyskać dostęp do wspólnego konta', btnLogin:'Zaloguj się', btnSignup:'Zarejestruj się', btnLogout:'Wyloguj się',
+        btnForgotPassword:'Nie pamiętasz hasła?', forgotPasswordTitle:'Zresetuj hasło', forgotPasswordDesc:'Podaj swój e-mail — wyślemy link do ustawienia nowego hasła.', btnSendResetLink:'Wyślij link resetujący', resetPasswordTitle:'Ustaw nowe hasło', btnSaveNewPassword:'Zapisz nowe hasło', placeholderConfirmPassword:'Potwierdź hasło (przy rejestracji)', placeholderNewPassword:'Nowe hasło',
+        monthlyCloseBtn:'Zamknięcie miesiąca', tabDashboard:'Dashboard', tabTransactions:'Transakcje', tabProjects:'Projekty', tabReceipts:'Paragony', tabMonthly:'Zamknięcie miesiąca', tabSettings:'Ustawienia',
+        mIncomeLabel:'Przychody', mExpenseLabel:'Koszty', mTaxLabel:'Rezerwa podatkowa', mProfitLabel:'Zysk netto', cashflowTitle:'Przegląd przepływów pieniężnych', cashflowSubtitle:'Konto bankowe, kasa i rezerwa podatkowa w jednym miejscu.', currentMonth:'Bieżący miesiąc',
+        bankLabel:'Konto bankowe', cashLabel:'Kasa', reserveLabel:'Wirtualna rezerwa podatkowa', splitTitle:'Saldo partnerów', earnedShare:'Należna część', withdrawnDraws:'Wypłacone środki', remainingLabel:'Pozostało', withdrawBtn:'Wypłać', drawHistoryTitle:'Historia wypłat', noWithdrawals:'Brak wypłat', projSummaryIncome:'przychód', projSummaryCost:'koszt', projSummaryNet:'netto', projSummaryTxCount:'transakcji', projNoTransactions:'Brak transakcji', projSplitTitle:'Podział partnerów', projSplitLabor:'Wypłacono za pracę', projSplitShare:'Udział w zysku', projSplitTotal:'Razem za projekt', projSplitForecastNote:'kwoty w ( ) zawierają oczekujące transakcje',
+        whatsNewTitle:'Co nowego', whatsNewGotIt:'Rozumiem', whatsNewWithdrawTitle:'Przycisk Wypłać na saldzie wspólników', whatsNewWithdrawDesc:'Każda karta salda wspólnika ma teraz przycisk Wypłać oraz klikalną historię, kto i ile wypłacił i kiedy.', whatsNewProjectDetailTitle:'Kliknij projekt, aby zobaczyć jego transakcje', whatsNewProjectDetailDesc:'Kliknij kartę projektu, aby zobaczyć pełną listę transakcji przypisanych do niego.',
+        pendingTxTitle:'Oczekujące — jeszcze nie zapłacone', pendingTxSubtitle:'Zarejestrowane, ale niezweryfikowane. Nie wpływają jeszcze na żaden bilans ani zysk — oznacz jako zapłacone, gdy pieniądze faktycznie się przemieszczą.', noPendingTx:'Brak oczekujących — wszystko zostało zweryfikowane.', btnMarkPaid:'Oznacz jako zapłacone', thDescription:'Opis',
+        txTitle:'Transakcje', txSubtitle:'Dodawaj przychody, koszty, wypłaty i potwierdzaj paragonami.', txPreviewTitle:'Podgląd', txListTitle:'Lista transakcji',
+        thDate:'Data', thProject:'Projekt', thAmount:'Kwota', thType:'Typ', thStatus:'Status', thActions:'Akcje',
+        labelDate:'Data', labelAmount:'Kwota', labelDirection:'Kierunek', labelAccount:'Konto', labelProject:'Projekt', labelCategory:'Kategoria', labelStatus:'Status', labelDescription:'Opis', labelCreator:'Wprowadził', labelReceipt:'Paragon / Zdjęcie',
+        phAmount:'0.00', phProject:'np. Kowalski / Floriańska 12', phDescription:'Krótka notatka',
+        optAll:'Wszystkie', optIncome:'Przychód', optExpense:'Koszt', optTransfer:'Transfer', optDraw:'Wypłata', optBank:'Bank', optCash:'Kasa', optTaxReserve:'Rezerwa podatkowa',
+        catIncome:'Przychód', catMaterials:'Materiały', catFuel:'Paliwo', catLaborEmployee:'Pracownik', catAccounting:'Księgowość', catMarketing:'Marketing', catEquipment:'Sprzęt',
+        categoriesTitle:'Kategorie', categoriesSubtitle:'Dodawaj, zmieniaj nazwę lub usuwaj kategorie widoczne w formularzu transakcji.', newCategoryNamePlaceholder:'Nazwa kategorii', dirIncome:'Przychód', dirExpense:'Wydatek', btnAddCategory:'+ Dodaj', categoryExists:'Kategoria o tej nazwie już istnieje.', categoryInUseError:'Nie można usunąć: ta kategoria jest używana w istniejących transakcjach.', deleteCategoryConfirm:'Usunąć kategorię "{name}"? Tej operacji nie można cofnąć.', deleteCategoryTitle:'Usuń kategorię', categoryDeleted:'Kategoria usunięta.', noCategories:'Brak kategorii',
+        statusPending:'oczekuje', statusVerified:'potwierdzony', statusRejected:'odrzucony',
+        btnSaveTx:'Zapisz transakcję', btnReset:'Reset', btnNewProject:'+ Nowy projekt', btnExportPdf:'Eksportuj PDF', btnExportExcel:'Eksportuj Excel', btnExportPdfByProject:'Eksportuj PDF według projektów', btnExportExcelByProject:'Eksportuj Excel według projektów', grandTotalLabel:'Razem', btnSendReport:'Wyślij do partnerów', btnLockMonth:'Zablokuj miesiąc', btnUnlockMonth:'Odblokuj miesiąc',
+        projectsTitle:'Projekty', projectsSubtitle:'Zobacz, które zlecenie jest rentowne, a które zjada marżę.', noProjects:'Brak projektów', receiptsTitle:'Paragony', noReceipts:'Brak paragonów', receiptLoading:'Ładowanie…',
+        monthlyTitle:'Zamknięcie miesiąca', monthlySubtitle:'Wyeksportuj raport do PDF lub Excela, wyślij do partnerów i zablokuj miesiąc.', monthlyIncome:'Przychody', monthlyExpenses:'Koszty', monthlyTax:'Rezerwa podatkowa', monthlyDistrib:'Do podziału',
+        settingsPartnerTitle:'Ustawienia partnerów', settingsOrgTitle:'Ustawienia organizacji', partnerANameLabel:'Nazwa partnera A', partnerBNameLabel:'Nazwa partnera B', shareALabel:'Udział A %', shareBLabel:'Udział B %',
+        baseCurrencyLabel:'Waluta bazowa', taxRateLabel:'Stawka rezerwy podatkowej', defaultLangLabel:'Język domyślny', storageModeLabel:'Tryb zapisu', storageModeValue:'Synchronizowane z Twoim kontem (Supabase)',
+        filterProject:'Filtruj po projekcie', filterStatus:'Filtruj po statusie', taxReserveCalc:'Rezerwa podatkowa z przychodu', receiptModalTitle:'Podgląd paragonu', editTransactionTitle:'Edytuj transakcję', btnSaveChanges:'Zapisz zmiany', btnDeleteTx:'Usuń',
+        settingsSecurityTitle:'Bezpieczeństwo i synchronizacja', themeTitle:'Wygląd', themeDesc:'Przełącz między ciemnym a jasnym motywem na tym urządzeniu.', pinTitle:'Blokada PIN urządzenia', pinDesc:'Opcjonalny 4-cyfrowy kod tylko dla tego urządzenia. Lokalna wygoda, nie zabezpieczenie konta.',
+        syncTitle:'Synchronizacja w chmurze między partnerami', syncDesc:'Aktywna — transakcje synchronizują się na żywo między partnerami przez Supabase.', syncActiveBadge:'Aktywna',
+        btnResetDb:'Usuń wszystkie transakcje', btnSettingsLocked:'🔒 Ustawienia zablokowane — dotknij, aby odblokować', btnSettingsUnlocked:'🔓 Ustawienia odblokowane — dotknij, aby zablokować',
+        settingsLockHint:'Ustawienia są domyślnie zablokowane, aby uniknąć przypadkowej zmiany. Odblokuj, aby edytować — zablokują się ponownie przy następnym otwarciu.', confirmReset:'Zresetować wszystkie lokalne dane tej sesji?',
+        inviteTitle:'Zaproś partnera', inviteDesc:'Wygeneruj jednorazowy link. Osoba, która go otworzy i się zarejestruje, dołączy do tego samego workspace zamiast tworzyć własny.',
+        btnGenerateInvite:'Wygeneruj link zaproszenia', btnCopyInvite:'Kopiuj', inviteCopied:'Link skopiowany', inviteMemberNote:'Dołączyłeś do tego workspace dzięki zaproszeniu właściciela.',
+        deleteRequestsTitle:'Oczekujące prośby o usunięcie', btnApprove:'Zatwierdź', btnReject:'Odrzuć',
+        deleteRequestConfirm:'Nie masz uprawnień, by usunąć to bezpośrednio. Wysłać prośbę o usunięcie do właściciela workspace?',
+        deleteRequestSent:'Prośba o usunięcie została wysłana do właściciela.', deleteRequestDuplicate:'Prośba o usunięcie tej transakcji już oczekuje.',
+        reportGenerated:'Raport pobrany.',captchaNotReady:'Weryfikacja bezpieczeństwa jeszcze się ładuje, spróbuj ponownie za chwilę.',repTitle:'Raport', repRate:'stawka', repTotalRow:'RAZEM', monthLockConfirm:'Zablokować bieżący miesiąc? Zmiany transakcji z tego miesiąca nie będą już możliwe.',
+        monthAlreadyLocked:'Ten miesiąc jest już zablokowany.', monthLockedBadge:'Ten miesiąc jest zablokowany — zmiany nie są już możliwe.', monthLockedSuccess:'Miesiąc zablokowany.',
+        monthUnlockConfirm:'Odblokować bieżący miesiąc? Transakcje z tego miesiąca będzie można ponownie dodawać i edytować.', monthUnlockedSuccess:'Miesiąc odblokowany.',
+        taxRateBadgeLabel:'Stawka', taxRateOwnerOnlyNote:'Tylko właściciel workspace może to zmienić.', taxRateSaved:'Stawka podatkowa zapisana.',
+        newProjectPrompt:'Nazwa projektu:', projectExists:'Projekt o tej nazwie już istnieje.', newCategoryPrompt:'Nazwa kategorii:',
+        deleteProjectConfirm:'Usunąć projekt "{name}"? Tej operacji nie można cofnąć.', projectDeleted:'Projekt usunięty.', deleteProjectTitle:'Usuń projekt',
+        footerDisclaimer:'SplitBooks to narzędzie księgowe do śledzenia wspólnych wydatków dla wspólników. Nie świadczy usług doradztwa finansowego, podatkowego, inwestycyjnego ani prawnego i nie jest instytucją płatniczą ani licencjonowaną instytucją finansową. Użytkownik odpowiada za własne rozliczenia podatkowe i zgodność z prawem.',
+        footerPrivacy:'Polityka prywatności', footerTerms:'Regulamin', footerPricing:'Cennik', footerHelp:'Poradnik', footerSupport:'Pomoc',
+        tourWelcomeTitle:'Krótkie zwiedzanie SplitBooks', tourWelcomeDesc:'30 sekund, żeby zobaczyć, gdzie co jest. Możesz pominąć w każdej chwili — ten przewodnik znajdziesz też w Ustawieniach.',
+        tourDashboardTitle:'Panel', tourDashboardDesc:'Twój przegląd — przychody, koszty, rezerwa podatkowa i zysk netto na pierwszy rzut oka. Tu też jest saldo wspólników — przycisk Wypłać i klikalna historia, kto i ile wypłacił.',
+        tourTransactionsTitle:'Transakcje', tourTransactionsDesc:'Tu dodajesz przychody, koszty, przelewy i wypłaty dla wspólników oraz załączasz paragony.',
+        tourProjectsTitle:'Projekty', tourProjectsDesc:'Grupuj transakcje wg projektu, żeby zobaczyć, który faktycznie przynosi zysk. Kliknij kartę projektu, aby zobaczyć pełną listę jego transakcji.',
+        tourReceiptsTitle:'Paragony', tourReceiptsDesc:'Wszystkie załączone paragony i zdjęcia w jednym miejscu.',
+        tourMonthlyTitle:'Zamknięcie miesiąca', tourMonthlyDesc:'Wyeksportuj raport, wyślij do wspólnika, a potem zablokuj miesiąc, żeby nic się już nie zmieniło.',
+        tourSettingsTitle:'Ustawienia', tourSettingsDesc:'Stawka podatkowa, dane wspólników, motyw, zaproszenia i bezpieczeństwo — wszystko tutaj.',
+        tourNext:'Dalej', tourBack:'Wstecz', tourSkip:'Pomiń', tourDone:'Rozumiem', tourStepOf:'Krok {n} z {total}', btnReplayTour:'Pokaż przewodnik ponownie',
+        helpFooterTitle:'Pomoc i poradnik', helpFooterDesc:'Uruchom krótki przewodnik ponownie albo przeczytaj pełny poradnik.'
+      },
+      uk: {
+        uiState:'Наживо · синхронізовано', appTitle:'SplitBooks', subtitle:'Спільний фінансовий контроль для партнерів, проєктів, чеків і закриття місяця.',
+        activeUserLabel:'Ви увійшли як', authSubtitle:'Увійдіть, щоб отримати доступ до спільного простору', btnLogin:'Увійти', btnSignup:'Зареєструватися', btnLogout:'Вийти',
+        btnForgotPassword:'Забули пароль?', forgotPasswordTitle:'Скидання пароля', forgotPasswordDesc:'Введіть email — надішлемо посилання для встановлення нового пароля.', btnSendResetLink:'Надіслати посилання', resetPasswordTitle:'Встановіть новий пароль', btnSaveNewPassword:'Зберегти новий пароль', placeholderConfirmPassword:'Підтвердіть пароль (для реєстрації)', placeholderNewPassword:'Новий пароль',
+        monthlyCloseBtn:'Закриття місяця', tabDashboard:'Панель', tabTransactions:'Транзакції', tabProjects:'Проєкти', tabReceipts:'Чеки', tabMonthly:'Закриття місяця', tabSettings:'Налаштування',
+        mIncomeLabel:'Дохід', mExpenseLabel:'Витрати', mTaxLabel:'Податковий резерв', mProfitLabel:'Чистий прибуток', cashflowTitle:'Огляд руху коштів', cashflowSubtitle:'Банк, каса і податковий резерв в одному місці.', currentMonth:'Поточний місяць',
+        bankLabel:'Банківський рахунок', cashLabel:'Каса', reserveLabel:'Віртуальний податковий буфер', splitTitle:'Баланс партнерів', earnedShare:'Нарахована частка', withdrawnDraws:'Виплачені кошти', remainingLabel:'Залишок', withdrawBtn:'Вивести', drawHistoryTitle:'Історія виплат', noWithdrawals:'Виплат ще немає', projSummaryIncome:'дохід', projSummaryCost:'витрати', projSummaryNet:'нетто', projSummaryTxCount:'транзакцій', projNoTransactions:'Немає транзакцій', projSplitTitle:'Розподіл між партнерами', projSplitLabor:'Виплачено за роботу', projSplitShare:'Частка прибутку', projSplitTotal:'Разом за проєктом', projSplitForecastNote:'суми в ( ) враховують очікуючі транзакції',
+        whatsNewTitle:'Що нового', whatsNewGotIt:'Зрозуміло', whatsNewWithdrawTitle:'Кнопка «Вивести» на балансі партнерів', whatsNewWithdrawDesc:'На кожній картці балансу партнера тепер є кнопка «Вивести» та клікабельна історія — хто скільки і коли вивів.', whatsNewProjectDetailTitle:'Натисніть на проєкт, щоб побачити його транзакції', whatsNewProjectDetailDesc:'Натисніть на картку проєкту, щоб відкрити повний список транзакцій, прив’язаних до нього.',
+        pendingTxTitle:'Очікує — ще не сплачено', pendingTxSubtitle:'Записано, але не підтверджено. Це поки не впливає на жоден баланс чи прибуток — позначте як сплачено, коли гроші фактично підуть.', noPendingTx:'Нічого очікуваного — все записане підтверджено.', btnMarkPaid:'Позначити як сплачено', thDescription:'Опис',
+        txTitle:'Транзакції', txSubtitle:'Додавайте дохід, витрати, виплати та підтверджуйте чеками.', txPreviewTitle:'Перегляд', txListTitle:'Список транзакцій',
+        thDate:'Дата', thProject:'Проєкт', thAmount:'Сума', thType:'Тип', thStatus:'Статус', thActions:'Дії',
+        labelDate:'Дата', labelAmount:'Сума', labelDirection:'Напрямок', labelAccount:'Рахунок', labelProject:'Проєкт', labelCategory:'Категорія', labelStatus:'Статус', labelDescription:'Опис', labelCreator:'Вніс', labelReceipt:'Чек / Фото',
+        phAmount:'0.00', phProject:'напр. Kowalski / Floriańska 12', phDescription:'Коротка нотатка',
+        optAll:'Всі', optIncome:'Дохід', optExpense:'Витрата', optTransfer:'Переведення', optDraw:'Виплата', optBank:'Банк', optCash:'Каса', optTaxReserve:'Податковий резерв',
+        catIncome:'Дохід', catMaterials:'Матеріали', catFuel:'Паливо', catLaborEmployee:'Працівник', catAccounting:'Бухгалтерія', catMarketing:'Маркетинг', catEquipment:'Обладнання',
+        categoriesTitle:'Категорії', categoriesSubtitle:'Додавайте, перейменовуйте або видаляйте категорії у формі транзакції.', newCategoryNamePlaceholder:'Назва категорії', dirIncome:'Дохід', dirExpense:'Витрата', btnAddCategory:'+ Додати', categoryExists:'Категорія з такою назвою вже існує.', categoryInUseError:'Неможливо видалити: ця категорія використовується в існуючих транзакціях.', deleteCategoryConfirm:'Видалити категорію "{name}"? Цю дію не можна скасувати.', deleteCategoryTitle:'Видалити категорію', categoryDeleted:'Категорію видалено.', noCategories:'Ще немає категорій',
+        statusPending:'очікує', statusVerified:'підтверджено', statusRejected:'відхилено',
+        btnSaveTx:'Зберегти транзакцію', btnReset:'Скинути', btnNewProject:'+ Новий проєкт', btnExportPdf:'Експортувати PDF', btnExportExcel:'Експортувати Excel', btnExportPdfByProject:'Експортувати PDF за проєктами', btnExportExcelByProject:'Експортувати Excel за проєктами', grandTotalLabel:'Загалом', btnSendReport:'Надіслати партнерам', btnLockMonth:'Заблокувати місяць', btnUnlockMonth:'Розблокувати місяць',
+        projectsTitle:'Проєкти', projectsSubtitle:'Дивіться, який об’єкт прибутковий, а який з’їдає маржу.', noProjects:'Ще немає проєктів', receiptsTitle:'Чеки', noReceipts:'Ще немає чеків', receiptLoading:'Завантаження…',
+        monthlyTitle:'Закриття місяця', monthlySubtitle:'Експортуйте звіт у PDF або Excel, надішліть партнерам і заблокуйте місяць.', monthlyIncome:'Дохід', monthlyExpenses:'Витрати', monthlyTax:'Податковий резерв', monthlyDistrib:'До розподілу',
+        settingsPartnerTitle:'Налаштування партнерів', settingsOrgTitle:'Налаштування організації', partnerANameLabel:'Ім’я партнера A', partnerBNameLabel:'Ім’я партнера B', shareALabel:'Частка A %', shareBLabel:'Частка B %',
+        baseCurrencyLabel:'Базова валюта', taxRateLabel:'Ставка податкового резерву', defaultLangLabel:'Мова за замовчуванням', storageModeLabel:'Режим збереження', storageModeValue:'Синхронізовано з вашим акаунтом (Supabase)',
+        filterProject:'Фільтр за проєктом', filterStatus:'Фільтр за статусом', taxReserveCalc:'Податковий резерв з доходу', receiptModalTitle:'Перегляд чека', editTransactionTitle:'Редагувати транзакцію', btnSaveChanges:'Зберегти зміни', btnDeleteTx:'Видалити',
+        settingsSecurityTitle:'Безпека та синхронізація', themeTitle:'Вигляд', themeDesc:'Перемикайте темну та світлу тему на цьому пристрої.', pinTitle:'PIN-блокування пристрою', pinDesc:'Необов’язковий 4-значний код лише для цього пристрою. Локальна зручність, не захист акаунта.',
+        syncTitle:'Хмарна синхронізація між партнерами', syncDesc:'Активна — транзакції синхронізуються наживо між партнерами через Supabase.', syncActiveBadge:'Активна',
+        btnResetDb:'Видалити всі транзакції', btnSettingsLocked:'🔒 Налаштування заблоковані — торкніться, щоб розблокувати', btnSettingsUnlocked:'🔓 Налаштування розблоковані — торкніться, щоб заблокувати',
+        settingsLockHint:'Налаштування заблоковані за замовчуванням, щоб ви випадково їх не змінили. Розблокуйте для редагування — вони знову заблокуються при наступному відкритті.', confirmReset:'Скинути всі локальні дані цієї сесії?',
+        inviteTitle:'Запросити партнера', inviteDesc:'Згенеруйте одноразове посилання. Той, хто відкриє його і зареєструється, приєднається до цього ж робочого простору замість створення власного.',
+        btnGenerateInvite:'Згенерувати посилання-запрошення', btnCopyInvite:'Копіювати', inviteCopied:'Посилання скопійовано', inviteMemberNote:'Ви приєдналися до цього робочого простору за запрошенням власника.',
+        deleteRequestsTitle:'Запити на видалення, що очікують', btnApprove:'Схвалити', btnReject:'Відхилити',
+        deleteRequestConfirm:'У вас немає прав видалити це напряму. Надіслати запит на видалення власнику робочого простору?',
+        deleteRequestSent:'Запит на видалення надіслано власнику.', deleteRequestDuplicate:'Запит на видалення цієї транзакції вже очікує.',
+        reportGenerated:'Звіт завантажено.',captchaNotReady:'Перевірка безпеки ще завантажується, спробуйте за мить.',repTitle:'Звіт', repRate:'ставка', repTotalRow:'РАЗОМ', monthLockConfirm:'Заблокувати поточний місяць? Зміни транзакцій цього місяця більше не будуть можливі.',
+        monthAlreadyLocked:'Цей місяць вже заблокований.', monthLockedBadge:'Цей місяць заблоковано — зміни більше не можливі.', monthLockedSuccess:'Місяць заблоковано.',
+        monthUnlockConfirm:'Розблокувати поточний місяць? Транзакції цього місяця знову можна буде додавати й редагувати.', monthUnlockedSuccess:'Місяць розблоковано.',
+        taxRateBadgeLabel:'Ставка', taxRateOwnerOnlyNote:'Лише власник робочого простору може це змінити.', taxRateSaved:'Податкову ставку збережено.',
+        newProjectPrompt:'Назва проєкту:', projectExists:'Проєкт з такою назвою вже існує.', newCategoryPrompt:'Назва категорії:',
+        deleteProjectConfirm:'Видалити проєкт "{name}"? Цю дію не можна скасувати.', projectDeleted:'Проєкт видалено.', deleteProjectTitle:'Видалити проєкт',
+        footerDisclaimer:'SplitBooks — інструмент для обліку та відстеження спільних витрат бізнес-партнерів. Сервіс не надає фінансових, податкових, інвестиційних чи юридичних консультацій і не є платіжною установою чи ліцензованою фінансовою організацією. Ви самостійно відповідаєте за податкову та юридичну відповідність.',
+        footerPrivacy:'Політика конфіденційності', footerTerms:'Умови використання', footerPricing:'Тарифи', footerHelp:'Посібник', footerSupport:'Підтримка',
+        tourWelcomeTitle:'Коротка екскурсія по SplitBooks', tourWelcomeDesc:'30 секунд, щоб побачити, де що є. Можна пропустити в будь-який момент — цю екскурсію завжди можна знайти в Налаштуваннях.',
+        tourDashboardTitle:'Панель', tourDashboardDesc:'Ваш огляд — дохід, витрати, податковий резерв і чистий прибуток одним поглядом. Тут же баланс партнерів — кнопка «Вивести» та клікабельна історія, хто скільки вивів.',
+        tourTransactionsTitle:'Транзакції', tourTransactionsDesc:'Тут додаєте дохід, витрати, перекази та виплати партнерам, а також прикріплюєте чеки.',
+        tourProjectsTitle:'Проєкти', tourProjectsDesc:'Групуйте транзакції за проєктом, щоб бачити, який з них насправді прибутковий. Натисніть на картку проєкту, щоб відкрити повний список його транзакцій.',
+        tourReceiptsTitle:'Чеки', tourReceiptsDesc:'Усі прикріплені чеки та фото в одному місці.',
+        tourMonthlyTitle:'Закриття місяця', tourMonthlyDesc:'Експортуйте звіт, надішліть партнеру, потім заблокуйте місяць, щоб нічого заднім числом не змінилося.',
+        tourSettingsTitle:'Налаштування', tourSettingsDesc:'Податкова ставка, імена партнерів, тема, запрошення та безпека — все тут.',
+        tourNext:'Далі', tourBack:'Назад', tourSkip:'Пропустити', tourDone:'Зрозуміло', tourStepOf:'Крок {n} з {total}', btnReplayTour:'Показати екскурсію знову',
+        helpFooterTitle:'Допомога та посібник', helpFooterDesc:'Запустіть коротку екскурсію знову або прочитайте повний посібник.'
+      }
+    };
+
+    // Language is a per-device preference (same pattern as the tour/What's
+    // New "seen" flags below) — remembered in localStorage, not synced
+    // through the org in Supabase, so it survives reloads on this browser.
+    function getStoredLang(){
+      try { return localStorage.getItem('sb_lang') || 'en'; } catch (e) { return 'en'; }
+    }
+    function storeLang(lang){
+      try { localStorage.setItem('sb_lang', lang); } catch (e) {}
+    }
+
+    const state = {
+      lang: getStoredLang(),
+      user:null,
+      orgId:null,
+      role:null,
+      myMembershipId:null,
+      partnerA:{name:'Partner A', share:50, earned:4650, withdrawn:2000},
+      partnerB:{name:'Partner B', share:50, earned:4650, withdrawn:1100},
+      currency:'PLN',
+      taxRate:10,
+      txs:[],
+      projects:[],
+      categories:[],
+      deleteRequests:[],
+      monthLocked:false,
+      editId:null,
+      receiptText:'',
+      pinEnabled:false
+    };
+
+    const $ = id => document.getElementById(id);
+
+    // User-entered text (project names, descriptions, receipt filenames) gets
+    // interpolated into innerHTML in several places below. Escape it first so
+    // one partner can't stash a <script>/onerror payload in a project name or
+    // note and have it execute in another partner's browser.
+    function escapeHtml(str){
+      return String(str ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
+    // For values placed inside onclick="fn('...')" — a double-quoted HTML
+    // attribute wrapping a single-quoted JS string literal. Needs escaping for
+    // both contexts, not just the JS one, or a literal `"` breaks out of the
+    // attribute entirely.
+    function safeOnclickArg(str){
+      // Project/transaction names can contain raw newlines (e.g. pasted
+      // multi-line addresses). A literal newline inside a single-quoted JS
+      // string in an onclick="..." attribute is a syntax error, so the click
+      // silently does nothing (no visible error) -- escape \r and \n to
+      // real backslash-escapes first, before the quote escaping.
+      return String(str ?? '').replace(/\\/g, '\\\\').replace(/\r/g, '\\r').replace(/\n/g, '\\n').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    }
+
+    // Show the user a neutral message and keep the raw Supabase/Postgres
+    // error (table/constraint names etc.) in the console only, not on screen.
+    function notifyError(userMsg, err){
+      if (err) console.warn(userMsg + ' — details:', err.message);
+      alert(userMsg + ' Please try again.');
+    }
+
+    const PENDING_INVITE_KEY = 'cashflow_pending_invite_token';
+    (function capturePendingInviteFromUrl(){
+      const params = new URLSearchParams(location.search);
+      const token = params.get('invite');
+      if (token) {
+        localStorage.setItem(PENDING_INVITE_KEY, token);
+        params.delete('invite');
+        const cleanUrl = location.pathname + (params.toString() ? '?' + params.toString() : '');
+        history.replaceState(null, '', cleanUrl);
+      }
+    })();
+    function getPendingInviteToken(){ return localStorage.getItem(PENDING_INVITE_KEY); }
+    function clearPendingInviteToken(){ localStorage.removeItem(PENDING_INVITE_KEY); }
+
+    const SUPABASE_URL = "https://bgbcyncpdfnsrhvunzkv.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJnYmN5bmNwZGZuc3JodnVuemt2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxOTA0ODgsImV4cCI6MjA5ODc2NjQ4OH0.hhbeo4hxCKwURz_hqXmJQMNy6TxOJV6vpcbTxp0VNNw";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    function showAuthError(msg){
+      const el = $('authError');
+      el.textContent = msg;
+      el.classList.remove('hidden', 'text-emerald-400');
+      el.classList.add('text-rose-400');
+    }
+
+    function showAuthSuccess(msg){
+      const el = $('authError');
+      el.textContent = msg;
+      el.classList.remove('hidden', 'text-rose-400');
+      el.classList.add('text-emerald-400');
+    }
+
+    // Безопасный вызов PostHog: пока init отложен, методы-заглушки ещё не
+    // навешаны (window.posthog — просто массив). Аналитика никогда не должна
+    // ронять приложение, тем более путь входа.
+    function ph(method){
+      try {
+        const args = Array.prototype.slice.call(arguments, 1);
+        if (window.posthog && typeof window.posthog[method] === 'function') {
+          window.posthog[method].apply(window.posthog, args);
+        }
+      } catch (e) { /* аналитика не критична */ }
+    }
+
+    function checkUserSession(){
+      supabaseClient.auth.onAuthStateChange((event, session) => {
+        // Supabase logs the user into a temporary session when they follow a
+        // password-reset email link. Intercept that case and ask for a new
+        // password instead of dropping them straight into the app.
+        if (event === 'PASSWORD_RECOVERY') {
+          $('resetPasswordModal').classList.remove('hidden');
+          $('resetPasswordModal').classList.add('flex');
+          return;
+        }
+        if (session && session.user) handleUserLogin(session.user); else showAuthScreen();
+      });
+    }
+
+    let loginInFlightFor = null;
+    async function handleUserLogin(user){
+      // onAuthStateChange fires more than once on page load (INITIAL_SESSION +
+      // SIGNED_IN). The orgId guard below only helps after the first load has
+      // finished, so an in-flight marker is needed too - without it every
+      // Supabase query ran twice on startup (visible in Lighthouse).
+      if (loginInFlightFor === user.id) { state.user = user; return; }
+      if (state.user && state.user.id === user.id && state.orgId) {
+        state.user = user;
+        return;
+      }
+      loginInFlightFor = user.id;
+      state.user = user;
+      $('user-display').textContent = user.email;
+      $('auth-screen').classList.add('hidden');
+      $('main-app').classList.remove('hidden');
+      ph('identify', user.id, { email: user.email });
+      try {
+        await ensureOrganization();
+        // Independent lookups - run in parallel instead of a 6-step waterfall.
+        await Promise.all([
+          loadTaxRate(),
+          loadMembers(),
+          loadTransactions(),
+          loadProjects(),
+          loadCategories(),
+          loadDeleteRequests()
+        ]);
+        await checkMonthLocked();
+        subscribeToTransactions();
+      } catch (e) {
+        alert('Could not load your workspace: ' + e.message);
+      } finally {
+        loginInFlightFor = null;
+      }
+      populateFilters();
+      populateProjectSelect();
+      populateCategorySelect();
+      refreshUI();
+      maybeStartTour();
+      maybeShowWhatsNew();
+    }
+
+    function showAuthScreen(){
+      state.user = null;
+      state.orgId = null;
+      state.role = null;
+      state.txs = [];
+      unsubscribeFromTransactions();
+      $('main-app').classList.add('hidden');
+      $('auth-screen').classList.remove('hidden');
+      ensureTurnstile();
+    }
+
+    async function ensureOrganization(){
+      const { data: existing, error: findErr } = await supabaseClient
+        .from('memberships')
+        .select('org_id, role')
+        .eq('user_id', state.user.id)
+        .limit(1)
+        .maybeSingle();
+      if (findErr) throw findErr;
+
+      if (existing) {
+        state.orgId = existing.org_id;
+        state.role = existing.role;
+        return;
+      }
+
+      const pendingToken = getPendingInviteToken();
+      if (pendingToken) {
+        clearPendingInviteToken();
+        const { data, error } = await supabaseClient.rpc('accept_invite', { p_token: pendingToken });
+        if (!error) {
+          const row = Array.isArray(data) ? data[0] : data;
+          state.orgId = row.out_org_id;
+          state.role = row.out_role;
+          return;
+        }
+        console.warn('Invite could not be redeemed, creating a new organization instead:', error.message);
+      }
+
+      const { data: org, error: orgErr } = await supabaseClient
+        .from('organizations')
+        .insert({ name: state.user.email + '’s organization', created_by: state.user.id })
+        .select()
+        .single();
+      if (orgErr) throw orgErr;
+
+      const { error: memErr } = await supabaseClient
+        .from('memberships')
+        .insert({ org_id: org.id, user_id: state.user.id, role: 'owner', display_name: state.user.email.split('@')[0], share_percent: 50 });
+      if (memErr) throw memErr;
+
+      const DEFAULT_CATEGORIES = [
+        ['Income', 'income'], ['Materials', 'expense'], ['Fuel', 'expense'],
+        ['Labor Employee', 'expense'], ['Accounting', 'expense'],
+        ['Marketing', 'expense'], ['Equipment', 'expense']
+      ];
+      const { error: catErr } = await supabaseClient
+        .from('categories')
+        .insert(DEFAULT_CATEGORIES.map(([name, direction]) => ({ org_id: org.id, name, direction, created_by: state.user.id })));
+      if (catErr) console.warn('Could not seed default categories:', catErr.message);
+
+      state.orgId = org.id;
+      state.role = 'owner';
+    }
+
+    async function loadTaxRate(){
+      const { data, error } = await supabaseClient
+        .from('organizations')
+        .select('tax_rate')
+        .eq('id', state.orgId)
+        .single();
+      if (error) { console.warn('Could not load tax rate:', error.message); return; }
+      state.taxRate = Number(data.tax_rate);
+      $('taxRate').value = state.taxRate;
+    }
+
+    // Partner names are each person's own display_name on their membership
+    // row (self-editable — see membership_update_self RLS policy), not a
+    // shared org-level field. Owner's row maps to the "Partner A" slot in the
+    // UI, the other member's row maps to "Partner B" (matches partnerSlotFor()
+    // used elsewhere for balance attribution).
+    async function loadMembers(){
+      const { data, error } = await supabaseClient
+        .from('memberships')
+        .select('id, user_id, role, display_name')
+        .eq('org_id', state.orgId);
+      if (error) { console.warn('Could not load members:', error.message); return; }
+      const mine = data.find(m => m.user_id === state.user.id);
+      const owner = data.find(m => m.role === 'owner');
+      const member = data.find(m => m.role !== 'owner');
+      if (mine) state.myMembershipId = mine.id;
+      state.partnerA.name = (owner && owner.display_name) || 'Partner A';
+      state.partnerB.name = (member && member.display_name) || 'Partner B';
+      $('setNameA').value = state.partnerA.name;
+      $('setNameB').value = state.partnerB.name;
+    }
+
+    // Realtime sync: without this, a transaction created by one partner only
+    // appeared for the other after a manual page reload (loadTransactions()
+    // only ran once, at login). Subscribing to postgres_changes on the org's
+    // own transactions keeps both partners' views live.
+    let txRealtimeChannel = null;
+
+    function subscribeToTransactions(){
+      unsubscribeFromTransactions();
+      txRealtimeChannel = supabaseClient
+        .channel('transactions-org-' + state.orgId)
+        .on('postgres_changes', {
+          event: '*',
+          schema: 'public',
+          table: 'transactions',
+          filter: `org_id=eq.${state.orgId}`
+        }, async () => {
+          await loadTransactions();
+          populateFilters();
+          populateProjectSelect();
+          renderTxTable();
+          recalcPartnerBalances();
+        })
+        .subscribe();
+      // Categories change far less often than transactions, so they're not
+      // part of the realtime subscription above — reloaded on next login/tab
+      // switch instead, same cadence as projects.
+    }
+
+    function unsubscribeFromTransactions(){
+      if (txRealtimeChannel) {
+        supabaseClient.removeChannel(txRealtimeChannel);
+        txRealtimeChannel = null;
+      }
+    }
+
+    // Task #19: projects can now be pre-created (via "+ New project") instead
+    // of only existing implicitly through whatever free text was typed on a
+    // transaction. Loaded per-organization, same isolation as everything else
+    // (projects_select RLS: is_org_member(org_id)).
+    async function loadProjects(){
+      const { data, error } = await supabaseClient
+        .from('projects')
+        .select('id, name')
+        .eq('org_id', state.orgId)
+        .order('name', { ascending: true });
+      if (error) { console.warn('Could not load projects:', error.message); return; }
+      state.projects = data || [];
+    }
+
+    // Categories used to be a fixed, hardcoded list. Now they're per-org rows
+    // in Supabase (categories_select RLS: is_org_member(org_id)), so partners
+    // can add/rename/remove their own categories. "Partner Draw A/B" stay
+    // hardcoded in the HTML <select> — they're tied to balance attribution
+    // logic in partnerSlotFor() and must never be renamed or deleted.
+    async function loadCategories(){
+      const { data, error } = await supabaseClient
+        .from('categories')
+        .select('id, name, direction')
+        .eq('org_id', state.orgId)
+        .order('name', { ascending: true });
+      if (error) { console.warn('Could not load categories:', error.message); return; }
+      state.categories = data || [];
+    }
+
+    // The transaction form's Project field used to be free text, which meant
+    // two transactions for "the same" project could silently diverge by a typo
+    // and get split across two project cards. Now it's a select sourced from
+    // real project rows — plus any project names already used on existing
+    // transactions, so nothing entered before this change disappears from the
+    // dropdown just because it was never formally created as a project.
+    function populateProjectSelect(){
+      const sel = $('project');
+      if (!sel) return;
+      const current = sel.value;
+      const fromProjects = state.projects.map(p => p.name);
+      const fromTxs = state.txs.map(t => t.project).filter(p => p && p !== '—');
+      const names = [...new Set([...fromProjects, ...fromTxs])].sort((a, b) => a.localeCompare(b));
+      sel.innerHTML = '<option value="">—</option>' + names.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('');
+      if (names.includes(current)) sel.value = current;
+    }
+
+    // The 7 categories that shipped before this feature existed still have
+    // translated EN/PL/UK labels (catIncome, catMaterials, etc.) in the i18n
+    // object. Categories a user adds themselves are freeform text (like
+    // project names) and just display as typed, in whatever language.
+    const CATEGORY_I18N_KEYS = {
+      'Income': 'catIncome', 'Materials': 'catMaterials', 'Fuel': 'catFuel',
+      'Labor Employee': 'catLaborEmployee', 'Accounting': 'catAccounting',
+      'Marketing': 'catMarketing', 'Equipment': 'catEquipment'
+    };
+    function categoryLabel(name){
+      const t = i18n[state.lang];
+      const key = CATEGORY_I18N_KEYS[name];
+      return (key && t[key]) || name;
+    }
+
+    // "Partner Draw A/B" are two real <option> elements already in the HTML
+    // (ids optPartnerDrawA/B and editOptPartnerDrawA/B) — captured by
+    // reference before the <select> is cleared, then re-appended, so they
+    // keep working with refreshPartnerCategoryLabels() exactly as before.
+    // Everything else comes from state.categories (per-org, Supabase-backed).
+    function populateCategorySelect(){
+      const names = state.categories.map(c => c.name).sort((a, b) => a.localeCompare(b));
+      const optionsHtml = names.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(categoryLabel(n))}</option>`).join('');
+      [
+        { selId: 'category', drawAId: 'optPartnerDrawA', drawBId: 'optPartnerDrawB' },
+        { selId: 'editCategory', drawAId: 'editOptPartnerDrawA', drawBId: 'editOptPartnerDrawB' }
+      ].forEach(({ selId, drawAId, drawBId }) => {
+        const sel = $(selId);
+        if (!sel) return;
+        const current = sel.value;
+        const drawA = $(drawAId);
+        const drawB = $(drawBId);
+        sel.innerHTML = optionsHtml;
+        if (drawA) sel.appendChild(drawA);
+        if (drawB) sel.appendChild(drawB);
+        if ([...sel.options].some(o => o.value === current)) sel.value = current;
+      });
+      refreshPartnerCategoryLabels();
+    }
+
+    function renderCategoriesList(){
+      const box = $('categoriesList');
+      if (!box) return;
+      const t = i18n[state.lang];
+      if (!state.categories.length) {
+        box.innerHTML = `<div class="text-sm text-slate-500">${t.noCategories || 'No categories yet'}</div>`;
+        return;
+      }
+      const isOwner = state.role === 'owner';
+      box.innerHTML = state.categories.map(c => {
+        const dirText = c.direction === 'income' ? (t.dirIncome || 'Income') : (t.dirExpense || 'Expense');
+        const dirClass = c.direction === 'income' ? 'text-emerald-400' : 'text-rose-400';
+        const deleteBtn = isOwner
+          ? `<button class="text-slate-500 hover:text-rose-400 text-xs" title="${escapeHtml(t.deleteCategoryTitle || 'Delete category')}" onclick="deleteCategory('${c.id}', '${safeOnclickArg(c.name)}')">&#10005;</button>`
+          : '';
+        return `
+        <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-950/60 border border-slate-800">
+          <div class="text-sm">${escapeHtml(categoryLabel(c.name))}</div>
+          <div class="flex items-center gap-3">
+            <span class="text-xs ${dirClass}">${dirText}</span>
+            ${deleteBtn}
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    window.deleteCategory = async function(id, name){
+      const t = i18n[state.lang];
+      const confirmMsg = (t.deleteCategoryConfirm || 'Delete category "{name}"? This cannot be undone.').replace('{name}', name);
+      if (!confirm(confirmMsg)) return;
+      const { error } = await supabaseClient.from('categories').delete().eq('id', id);
+      if (error) {
+        if (error.message && error.message.includes('CATEGORY_IN_USE')) {
+          alert(t.categoryInUseError || 'Cannot delete: this category is used by existing transactions.');
+        } else {
+          notifyError('Could not delete category.', error);
+        }
+        return;
+      }
+      await loadCategories();
+      populateCategorySelect();
+      renderCategoriesList();
+    };
+
+    // Theme (dark/light) is a local device preference, not org data, so it's
+    // stored in localStorage and applied independently of the Settings lock —
+    // the <html class="dark"|"light"> flip is also done inline in <head> to
+    // avoid a flash of the wrong theme before this script runs.
+    function applyTheme(theme){
+      document.documentElement.classList.toggle('light', theme === 'light');
+      document.documentElement.classList.toggle('dark', theme !== 'light');
+      const toggle = $('themeToggle');
+      if (toggle) toggle.checked = theme === 'light';
+      try { localStorage.setItem('sb_theme', theme); } catch (e) {}
+    }
+    function initTheme(){
+      let saved = 'dark';
+      try { saved = localStorage.getItem('sb_theme') || 'dark'; } catch (e) {}
+      applyTheme(saved);
+    }
+    initTheme();
+
+    let settingsLocked = true;
+
+    function refreshTaxRateUI(){
+      const isOwner = state.role === 'owner';
+      $('taxRate').disabled = !isOwner || settingsLocked;
+      $('taxRateOwnerOnlyNote').classList.toggle('hidden', isOwner);
+    }
+
+    function refreshPartnerNameUI(){
+      // Everyone can rename themselves, nobody can rename their partner.
+      const isOwner = state.role === 'owner';
+      $('setNameA').disabled = !isOwner || settingsLocked;
+      $('setNameB').disabled = isOwner || settingsLocked;
+      refreshPartnerCategoryLabels();
+    }
+
+    // The "Partner draw" category options show each partner's real name
+    // (as set in Partner settings) instead of a generic "Partner A/B" label,
+    // so whoever is recording the transaction can see whose draw they're
+    // logging at a glance.
+    function refreshPartnerCategoryLabels(){
+      const aName = state.partnerA.name || 'Partner A';
+      const bName = state.partnerB.name || 'Partner B';
+      ['optPartnerDrawA', 'editOptPartnerDrawA'].forEach(id => { const el = $(id); if (el) el.textContent = aName; });
+      ['optPartnerDrawB', 'editOptPartnerDrawB'].forEach(id => { const el = $(id); if (el) el.textContent = bName; });
+    }
+
+    // Settings are locked by default (see setView) so a stray tap can't
+    // change tax rate, partner shares, currency, etc. Unlocking only
+    // affects this screen's own controls, not role-based rules above —
+    // refreshTaxRateUI/refreshPartnerNameUI still enforce who's allowed
+    // to touch what once unlocked.
+    function applySettingsLock(locked){
+      settingsLocked = locked;
+      ['shareA','currency','defaultLang','pinToggle','btnGenerateInvite','btnCopyInvite','btnResetDb'].forEach(id => {
+        $(id).disabled = locked;
+      });
+      refreshTaxRateUI();
+      refreshPartnerNameUI();
+      const btn = $('btnSettingsLock');
+      const t = i18n[state.lang];
+      if (locked) {
+        btn.textContent = t.btnSettingsLocked || '🔒 Settings locked — tap to unlock';
+        btn.className = 'flex-1 px-4 py-2.5 rounded-2xl bg-slate-800 hover:bg-slate-700 font-semibold text-sm';
+      } else {
+        btn.textContent = t.btnSettingsUnlocked || '🔓 Settings unlocked — tap to lock';
+        btn.className = 'flex-1 px-4 py-2.5 rounded-2xl bg-amber-600 hover:bg-amber-500 font-semibold text-sm';
+      }
+    }
+
+    function creatorLabel(row){
+      return row.created_by_user_id === state.user.id ? state.user.email : 'Partner';
+    }
+
+    function partnerSlotFor(row){
+      // A draw explicitly logged under the "Partner Draw A/B" category
+      // belongs to that partner regardless of who recorded it (e.g. one
+      // partner paying out the other's withdrawal in cash). Any other draw
+      // (including legacy "Labor Partner" rows from before this category
+      // split) falls back to the old behavior: attributed to whoever
+      // created the transaction.
+      if (row.type === 'draw') {
+        if (row.category === 'Partner Draw A') return 'owner';
+        if (row.category === 'Partner Draw B') return 'member';
+      }
+      const mine = row.created_by_user_id === state.user.id;
+      const myRole = state.role === 'owner' ? 'owner' : 'member';
+      const otherRole = myRole === 'owner' ? 'member' : 'owner';
+      return mine ? myRole : otherRole;
+    }
+
+    async function loadTransactions(){
+      const { data, error } = await supabaseClient
+        .from('transactions')
+        .select('*')
+        .eq('org_id', state.orgId)
+        .order('date', { ascending:false })
+        .order('created_at', { ascending:false });
+      if (error) throw error;
+      state.txs = (data || []).map(row => ({
+        id: row.id,
+        date: row.date,
+        project: row.project || '—',
+        amount: Number(row.amount),
+        type: row.type,
+        status: row.status,
+        creator: creatorLabel(row),
+        createdByUserId: row.created_by_user_id,
+        partnerSlot: partnerSlotFor(row),
+        category: row.category || '—',
+        account: row.account || '—',
+        description: row.description || '—',
+        receipt: row.receipt_path || null
+      }));
+    }
+
+    function receiptFileName(path){
+      if (!path) return '';
+      const last = path.split('/').pop();
+      const dashIdx = last.indexOf('-');
+      return dashIdx > -1 ? last.slice(dashIdx + 1) : last;
+    }
+
+    function canDeleteDirectly(tx){
+      return state.role === 'owner' || (tx.createdByUserId === state.user.id && tx.status === 'pending');
+    }
+
+    async function loadDeleteRequests(){
+      if (state.role !== 'owner') { state.deleteRequests = []; return; }
+      const { data, error } = await supabaseClient
+        .from('delete_requests')
+        .select('id, created_at, transactions(id, project, amount, date)')
+        .eq('org_id', state.orgId)
+        .eq('status', 'pending')
+        .order('created_at', { ascending: false });
+      if (error) { console.warn('Could not load delete requests:', error.message); state.deleteRequests = []; return; }
+      state.deleteRequests = data || [];
+    }
+
+    window.approveDeleteRequest = async function(requestId, txId){
+      const { error } = await supabaseClient.from('transactions').delete().eq('id', txId);
+      if (error) { notifyError('Could not delete transaction.', error); return; }
+      await loadTransactions();
+      await loadDeleteRequests();
+      populateFilters();
+      renderTxTable();
+      recalcPartnerBalances();
+      renderDeleteRequests();
+    };
+
+    window.rejectDeleteRequest = async function(requestId){
+      const { error } = await supabaseClient.from('delete_requests').update({ status: 'rejected' }).eq('id', requestId);
+      if (error) { notifyError('Could not reject.', error); return; }
+      await loadDeleteRequests();
+      renderDeleteRequests();
+    };
+
+    function currentYearMonth(){ return new Date().toISOString().slice(0,7); }
+
+    async function checkMonthLocked(){
+      const { data, error } = await supabaseClient
+        .from('locked_months')
+        .select('year_month')
+        .eq('org_id', state.orgId)
+        .eq('year_month', currentYearMonth())
+        .maybeSingle();
+      if (error) { console.warn('Could not check month lock status:', error.message); return; }
+      state.monthLocked = !!data;
+    }
+
+    function renderMonthLockUI(){
+      const badge = $('monthLockedBadge');
+      const btn = $('lockMonth');
+      const unlockBtn = $('unlockMonth');
+      if (!badge || !btn) return;
+      badge.classList.toggle('hidden', !state.monthLocked);
+      btn.disabled = state.monthLocked;
+      btn.classList.toggle('opacity-50', state.monthLocked);
+      btn.classList.toggle('cursor-not-allowed', state.monthLocked);
+      if (unlockBtn) unlockBtn.classList.toggle('hidden', !(state.monthLocked && state.role === 'owner'));
+    }
+
+    function renderDeleteRequests(){
+      const section = $('deleteRequestsSection');
+      if (state.role !== 'owner' || !state.deleteRequests.length) {
+        section.classList.add('hidden');
+        return;
+      }
+      section.classList.remove('hidden');
+      $('deleteRequestsList').innerHTML = state.deleteRequests.map(r => {
+        const tx = r.transactions || {};
+        return `
+        <div class="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-slate-800 bg-slate-950/60 p-3">
+          <div class="text-sm"><span class="text-slate-400">${escapeHtml(tx.date || '')}</span> · ${escapeHtml(tx.project || '')} · <span class="font-semibold">${tx.amount != null ? fmt(Number(tx.amount)) : ''}</span></div>
+          <div class="flex gap-2">
+            <button class="px-3 py-1.5 rounded-lg bg-emerald-600 text-xs" onclick="approveDeleteRequest('${r.id}', '${tx.id}')" data-i18n="btnApprove">Approve</button>
+            <button class="px-3 py-1.5 rounded-lg bg-slate-700 text-xs" onclick="rejectDeleteRequest('${r.id}')" data-i18n="btnReject">Reject</button>
+          </div>
+        </div>`;
+      }).join('');
+      applyLangToDynamicButtons();
+    }
+
+    // Turnstile costs ~1.5 s of main-thread time and is only ever needed on the
+    // sign-in screen, so its script is injected when that screen is shown
+    // instead of on every page load (returning users go straight to the app).
+    let turnstileLoading = false;
+
+    // Есть ли сохранённая сессия Supabase (ключ вида sb-<ref>-auth-token).
+    // Если нет — пользователь почти наверняка увидит экран входа, и Turnstile
+    // нужен сразу: грузим его параллельно со стартом приложения, как было до
+    // ленивой загрузки. Залогиненные пользователи скрипт по-прежнему не тянут.
+    function hasStoredSession(){
+      try {
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && k.startsWith('sb-') && k.endsWith('-auth-token') && localStorage.getItem(k)) return true;
+        }
+      } catch (e) {}
+      return false;
+    }
+
+    function ensureTurnstile(){
+      if (turnstileLoading || window.turnstile) return;
+      turnstileLoading = true;
+      const s = document.createElement('script');
+      s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+      s.async = true; s.defer = true;
+      s.onerror = () => { turnstileLoading = false; };
+      document.head.appendChild(s);
+    }
+
+    function getCaptchaToken(){ return document.querySelector('[name="cf-turnstile-response"]')?.value; }
+    function resetCaptcha(){ if (window.turnstile) window.turnstile.reset(); }
+
+    // Стартовая загрузка капчи для разлогиненных: showAuthScreen() при первом
+    // открытии страницы не вызывается (экран входа виден по умолчанию), так что
+    // полагаться только на него нельзя — из-за этого вход ломался с ошибкой
+    // "no captcha_token found".
+    if (!hasStoredSession()) {
+      // Гостю капча нужна сразу.
+      ensureTurnstile();
+    } else {
+      // Сохранённый токен ещё не значит рабочую сессию: если он протух, Supabase
+      // покажет экран входа — и без этой подстраховки капча не загрузится вовсе
+      // (showAuthScreen() при первом открытии страницы не вызывается).
+      setTimeout(() => {
+        const scr = document.getElementById('auth-screen');
+        if (scr && !scr.classList.contains('hidden')) ensureTurnstile();
+      }, 1500);
+    }
+
+    $('btnEmailLogin').addEventListener('click', async () => {
+      const email = $('authEmail').value;
+      const password = $('authPassword').value;
+      if (!email || !password) { showAuthError('Enter email and password.'); return; }
+      if (!getCaptchaToken()) {
+        ensureTurnstile();
+        showAuthError(i18n[state.lang].captchaNotReady || 'Security check is still loading, please try again in a moment.');
+        return;
+      }
+      try {
+        const { error } = await supabaseClient.auth.signInWithPassword({ email, password, options: { captchaToken: getCaptchaToken() } });
+        if (error) showAuthError(error.message);
+        resetCaptcha();
+      } catch (e) {
+        showAuthError('Could not reach the server: ' + e.message);
+        resetCaptcha();
+      }
+    });
+
+    $('btnEmailSignup').addEventListener('click', async () => {
+      const email = $('authEmail').value;
+      const password = $('authPassword').value;
+      const passwordConfirm = $('authPasswordConfirm').value;
+      if (!email || !password) { showAuthError('Enter email and password.'); return; }
+      if (password !== passwordConfirm) { showAuthError('Passwords do not match.'); return; }
+      if (!getCaptchaToken()) {
+        ensureTurnstile();
+        showAuthError(i18n[state.lang].captchaNotReady || 'Security check is still loading, please try again in a moment.');
+        return;
+      }
+      try {
+        const { error } = await supabaseClient.auth.signUp({ email, password, options: { captchaToken: getCaptchaToken() } });
+        if (error) showAuthError(error.message);
+        else showAuthSuccess('Registered. Check your email to confirm, then log in.');
+        resetCaptcha();
+      } catch (e) {
+        showAuthError('Could not reach the server: ' + e.message);
+        resetCaptcha();
+      }
+    });
+
+    $('btnLogout').addEventListener('click', async () => {
+      await supabaseClient.auth.signOut();
+      showAuthScreen();
+    });
+
+    $('btnForgotPassword').addEventListener('click', () => {
+      $('forgotPasswordEmail').value = $('authEmail').value;
+      $('forgotPasswordMsg').classList.add('hidden');
+      $('forgotPasswordModal').classList.remove('hidden');
+      $('forgotPasswordModal').classList.add('flex');
+    });
+
+    $('closeForgotPasswordModal').addEventListener('click', () => closeModal('forgotPasswordModal'));
+
+    $('btnSendResetLink').addEventListener('click', async () => {
+      const email = $('forgotPasswordEmail').value;
+      const msg = $('forgotPasswordMsg');
+      if (!email) { msg.textContent = 'Enter your email.'; msg.className = 'text-xs mt-2 text-rose-400'; return; }
+      const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + window.location.pathname });
+      if (error) { msg.textContent = error.message; msg.className = 'text-xs mt-2 text-rose-400'; return; }
+      msg.textContent = 'Check your email for the reset link.';
+      msg.className = 'text-xs mt-2 text-emerald-400';
+    });
+
+    $('btnSaveNewPassword').addEventListener('click', async () => {
+      const newPassword = $('newPassword').value;
+      const newPasswordConfirm = $('newPasswordConfirm').value;
+      const msg = $('resetPasswordMsg');
+      if (!newPassword || newPassword.length < 6) { msg.textContent = 'Password must be at least 6 characters.'; msg.className = 'text-xs mt-2 text-rose-400'; return; }
+      if (newPassword !== newPasswordConfirm) { msg.textContent = 'Passwords do not match.'; msg.className = 'text-xs mt-2 text-rose-400'; return; }
+      const { error } = await supabaseClient.auth.updateUser({ password: newPassword });
+      if (error) { msg.textContent = error.message; msg.className = 'text-xs mt-2 text-rose-400'; return; }
+      closeModal('resetPasswordModal');
+      $('newPassword').value = '';
+      $('newPasswordConfirm').value = '';
+      const { data: { user } } = await supabaseClient.auth.getUser();
+      if (user) handleUserLogin(user);
+    });
+
+    function fmt(n){ return new Intl.NumberFormat(state.lang === 'en' ? 'en-US' : 'pl-PL', {minimumFractionDigits:2, maximumFractionDigits:2}).format(n) + ' ' + state.currency; }
+
+    function signedAmount(t){
+      if (t.type === 'income') return t.amount;
+      if (t.type === 'expense' || t.type === 'draw') return -t.amount;
+      return 0;
+    }
+
+    function recalcPartnerBalances(){
+      // Only status === 'verified' transactions affect balances / net profit.
+      // 'pending' = accrued/recorded but not yet actually paid or confirmed —
+      // stays out of every total below until the user explicitly marks it
+      // verified (see markTxPaid()). 'rejected' never counts.
+      const income = state.txs.filter(t=>t.type==='income' && t.status==='verified').reduce((s,t)=>s+t.amount,0);
+      const expenses = state.txs.filter(t=>t.type==='expense' && t.status==='verified').reduce((s,t)=>s+t.amount,0);
+      const drawA = state.txs.filter(t=>t.type==='draw' && t.status==='verified' && t.partnerSlot==='owner').reduce((s,t)=>s+t.amount,0);
+      const drawB = state.txs.filter(t=>t.type==='draw' && t.status==='verified' && t.partnerSlot==='member').reduce((s,t)=>s+t.amount,0);
+      const net = income - expenses;
+      const reserve = Math.max(0, net) * state.taxRate / 100;
+      const distributable = Math.max(0, net - reserve);
+      const aEarned = distributable * state.partnerA.share / 100;
+      const bEarned = distributable * state.partnerB.share / 100;
+      state.partnerA.earned = aEarned;
+      state.partnerB.earned = bEarned;
+      state.partnerA.withdrawn = drawA;
+      state.partnerB.withdrawn = drawB;
+      $('partnerAremaining').textContent = fmt(aEarned - drawA);
+      $('partnerBremaining').textContent = fmt(bEarned - drawB);
+      $('partnerAearned').textContent = fmt(aEarned);
+      $('partnerBearned').textContent = fmt(bEarned);
+      $('partnerAwithdrawn').textContent = fmt(drawA);
+      $('partnerBwithdrawn').textContent = fmt(drawB);
+      $('split-ratio').textContent = state.partnerA.share + ' / ' + state.partnerB.share;
+      $('shareDisplay').textContent = state.partnerA.share + ' / ' + state.partnerB.share;
+      $('m-income').textContent = fmt(income);
+      $('m-expense').textContent = fmt(expenses);
+      $('m-tax').textContent = fmt(reserve);
+      $('m-profit').textContent = fmt(net);
+      const bankBalance = state.txs.filter(t=>t.account==='Bank' && t.status==='verified').reduce((s,t)=>s+signedAmount(t),0);
+      const cashBalance = state.txs.filter(t=>t.account==='Cash' && t.status==='verified').reduce((s,t)=>s+signedAmount(t),0);
+      $('bank-balance').textContent = fmt(bankBalance);
+      $('cash-balance').textContent = fmt(cashBalance);
+      $('reserve-balance').textContent = fmt(reserve);
+      $('monthIncome').textContent = fmt(income);
+      $('monthExpense').textContent = fmt(expenses);
+      $('monthTax').textContent = fmt(reserve);
+      $('monthDistrib').textContent = fmt(distributable);
+      $('monthlySummary').textContent = `${state.lang==='pl'?'Przychody':''}${state.lang==='uk'?'':''}`;
+      $('tx-count').textContent = `${state.txs.length} transactions`;
+      const rateLabel = `${i18n[state.lang].taxRateBadgeLabel || 'Rate'}: ${state.taxRate}%`;
+      if ($('taxRateBadgeDash')) $('taxRateBadgeDash').textContent = rateLabel;
+      if ($('taxRateBadgeMonthly')) $('taxRateBadgeMonthly').textContent = rateLabel;
+      renderPendingTx();
+    }
+
+    // Who a pending transaction is owed to: the partner (for draws) or
+    // whatever free-text name was put in the Description field (for
+    // everything else, e.g. an employee's name on a Labor Employee expense).
+    function pendingTxRecipient(tx){
+      if (tx.type === 'draw') {
+        return tx.partnerSlot === 'owner' ? state.partnerA.name : state.partnerB.name;
+      }
+      return tx.description || tx.project || '—';
+    }
+
+    function renderPendingTx(){
+      const list = $('pendingTxList');
+      const countEl = $('pending-count');
+      if (!list || !countEl) return;
+      const pending = state.txs.filter(t => t.status === 'pending');
+      countEl.textContent = String(pending.length);
+      if (!pending.length) {
+        list.innerHTML = `<div class="text-sm text-slate-500">${i18n[state.lang].noPendingTx || 'Nothing pending — everything recorded has been verified.'}</div>`;
+        return;
+      }
+      list.innerHTML = pending.map(tx => `
+        <div class="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-slate-800 bg-slate-950/60 p-3">
+          <div class="min-w-0">
+            <div class="text-sm font-semibold truncate">${escapeHtml(pendingTxRecipient(tx))}</div>
+            <div class="text-xs text-slate-400">${escapeHtml(tx.date)} · ${typeLabel(tx.type)} · ${escapeHtml(tx.category || '')}</div>
+            ${tx.description && tx.description !== '—' ? `<div class="text-xs text-slate-500 mt-0.5 truncate">${escapeHtml(tx.description)}</div>` : ''}
+          </div>
+          <div class="flex items-center gap-3 shrink-0">
+            <div class="text-sm font-bold text-amber-400">${fmt(tx.amount)}</div>
+            <button class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-semibold" onclick="markTxPaid('${tx.id}')">${i18n[state.lang].btnMarkPaid || 'Mark as paid'}</button>
+          </div>
+        </div>`).join('');
+    }
+
+    window.markTxPaid = async function(id){
+      const { error } = await supabaseClient.from('transactions').update({ status: 'verified' }).eq('id', id);
+      if (error) { notifyError('Could not update status.', error); return; }
+      await loadTransactions();
+      renderTxTable();
+      recalcPartnerBalances();
+    };
+
+    function populateFilters(){
+      const proj = $('filterProject');
+      const current = proj.value;
+      const unique = [...new Set(state.txs.map(t=>t.project))];
+      const allLabel = i18n[state.lang].optAll || 'All';
+      proj.innerHTML = `<option value="" data-i18n="optAll">${allLabel}</option>` + unique.map(p=>`<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join('');
+      proj.value = current;
+    }
+
+    function txStatusClass(status){
+      return status==='verified' ? 'text-emerald-400' : status==='rejected' ? 'text-rose-400' : 'text-amber-400';
+    }
+
+    const TYPE_I18N_KEY = { income:'optIncome', expense:'optExpense', transfer:'optTransfer', draw:'optDraw' };
+    const STATUS_I18N_KEY = { pending:'statusPending', verified:'statusVerified', rejected:'statusRejected' };
+    function typeLabel(type){ const key = TYPE_I18N_KEY[type]; return key ? i18n[state.lang][key] : type; }
+    function statusLabel(status){ const key = STATUS_I18N_KEY[status]; return key ? i18n[state.lang][key] : status; }
+
+    function renderTxTable(){
+      const projectFilter = $('filterProject').value;
+      const statusFilter = $('filterStatus').value;
+      const filtered = state.txs.filter(t => (!projectFilter || t.project===projectFilter) && (!statusFilter || t.status===statusFilter));
+
+      const actionButtons = tx => `
+        <button class="px-2 py-1 rounded-lg bg-sky-600 text-xs" onclick="editTx('${tx.id}')" data-i18n="btnEditTx">Edit</button>
+        <button class="px-2 py-1 rounded-lg bg-rose-600 text-xs" onclick="deleteTx('${tx.id}')" data-i18n="btnDeleteTxSmall">Delete</button>
+        ${tx.receipt ? `<button class="px-2 py-1 rounded-lg bg-slate-700 text-xs" onclick="openReceipt('${safeOnclickArg(tx.receipt)}')" data-i18n="btnReceipt">View</button>` : ''}`;
+
+      const rows = filtered.map(tx => `
+        <tr class="tx-row">
+          <td class="p-3 text-slate-400">${escapeHtml(tx.date)}</td>
+          <td class="p-3">${escapeHtml(tx.project)}</td>
+          <td class="p-3 font-semibold">${fmt(tx.amount)}</td>
+          <td class="p-3">${typeLabel(tx.type)}</td>
+          <td class="p-3 ${txStatusClass(tx.status)}">${statusLabel(tx.status)}</td>
+          <td class="p-3 text-slate-400">${escapeHtml(tx.description || '—')}</td>
+          <td class="p-3">
+            <div class="flex gap-2">${actionButtons(tx)}</div>
+          </td>
+        </tr>`).join('');
+      $('txTable').innerHTML = rows || `<tr><td colspan="7" class="p-4 text-slate-500">No transactions</td></tr>`;
+
+      // Mobile card list — same data, laid out so Status and the action
+      // buttons are always visible without any horizontal scrolling.
+      const cards = filtered.map(tx => `
+        <div class="rounded-2xl border border-slate-800 bg-slate-950/60 p-3">
+          <div class="flex items-start justify-between gap-2">
+            <div class="min-w-0">
+              <div class="text-sm font-semibold truncate">${escapeHtml(tx.project)}</div>
+              <div class="text-xs text-slate-400">${escapeHtml(tx.date)} · ${typeLabel(tx.type)}</div>
+            </div>
+            <div class="text-sm font-bold shrink-0">${fmt(tx.amount)}</div>
+          </div>
+          <div class="mt-2 flex items-center justify-between gap-2">
+            <span class="text-xs font-semibold ${txStatusClass(tx.status)}">${statusLabel(tx.status)}</span>
+            <span class="text-xs text-slate-400 truncate">${escapeHtml(tx.description || '—')}</span>
+          </div>
+          <div class="mt-3 flex flex-wrap gap-2">${actionButtons(tx)}</div>
+        </div>`).join('');
+      $('txCards').innerHTML = cards || `<div class="p-4 text-slate-500 text-sm">No transactions</div>`;
+
+      applyLangToDynamicButtons();
+      renderReceipts();
+      renderProjects();
+    }
+
+    // The Projects view used to be 3 permanent hardcoded demo cards (Kowalski,
+    // Roof cleaning, Facade repair) with fake income/cost figures, unrelated
+    // to what was actually entered. Build it from real transactions instead,
+    // grouped by project. Projects created via "+ New project" but with no
+    // transactions yet are seeded here at 0/0 so they still show up.
+    function renderProjects(){
+      const grid = $('projectsGrid');
+      const byProject = {};
+      state.projects.forEach(p => { byProject[p.name] = { income: 0, cost: 0, id: p.id }; });
+      state.txs.forEach(t => {
+        const name = (t.project || '').trim();
+        if (!name) return;
+        if (!byProject[name]) byProject[name] = { income: 0, cost: 0, id: null };
+        if (t.type === 'income') byProject[name].income += t.amount;
+        if (t.type === 'expense') byProject[name].cost += t.amount;
+      });
+      const names = Object.keys(byProject);
+      if (!names.length) {
+        grid.innerHTML = `<div class="text-sm text-slate-500">${i18n[state.lang].noProjects || 'No projects yet'}</div>`;
+        return;
+      }
+      const isOwner = state.role === 'owner';
+      grid.innerHTML = names.map(name => {
+        const { income, cost, id } = byProject[name];
+        const net = income - cost;
+        const colorClass = net > 0 ? 'text-emerald-400' : net < 0 ? 'text-rose-400' : 'text-amber-400';
+        const sign = net > 0 ? '+' : '';
+        const deleteBtn = (isOwner && id)
+          ? `<button class="text-slate-500 hover:text-rose-400 text-xs" title="${escapeHtml(i18n[state.lang].deleteProjectTitle || 'Delete project')}" onclick="event.stopPropagation(); deleteProject('${id}', '${safeOnclickArg(name)}')">&#10005;</button>`
+          : '';
+        return `
+        <div class="rounded-2xl border border-slate-800 bg-slate-950/60 p-4 cursor-pointer hover:border-indigo-500/50" onclick="openProjectTransactions('${safeOnclickArg(name)}')">
+          <div class="flex items-start justify-between gap-2">
+            <div class="text-slate-400 text-xs">${escapeHtml(name)}</div>
+            ${deleteBtn}
+          </div>
+          <div class="${colorClass} text-xl font-black mt-1">${sign}${fmt(net)}</div>
+          <div class="text-xs text-slate-500 mt-2">${i18n[state.lang].projSummaryIncome} ${fmt(income)} · ${i18n[state.lang].projSummaryCost} ${fmt(cost)}</div>
+        </div>`;
+      }).join('');
+    }
+
+    window.deleteProject = async function(id, name){
+      const confirmMsg = (i18n[state.lang].deleteProjectConfirm || 'Delete project "{name}"? This cannot be undone.').replace('{name}', name);
+      if (!confirm(confirmMsg)) return;
+      const { error } = await supabaseClient.from('projects').delete().eq('id', id);
+      if (error) { notifyError('Could not delete project.', error); return; }
+      await loadProjects();
+      populateProjectSelect();
+      renderProjects();
+    };
+
+    // Clicking a project card opens a read-only list of every transaction
+    // filed under that project name — reuses the same fmt/typeLabel/
+    // statusLabel/txStatusClass helpers as the main transaction table so
+    // amounts, translated type/status labels and coloring stay consistent.
+    window.openProjectTransactions = function(name){
+      ph('capture', 'project_card_opened');
+      const txs = state.txs.filter(t => (t.project || '').trim() === name);
+      const income = txs.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+      const cost = txs.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+      const t = i18n[state.lang];
+      $('projectTxModalTitle').textContent = name;
+      $('projectTxModalSummary').textContent = `${t.projSummaryIncome} ${fmt(income)} · ${t.projSummaryCost} ${fmt(cost)} · ${t.projSummaryNet} ${fmt(income - cost)} · ${txs.length} ${t.projSummaryTxCount}`;
+      // Partner split for this project (feature 2026-07-27): each partner is
+      // entitled to their labor draws filed under this project plus their
+      // share % of what remains after labor and the tax reserve. Main figures
+      // use verified transactions only; the parenthesised forecast adds
+      // pending ones. Mirrors the accounting in recalcPartnerBalances().
+      const splitFor = (statuses) => {
+        const ok = x => statuses.includes(x.status);
+        const inc = txs.filter(x => x.type === 'income' && ok(x)).reduce((s, x) => s + x.amount, 0);
+        const exp = txs.filter(x => x.type === 'expense' && ok(x)).reduce((s, x) => s + x.amount, 0);
+        const laborA = txs.filter(x => x.type === 'draw' && ok(x) && x.partnerSlot === 'owner').reduce((s, x) => s + x.amount, 0);
+        const laborB = txs.filter(x => x.type === 'draw' && ok(x) && x.partnerSlot === 'member').reduce((s, x) => s + x.amount, 0);
+        const net = inc - exp;
+        const reserve = Math.max(0, net) * state.taxRate / 100;
+        const remainder = net - reserve - laborA - laborB;
+        return { laborA, laborB, reserve,
+          shareA: remainder * state.partnerA.share / 100,
+          shareB: remainder * state.partnerB.share / 100 };
+      };
+      const sv = splitFor(['verified']);
+      const sf = splitFor(['verified', 'pending']);
+      const pair = (a, b) => fmt(a) + (Math.abs(b - a) > 0.005 ? ` <span class="text-slate-500 font-normal">(${fmt(b)})</span>` : '');
+      const partnerRow = (pname, share, labor, laborF, shareAmt, shareAmtF) => `
+        <div class="rounded-2xl border border-slate-800 bg-slate-950/60 p-3">
+          <div class="text-sm font-semibold mb-1">${escapeHtml(pname)} · ${share}%</div>
+          <div class="text-xs text-slate-400 flex justify-between gap-2"><span>${t.projSplitLabor}</span><span>${pair(labor, laborF)}</span></div>
+          <div class="text-xs text-slate-400 flex justify-between gap-2"><span>${t.projSplitShare}</span><span>${pair(shareAmt, shareAmtF)}</span></div>
+          <div class="text-sm font-bold flex justify-between gap-2 mt-1 border-t border-slate-800 pt-1"><span>${t.projSplitTotal}</span><span>${pair(labor + shareAmt, laborF + shareAmtF)}</span></div>
+        </div>`;
+      $('projectTxModalSplit').innerHTML = `
+        <div class="text-xs text-slate-400 font-semibold mb-2">${t.projSplitTitle}</div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          ${partnerRow(state.partnerA.name, state.partnerA.share, sv.laborA, sf.laborA, sv.shareA, sf.shareA)}
+          ${partnerRow(state.partnerB.name, state.partnerB.share, sv.laborB, sf.laborB, sv.shareB, sf.shareB)}
+        </div>
+        <div class="text-[11px] text-slate-500 mt-2">${t.monthlyTax}: ${pair(sv.reserve, sf.reserve)} · ${t.projSplitForecastNote}</div>`;
+      const list = $('projectTxModalList');
+      list.innerHTML = txs.length ? txs.map(tx => `
+        <div class="rounded-2xl border border-slate-800 bg-slate-950/60 p-3">
+          <div class="flex items-start justify-between gap-2">
+            <div class="min-w-0">
+              <div class="text-sm font-semibold">${escapeHtml(tx.date)} · ${typeLabel(tx.type)}</div>
+              <div class="text-xs text-slate-400 truncate">${escapeHtml(tx.description || '—')}</div>
+            </div>
+            <div class="text-right shrink-0">
+              <div class="text-sm font-bold">${fmt(tx.amount)}</div>
+              <div class="text-xs font-semibold ${txStatusClass(tx.status)}">${statusLabel(tx.status)}</div>
+            </div>
+          </div>
+        </div>`).join('') : `<div class="text-sm text-slate-500">${t.projNoTransactions}</div>`;
+      $('projectTxModal').classList.remove('hidden');
+      $('projectTxModal').classList.add('flex');
+    };
+
+    // Dedicated withdrawal flow for the partner balance cards. "Withdraw"
+    // inserts a type:'draw' transaction tagged to that partner's category
+    // (see partnerSlotFor()), reusing the same insert shape as the main
+    // transaction form. Unlike the general form — where new transactions
+    // default to 'pending' until someone marks them verified — a
+    // withdrawal is inserted as 'verified' immediately: clicking this
+    // button IS the partner taking the money right now, not a plan to
+    // take it later, so the remaining balance should update right away.
+    let withdrawSlot = null;
+    window.openWithdrawModal = function(slot){
+      withdrawSlot = slot;
+      const name = slot === 'owner' ? state.partnerA.name : state.partnerB.name;
+      $('withdrawModalTitle').textContent = `${i18n[state.lang].withdrawBtn || 'Withdraw'} — ${name}`;
+      $('withdrawAmount').value = '';
+      $('withdrawAccount').value = 'Bank';
+      $('withdrawDescription').value = '';
+      $('withdrawModal').classList.remove('hidden');
+      $('withdrawModal').classList.add('flex');
+    };
+
+    $('submitWithdraw').addEventListener('click', async () => {
+      const amount = Number($('withdrawAmount').value || 0);
+      if (!amount || amount <= 0) return;
+      const category = withdrawSlot === 'owner' ? 'Partner Draw A' : 'Partner Draw B';
+      const date = new Date().toISOString().slice(0,10);
+      const account = $('withdrawAccount').value;
+      const description = $('withdrawDescription').value || '—';
+
+      // LOCAL PREVIEW ONLY: this demo has no real logged-in Supabase user
+      // (state.user.id = 'demo'), so a real insert() would just fail
+      // silently against RLS / a fake org_id. Push the draw straight into
+      // state.txs instead, so the button is actually testable offline.
+      if (state.previewMode) {
+        state.txs.unshift({
+          id: 'preview-' + Date.now(), date, project: '—', amount, type: 'draw', status: 'verified',
+          creator: state.user.email, createdByUserId: state.user.id, partnerSlot: withdrawSlot,
+          category, account, description, receipt: null
+        });
+        populateFilters();
+        renderTxTable();
+        recalcPartnerBalances();
+        closeModal('withdrawModal');
+        return;
+      }
+
+      const row = {
+        org_id: state.orgId,
+        created_by_user_id: state.user.id,
+        date,
+        project: '—',
+        amount,
+        type: 'draw',
+        status: 'verified',
+        category,
+        account,
+        description,
+        receipt_path: null
+      };
+      try {
+        const { error } = await supabaseClient.from('transactions').insert(row);
+        if (error) { notifyError('Could not record withdrawal.', error); return; }
+        // No amount sent to analytics — only that the feature was used.
+        ph('capture', 'partner_withdrawal_recorded', { partner_slot: withdrawSlot });
+        await loadTransactions();
+        populateFilters();
+        renderTxTable();
+        recalcPartnerBalances();
+        closeModal('withdrawModal');
+      } catch (err) {
+        notifyError('Could not record withdrawal.', err);
+      }
+    });
+
+    // "Withdrawn draws" on each partner card is clickable and opens the
+    // full list of that partner's draw transactions — so it's always
+    // visible who withdrew how much and when, not just a running total.
+    window.openDrawHistory = function(slot){
+      const name = slot === 'owner' ? state.partnerA.name : state.partnerB.name;
+      const txs = state.txs.filter(t => t.type === 'draw' && t.partnerSlot === slot);
+      $('drawHistoryModalTitle').textContent = `${i18n[state.lang].drawHistoryTitle || 'Withdrawal history'} — ${name}`;
+      const list = $('drawHistoryModalList');
+      list.innerHTML = txs.length ? txs.map(tx => `
+        <div class="rounded-2xl border border-slate-800 bg-slate-950/60 p-3">
+          <div class="flex items-start justify-between gap-2">
+            <div class="min-w-0">
+              <div class="text-sm font-semibold">${escapeHtml(tx.date)} · ${escapeHtml(tx.account)}</div>
+              <div class="text-xs text-slate-400 truncate">${escapeHtml(tx.description || '—')}</div>
+            </div>
+            <div class="text-right shrink-0">
+              <div class="text-sm font-bold">${fmt(tx.amount)}</div>
+              <div class="text-xs font-semibold ${txStatusClass(tx.status)}">${statusLabel(tx.status)}</div>
+            </div>
+          </div>
+        </div>`).join('') : `<div class="text-sm text-slate-500">${i18n[state.lang].noWithdrawals || 'No withdrawals yet'}</div>`;
+      $('drawHistoryModal').classList.remove('hidden');
+      $('drawHistoryModal').classList.add('flex');
+    };
+
+    function renderReceipts(){
+      const grid = $('receiptsGrid');
+      const withReceipts = state.txs.filter(t => t.receipt);
+      if (!withReceipts.length) {
+        grid.innerHTML = `<div class="text-sm text-slate-500">${i18n[state.lang].noReceipts || 'No receipts yet'}</div>`;
+        return;
+      }
+      grid.innerHTML = withReceipts.map(tx => {
+        const safePath = safeOnclickArg(tx.receipt);
+        return `
+        <button class="receipt-card rounded-2xl border border-slate-800 bg-slate-950/60 p-4 text-left" onclick="openReceipt('${safePath}')">
+          <div class="text-xs text-slate-400">${escapeHtml(tx.project)} · ${fmt(tx.amount)}</div>
+          <div class="mt-2 text-sm">${escapeHtml(tx.description || '—')}</div>
+          <div class="mt-3 text-xs text-emerald-400">📎 ${escapeHtml(receiptFileName(tx.receipt))}</div>
+        </button>`;
+      }).join('');
+    }
+
+    function applyLang(){
+      const t = i18n[state.lang];
+      $('defaultLang').value = state.lang;
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.dataset.i18n;
+        if (t[key] !== undefined) el.textContent = t[key];
+      });
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.dataset.i18nPlaceholder;
+        if (t[key] !== undefined) el.placeholder = t[key];
+      });
+      document.querySelectorAll('#direction option, #account option, #category option, #status option, #defaultLang option, #editDirection option, #editCategory option, #editStatus option, #withdrawAccount option').forEach(opt => {
+        const key = opt.dataset.i18n;
+        if (key && t[key] !== undefined) opt.textContent = t[key];
+      });
+      $('tx-list-sub').textContent = state.lang === 'pl' ? 'najnowsze na górze' : state.lang === 'uk' ? 'новіші зверху' : 'latest first';
+      populateFilters();
+      populateCategorySelect();
+      recalcPartnerBalances();
+      renderTxTable();
+    }
+
+    function applyLangToDynamicButtons(){
+      const t = i18n[state.lang];
+      document.querySelectorAll('[data-i18n="btnEditTx"]').forEach(el => el.textContent = t.btnEditTx || 'Edit');
+      document.querySelectorAll('[data-i18n="btnDeleteTxSmall"]').forEach(el => el.textContent = t.btnDeleteTxSmall || (state.lang==='pl' ? 'Usuń' : state.lang==='uk' ? 'Видалити' : 'Delete'));
+      document.querySelectorAll('[data-i18n="btnReceipt"]').forEach(el => el.textContent = t.btnReceipt || (state.lang==='pl' ? 'Pokaż' : state.lang==='uk' ? 'Показати' : 'View'));
+      document.querySelectorAll('[data-i18n="btnApprove"]').forEach(el => el.textContent = t.btnApprove || 'Approve');
+      document.querySelectorAll('[data-i18n="btnReject"]').forEach(el => el.textContent = t.btnReject || 'Reject');
+    }
+
+    function renderPreview(){
+      const amount = Number($('amount').value || 0);
+      const t = i18n[state.lang];
+      const directionText = $('direction').options[$('direction').selectedIndex].text;
+      const accountText = $('account').options[$('account').selectedIndex].text;
+      const statusText = $('status').options[$('status').selectedIndex].text;
+      $('preview').innerHTML = `
+        <div class="rounded-2xl border border-slate-800 bg-slate-950/60 p-4 space-y-2">
+          <div class="flex justify-between"><span class="text-slate-400">${t.labelAmount}</span><span class="font-bold">${amount.toFixed(2)} ${state.currency}</span></div>
+          <div class="flex justify-between"><span class="text-slate-400">${t.labelDirection}</span><span>${directionText}</span></div>
+          <div class="flex justify-between"><span class="text-slate-400">${t.labelAccount}</span><span>${accountText}</span></div>
+          <div class="flex justify-between"><span class="text-slate-400">${t.labelProject}</span><span>${escapeHtml($('project').value || '—')}</span></div>
+          <div class="flex justify-between"><span class="text-slate-400">${t.labelStatus}</span><span class="${txStatusClass($('status').value)} capitalize">${statusText}</span></div>
+          <div class="pt-2 text-slate-400">${escapeHtml($('description').value || '—')}</div>
+        </div>`;
+      const reserveAmount = $('direction').value === 'income' ? amount * state.taxRate / 100 : 0;
+      $('taxCalc').textContent = fmt(reserveAmount);
+      recalcPartnerBalances();
+    }
+
+    function setView(view){
+      ['dashboard','transactions','projects','receipts','monthly','settings'].forEach(v => $('view-' + v).classList.toggle('hidden', v !== view));
+      document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+      // Settings re-lock every time you (re-)open the tab, so leaving and
+      // coming back never leaves it sitting unlocked by accident.
+      if (view === 'settings') applySettingsLock(true);
+    }
+
+    window.editTx = function(id){
+      const tx = state.txs.find(t=>t.id===id);
+      if (!tx) return;
+      state.editId = id;
+      $('editDate').value = tx.date;
+      $('editAmount').value = tx.amount;
+      $('editProject').value = tx.project;
+      $('editDirection').value = tx.type;
+      $('editCategory').value = tx.category;
+      $('editStatus').value = tx.status;
+      $('editModal').classList.remove('hidden');
+      $('editModal').classList.add('flex');
+    };
+
+    window.deleteTx = async function(id){
+      const tx = state.txs.find(t => t.id === id);
+      if (!tx) return;
+
+      if (canDeleteDirectly(tx)) {
+        const { error } = await supabaseClient.from('transactions').delete().eq('id', id);
+        if (error) { notifyError('Could not delete.', error); return; }
+        await loadTransactions();
+        populateFilters();
+        renderTxTable();
+        recalcPartnerBalances();
+        return;
+      }
+
+      if (!confirm(i18n[state.lang].deleteRequestConfirm || "You don't have permission to delete this directly. Send a delete request to the workspace owner for approval?")) return;
+      const { error } = await supabaseClient.from('delete_requests').insert({
+        org_id: state.orgId,
+        transaction_id: id,
+        requested_by: state.user.id
+      });
+      if (error) {
+        const msg = error.code === '23505'
+          ? (i18n[state.lang].deleteRequestDuplicate || 'A delete request for this transaction is already pending.')
+          : null;
+        if (msg) { alert(msg); return; }
+        notifyError('Could not request deletion.', error);
+        return;
+      }
+      alert(i18n[state.lang].deleteRequestSent || 'Delete request sent to the owner.');
+    };
+
+    window.openReceipt = async function(path){
+      const body = $('receiptModalBody');
+      body.textContent = i18n[state.lang].receiptLoading || 'Loading…';
+      $('receiptModal').classList.remove('hidden');
+      $('receiptModal').classList.add('flex');
+      const { data, error } = await supabaseClient.storage.from('receipts').createSignedUrl(path, 3600);
+      if (error) { console.warn('Could not load receipt:', error.message); body.textContent = 'Could not load receipt. Please try again.'; return; }
+      const url = data.signedUrl;
+      const isImage = /\.(png|jpe?g|gif|webp)$/i.test(path);
+      body.innerHTML = isImage
+        ? `<img src="${escapeHtml(url)}" class="max-w-full rounded-xl" alt="Receipt">`
+        : `<a href="${escapeHtml(url)}" target="_blank" rel="noopener" class="text-sky-400 underline">${escapeHtml(receiptFileName(path))}</a>`;
+    };
+
+    function closeModal(id){
+      const el = $(id);
+      el.classList.add('hidden');
+      el.classList.remove('flex');
+    }
+
+    // --- First-login onboarding tour ---
+    // A short, dismissable walkthrough of the main nav tabs. Shown once
+    // automatically (tracked via localStorage, a local device preference like
+    // the theme toggle — not org data), and replayable anytime from
+    // Settings > "Replay tour".
+    const TOUR_STEPS = [
+      { view: null, titleKey: 'tourWelcomeTitle', descKey: 'tourWelcomeDesc' },
+      { view: 'dashboard', titleKey: 'tourDashboardTitle', descKey: 'tourDashboardDesc' },
+      { view: 'transactions', titleKey: 'tourTransactionsTitle', descKey: 'tourTransactionsDesc' },
+      { view: 'projects', titleKey: 'tourProjectsTitle', descKey: 'tourProjectsDesc' },
+      { view: 'receipts', titleKey: 'tourReceiptsTitle', descKey: 'tourReceiptsDesc' },
+      { view: 'monthly', titleKey: 'tourMonthlyTitle', descKey: 'tourMonthlyDesc' },
+      { view: 'settings', titleKey: 'tourSettingsTitle', descKey: 'tourSettingsDesc' }
+    ];
+    let tourStep = 0;
+
+    function maybeStartTour(){
+      let seen = false;
+      try { seen = localStorage.getItem('sb_tour_seen') === '1'; } catch (e) {}
+      if (!seen) startTour();
+    }
+
+    function startTour(){
+      tourStep = 0;
+      renderTourStep();
+    }
+
+    function endTour(){
+      const overlay = $('tourOverlay');
+      if (overlay) overlay.remove();
+      try { localStorage.setItem('sb_tour_seen', '1'); } catch (e) {}
+    }
+
+    function renderTourStep(){
+      const step = TOUR_STEPS[tourStep];
+      const t = i18n[state.lang];
+      if (step.view) setView(step.view);
+
+      const existing = $('tourOverlay');
+      if (existing) existing.remove();
+
+      const overlay = document.createElement('div');
+      overlay.id = 'tourOverlay';
+      overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(2,6,23,.7);';
+
+      const targetEl = step.view ? document.querySelector('.tab[data-view="' + step.view + '"]') : null;
+      const rect = targetEl ? targetEl.getBoundingClientRect() : null;
+
+      if (rect) {
+        overlay.style.background = 'transparent';
+        const hole = document.createElement('div');
+        const pad = 6;
+        hole.style.cssText = 'position:fixed;top:' + (rect.top - pad) + 'px;left:' + (rect.left - pad) + 'px;'
+          + 'width:' + (rect.width + pad * 2) + 'px;height:' + (rect.height + pad * 2) + 'px;'
+          + 'border-radius:14px;box-shadow:0 0 0 9999px rgba(2,6,23,.75);pointer-events:none;border:2px solid #6366f1;';
+        overlay.appendChild(hole);
+      }
+
+      const card = document.createElement('div');
+      card.className = 'glass border border-slate-800 rounded-3xl p-5 shadow-2xl';
+      card.style.cssText = 'position:fixed;z-index:10000;width:calc(100% - 32px);max-width:22rem;';
+      if (rect) {
+        const top = Math.min(rect.bottom + 14, window.innerHeight - 220);
+        const left = Math.max(16, Math.min(rect.left, window.innerWidth - 22 * 16 - 16));
+        card.style.top = top + 'px';
+        card.style.left = left + 'px';
+      } else {
+        card.style.top = '50%';
+        card.style.left = '50%';
+        card.style.transform = 'translate(-50%,-50%)';
+      }
+
+      const isFirst = tourStep === 0;
+      const isLast = tourStep === TOUR_STEPS.length - 1;
+      const stepOfHtml = step.view
+        ? '<p class="text-xs text-indigo-400 font-semibold mb-1">' + escapeHtml((t.tourStepOf || 'Step {n} of {total}').replace('{n}', String(tourStep)).replace('{total}', String(TOUR_STEPS.length - 1))) + '</p>'
+        : '';
+      card.innerHTML = stepOfHtml
+        + '<h3 class="text-lg font-bold mb-1">' + escapeHtml(t[step.titleKey] || '') + '</h3>'
+        + '<p class="text-sm text-slate-300 mb-4">' + escapeHtml(t[step.descKey] || '') + '</p>'
+        + '<div class="flex items-center justify-between gap-2">'
+        + '<button id="tourSkipBtn" class="text-xs text-slate-400 hover:text-slate-200 underline">' + escapeHtml(t.tourSkip || 'Skip') + '</button>'
+        + '<div class="flex gap-2">'
+        + (!isFirst ? '<button id="tourBackBtn" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-sm font-semibold">' + escapeHtml(t.tourBack || 'Back') + '</button>' : '')
+        + '<button id="tourNextBtn" class="px-3 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-sm font-semibold">' + escapeHtml(isLast ? (t.tourDone || 'Got it') : (t.tourNext || 'Next')) + '</button>'
+        + '</div></div>';
+      overlay.appendChild(card);
+      document.body.appendChild(overlay);
+
+      $('tourSkipBtn').addEventListener('click', endTour);
+      const backBtn = $('tourBackBtn');
+      if (backBtn) backBtn.addEventListener('click', () => { tourStep--; renderTourStep(); });
+      $('tourNextBtn').addEventListener('click', () => {
+        if (isLast) { endTour(); return; }
+        tourStep++;
+        renderTourStep();
+      });
+    }
+
+    const replayTourBtn = $('btnReplayTour');
+    if (replayTourBtn) replayTourBtn.addEventListener('click', startTour);
+
+    // --- "What's new" notice ---
+    // Shown once per app version bump so existing users notice new
+    // features after an update, without needing an email/announcement.
+    // Bump WHATS_NEW_VERSION and extend WHATS_NEW_ITEMS whenever a
+    // user-visible feature ships. Skipped for brand-new users (the
+    // onboarding tour already covers current features) — only shown to
+    // people who've used the app before and are seeing this version for
+    // the first time. Tracked via localStorage, a local device
+    // preference like the tour flag, not org data.
+    const WHATS_NEW_VERSION = '2026-07-withdraw-and-project-detail';
+    const WHATS_NEW_ITEMS = [
+      { titleKey: 'whatsNewWithdrawTitle', descKey: 'whatsNewWithdrawDesc' },
+      { titleKey: 'whatsNewProjectDetailTitle', descKey: 'whatsNewProjectDetailDesc' }
+    ];
+
+    function renderWhatsNew(){
+      const t = i18n[state.lang];
+      $('whatsNewList').innerHTML = WHATS_NEW_ITEMS.map(item => `
+        <div class="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
+          <div class="text-sm font-semibold">${escapeHtml(t[item.titleKey] || '')}</div>
+          <div class="text-xs text-slate-400 mt-1">${escapeHtml(t[item.descKey] || '')}</div>
+        </div>`).join('');
+    }
+
+    function openWhatsNew(){
+      renderWhatsNew();
+      $('whatsNewModal').classList.remove('hidden');
+      $('whatsNewModal').classList.add('flex');
+    }
+
+    function dismissWhatsNew(){
+      closeModal('whatsNewModal');
+      try { localStorage.setItem('sb_whats_new_seen', WHATS_NEW_VERSION); } catch (e) {}
+    }
+
+    function maybeShowWhatsNew(){
+      let tourSeen = false;
+      try { tourSeen = localStorage.getItem('sb_tour_seen') === '1'; } catch (e) {}
+      if (!tourSeen) {
+        // Brand-new user — the tour they're about to see already covers
+        // these features, so just mark this version seen and skip.
+        try { localStorage.setItem('sb_whats_new_seen', WHATS_NEW_VERSION); } catch (e) {}
+        return;
+      }
+      let seenVersion = null;
+      try { seenVersion = localStorage.getItem('sb_whats_new_seen'); } catch (e) {}
+      if (seenVersion !== WHATS_NEW_VERSION) openWhatsNew();
+    }
+
+    $('closeWhatsNewModal').addEventListener('click', dismissWhatsNew);
+    $('whatsNewGotIt').addEventListener('click', dismissWhatsNew);
+    const replayWhatsNewBtn = $('btnShowWhatsNew');
+    if (replayWhatsNewBtn) replayWhatsNewBtn.addEventListener('click', openWhatsNew);
+
+    document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => setView(b.dataset.view)));
+    document.querySelectorAll('[data-lang]').forEach(b => b.addEventListener('click', () => { state.lang = b.dataset.lang; storeLang(state.lang); $('defaultLang').value = state.lang; applyLang(); refreshUI(); }));
+
+    // Categories are now data (state.categories), not a fixed map, so the
+    // direction lookup reads each category's own `direction` column instead
+    // of a hardcoded table. "Partner Draw A/B" stay special-cased here too.
+    function categoryDirection(name){
+      if (name === 'Partner Draw A' || name === 'Partner Draw B') return 'draw';
+      const found = state.categories.find(c => c.name === name);
+      return found ? found.direction : null;
+    }
+    $('category').addEventListener('input', () => {
+      const mapped = categoryDirection($('category').value);
+      if (mapped) $('direction').value = mapped;
+    });
+
+    ['amount','direction','account','project','category','status','description'].forEach(id => $(id).addEventListener('input', () => { renderPreview(); }));
+    $('date').value = new Date().toISOString().slice(0,10);
+
+    function clearTxForm(){
+      $('date').value = new Date().toISOString().slice(0,10);
+      $('amount').value = '';
+      $('project').value = '';
+      $('description').value = '';
+      $('receipt').value = '';
+      $('status').value = 'pending';
+      renderPreview();
+    }
+
+    $('saveTx').addEventListener('click', async () => {
+      const amount = Number($('amount').value || 0);
+      if (!amount || amount <= 0) return;
+
+      let receiptPath = null;
+      const file = $('receipt').files[0];
+      if (file) {
+        receiptPath = `${state.orgId}/${Date.now()}-${file.name}`;
+        const { error: uploadError } = await supabaseClient.storage.from('receipts').upload(receiptPath, file);
+        if (uploadError) { alert('Could not upload receipt: ' + uploadError.message); return; }
+      }
+
+      const row = {
+        org_id: state.orgId,
+        created_by_user_id: state.user.id,
+        date: $('date').value || new Date().toISOString().slice(0,10),
+        project: $('project').value || '—',
+        amount,
+        type: $('direction').value,
+        status: $('status').value,
+        category: $('category').value,
+        account: $('account').value,
+        description: $('description').value || '—',
+        receipt_path: receiptPath
+      };
+      const { error } = await supabaseClient.from('transactions').insert(row);
+      if (error) { notifyError('Could not save transaction.', error); return; }
+      await loadTransactions();
+      populateFilters();
+      renderTxTable();
+      recalcPartnerBalances();
+      clearTxForm();
+    });
+
+    $('resetTx').addEventListener('click', clearTxForm);
+
+    $('filterProject').addEventListener('change', renderTxTable);
+    $('filterStatus').addEventListener('change', renderTxTable);
+
+    $('shareA').addEventListener('input', e => {
+      state.partnerA.share = Number(e.target.value);
+      state.partnerB.share = 100 - state.partnerA.share;
+      recalcPartnerBalances();
+    });
+
+    $('setNameA').addEventListener('input', e => {
+      state.partnerA.name = e.target.value || 'Partner A';
+      refreshUI();
+    });
+
+    $('setNameB').addEventListener('input', e => {
+      state.partnerB.name = e.target.value || 'Partner B';
+      refreshUI();
+    });
+
+    // Only your own name is editable (see refreshPartnerNameUI — the other
+    // slot's input is disabled), and it saves to your own membership row.
+    // The disabled check here is a second guard in case the field somehow
+    // got re-enabled client-side; the real enforcement is the DB trigger.
+    async function saveMyDisplayName(){
+      if (!state.myMembershipId) return;
+      const myName = state.role === 'owner' ? state.partnerA.name : state.partnerB.name;
+      const { error } = await supabaseClient.from('memberships').update({ display_name: myName }).eq('id', state.myMembershipId);
+      if (error) { notifyError('Could not save your name.', error); return; }
+    }
+
+    $('setNameA').addEventListener('change', () => { if (state.role === 'owner') saveMyDisplayName(); });
+    $('setNameB').addEventListener('change', () => { if (state.role !== 'owner') saveMyDisplayName(); });
+
+    $('currency').addEventListener('change', e => {
+      state.currency = e.target.value;
+      refreshUI();
+    });
+
+    $('taxRate').addEventListener('input', e => {
+      state.taxRate = Number(e.target.value || 0);
+      renderPreview();
+      recalcPartnerBalances();
+    });
+
+    $('taxRate').addEventListener('change', async () => {
+      if (state.role !== 'owner') return;
+      const { error } = await supabaseClient.from('organizations').update({ tax_rate: state.taxRate }).eq('id', state.orgId);
+      if (error) { notifyError('Could not save tax rate.', error); return; }
+    });
+
+    $('defaultLang').addEventListener('change', e => {
+      state.lang = e.target.value;
+      storeLang(state.lang);
+      applyLang();
+      refreshUI();
+    });
+
+    $('btnMonthlyClose').addEventListener('click', () => setView('monthly'));
+
+    // Shared summary data for the monthly report, consumed by the PDF export,
+    // the Excel export, and the plain-text "Send to partners" mailto body.
+    function buildMonthlyReportData(){
+      return {
+        date: new Date().toISOString().slice(0,10),
+        income: $('monthIncome').textContent,
+        expenses: $('monthExpense').textContent,
+        tax: $('monthTax').textContent,
+        taxRate: state.taxRate,
+        distributable: $('monthDistrib').textContent,
+        partnerA: { name: state.partnerA.name, earned: $('partnerAearned').textContent, withdrawn: $('partnerAwithdrawn').textContent, remaining: $('partnerAremaining').textContent },
+        partnerB: { name: state.partnerB.name, earned: $('partnerBearned').textContent, withdrawn: $('partnerBwithdrawn').textContent, remaining: $('partnerBremaining').textContent },
+        txs: state.txs.map(t => [t.date, t.project || '—', fmt(t.amount), typeLabel(t.type), statusLabel(t.status)])
+      };
+    }
+
+    function buildMonthlyReportText(){
+      const r = buildMonthlyReportData();
+      const L = reportLabels();
+      const lines = [
+        `${L.title} (${r.date})`,
+        '',
+        `${L.income}: ${r.income}`,
+        `${L.expenses}: ${r.expenses}`,
+        `${L.tax}: ${r.tax} (${L.rate}: ${r.taxRate}%)`,
+        `${L.distributable}: ${r.distributable}`,
+        '',
+        `${r.partnerA.name}: ${L.earned} ${r.partnerA.earned}, ${L.withdrawn} ${r.partnerA.withdrawn}, ${L.remaining} ${r.partnerA.remaining}`,
+        `${r.partnerB.name}: ${L.earned} ${r.partnerB.earned}, ${L.withdrawn} ${r.partnerB.withdrawn}, ${L.remaining} ${r.partnerB.remaining}`,
+        '',
+        `${L.txs}:`
+      ];
+      r.txs.forEach(row => lines.push(row.join('  ')));
+      return lines.join('\n');
+    }
+
+    // jsPDF's built-in fonts are Latin-1 only: Ukrainian text rendered as
+    // garbage and Polish diacritics (ł, ą, ę, ś, ż) were dropped. These are
+    // Roboto subsets (Latin + Latin Ext-A + Cyrillic, ~28 KB each) served
+    // from our own origin and registered with jsPDF on first PDF export.
+    let pdfFontPromise = null;
+    function loadPdfFonts(){
+      if (pdfFontPromise) return pdfFontPromise;
+      const toBase64 = buf => {
+        const bytes = new Uint8Array(buf);
+        let bin = '';
+        for (let i = 0; i < bytes.length; i += 8192) {
+          bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 8192));
+        }
+        return btoa(bin);
+      };
+      const grab = url => fetch(url).then(r => {
+        if (!r.ok) throw new Error('Failed to load font ' + url);
+        return r.arrayBuffer();
+      }).then(toBase64);
+      pdfFontPromise = Promise.all([grab('/sb-regular.ttf'), grab('/sb-bold.ttf')])
+        .catch(e => { pdfFontPromise = null; throw e; });
+      return pdfFontPromise;
+    }
+
+    // Registers the Unicode font on a fresh jsPDF doc and makes it active.
+    // Falls back to the built-in font if the files cannot be fetched, so an
+    // export never fails outright - it just loses non-Latin glyphs.
+    async function applyPdfFont(doc){
+      try {
+        const [reg, bold] = await loadPdfFonts();
+        doc.addFileToVFS('SBSans-Regular.ttf', reg);
+        doc.addFont('SBSans-Regular.ttf', 'SBSans', 'normal');
+        doc.addFileToVFS('SBSans-Bold.ttf', bold);
+        doc.addFont('SBSans-Bold.ttf', 'SBSans', 'bold');
+        doc.setFont('SBSans', 'normal');
+        return 'SBSans';
+      } catch (e) {
+        return 'helvetica';
+      }
+    }
+
+    // Marks the given zero-based columns as currency from `startRow` down, so
+    // Excel shows "1 234,00 PLN" while the underlying value stays numeric.
+    function applyAmountFormat(ws, cols, fromRow, toRow){
+      const fmtStr = '#,##0.00" ' + (state.currency || 'PLN') + '"';
+      for (let r = fromRow; r <= toRow; r++) {
+        cols.forEach(c => {
+          const cell = ws[XLSX.utils.encode_cell({ r, c })];
+          if (cell && typeof cell.v === 'number') { cell.t = 'n'; cell.z = fmtStr; }
+        });
+      }
+    }
+
+    // Report labels in the user's current language, shared by the PDF, Excel
+    // and e-mail exports so all three stay consistent.
+    function reportLabels(){
+      const t = i18n[state.lang];
+      return {
+        title: `SplitBooks — ${t.repTitle || 'Report'}`,
+        income: t.monthlyIncome, expenses: t.monthlyExpenses,
+        tax: t.monthlyTax, rate: t.repRate || 'rate', distributable: t.monthlyDistrib,
+        earned: t.earnedShare, withdrawn: t.withdrawnDraws, remaining: t.remainingLabel,
+        txs: t.txTitle, total: t.repTotalRow || 'TOTAL',
+        head: [t.thDate, t.thProject, t.thAmount, t.thType, t.thStatus],
+        done: t.reportGenerated || 'Report downloaded.'
+      };
+    }
+
+    // Export libraries (~300 KB) are only needed when the user actually
+    // clicks an export button, so they are loaded on demand instead of
+    // blocking first paint (Lighthouse: -5.6s render-blocking).
+    let exportLibsPromise = null;
+    function ensureExportLibs(){
+      if (exportLibsPromise) return exportLibsPromise;
+      const load = (srcUrl, integrity) => new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = srcUrl; s.integrity = integrity; s.crossOrigin = 'anonymous';
+        s.onload = resolve; s.onerror = () => reject(new Error('Failed to load ' + srcUrl));
+        document.head.appendChild(s);
+      });
+      exportLibsPromise = Promise.all([
+        load('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', 'sha384-JcnsjUPPylna1s1fvi1u12X5qjY5OL56iySh75FdtrwhO/SWXgMjoVqcKyIIWOLk')
+          .then(() => load('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js', 'sha384-fCAW/rDWORTbQXSiB7mOg0QtQ5c+r0f544y6XoKjuVva0nMBlCpNUjiFeG5iMdS3')),
+        load('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js', 'sha384-vtjasyidUo0kW94K5MXDXntzOJpQgBKXmE7e2Ga4LG0skTTLeBi97eFAXsqewJjw')
+      ]).catch(e => { exportLibsPromise = null; throw e; });
+      return exportLibsPromise;
+    }
+
+    $('exportPdf').addEventListener('click', async () => {
+      try { await ensureExportLibs(); } catch (e) { alert(e.message); return; }
+      const r = buildMonthlyReportData();
+      const L = reportLabels();
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      const font = await applyPdfFont(doc);
+      doc.setFont(font, 'bold');
+      doc.setFontSize(16);
+      doc.text(`${L.title} (${r.date})`, 14, 18);
+      doc.setFont(font, 'normal');
+      doc.setFontSize(11);
+      const summary = [
+        `${L.income}: ${r.income}    ${L.expenses}: ${r.expenses}`,
+        `${L.tax}: ${r.tax} (${L.rate}: ${r.taxRate}%)    ${L.distributable}: ${r.distributable}`,
+        '',
+        `${r.partnerA.name}: ${L.earned} ${r.partnerA.earned}, ${L.withdrawn} ${r.partnerA.withdrawn}, ${L.remaining} ${r.partnerA.remaining}`,
+        `${r.partnerB.name}: ${L.earned} ${r.partnerB.earned}, ${L.withdrawn} ${r.partnerB.withdrawn}, ${L.remaining} ${r.partnerB.remaining}`
+      ];
+      doc.text(summary, 14, 28);
+      doc.autoTable({
+        startY: 28 + summary.length * 6 + 4,
+        head: [L.head],
+        body: r.txs,
+        styles: { font, fontStyle: 'normal', fontSize: 9, cellPadding: 2 },
+        headStyles: { font, fontStyle: 'bold', fillColor: [37, 99, 235], textColor: 255 },
+        columnStyles: { 2: { halign: 'right' } },
+        margin: { left: 14, right: 14 }
+      });
+      doc.save(`splitbooks-report-${r.date}.pdf`);
+      alert(L.done);
+    });
+
+    $('exportExcel').addEventListener('click', async () => {
+      try { await ensureExportLibs(); } catch (e) { alert(e.message); return; }
+      const r = buildMonthlyReportData();
+      const L = reportLabels();
+      // Amounts go in as real numbers (not "1 000,00 PLN" strings) so the user
+      // can sum and filter them in Excel; currency is shown via a cell format.
+      const rows = [
+        [L.title, r.date],
+        [],
+        [L.income, r.income],
+        [L.expenses, r.expenses],
+        [`${L.tax} (${L.rate} ${r.taxRate}%)`, r.tax],
+        [L.distributable, r.distributable],
+        [],
+        ['', L.earned, L.withdrawn, L.remaining],
+        [r.partnerA.name, r.partnerA.earned, r.partnerA.withdrawn, r.partnerA.remaining],
+        [r.partnerB.name, r.partnerB.earned, r.partnerB.withdrawn, r.partnerB.remaining],
+        [],
+        [L.txs],
+        L.head,
+        ...state.txs.map(t => [t.date, t.project || '—', t.amount, typeLabel(t.type), statusLabel(t.status)])
+      ];
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.aoa_to_sheet(rows);
+      ws['!cols'] = [{ wch: 26 }, { wch: 30 }, { wch: 16 }, { wch: 14 }, { wch: 16 }];
+      applyAmountFormat(ws, [1, 2, 3], 2, 9);
+      applyAmountFormat(ws, [2], 13, rows.length - 1);
+      XLSX.utils.book_append_sheet(wb, ws, 'Report');
+      XLSX.writeFile(wb, `splitbooks-report-${r.date}.xlsx`);
+      alert(L.done);
+    });
+
+    // Groups all transactions by project (same grouping convention as renderProjects()),
+    // for the standalone "Export by project" PDF/Excel report. Transactions with no
+    // project stay out of this report, matching how the Projects tab already works.
+    function buildProjectGroups(){
+      const byProject = {};
+      state.txs.forEach(t => {
+        const name = (t.project || '').trim();
+        if (!name) return;
+        if (!byProject[name]) byProject[name] = { income: 0, cost: 0, txs: [] };
+        if (t.type === 'income') byProject[name].income += t.amount;
+        if (t.type === 'expense') byProject[name].cost += t.amount;
+        byProject[name].txs.push(t);
+      });
+      const projects = Object.keys(byProject).sort().map(name => {
+        const g = byProject[name];
+        return {
+          name,
+          income: g.income,
+          cost: g.cost,
+          net: g.income - g.cost,
+          txs: g.txs.map(t => [t.date, fmt(t.amount), typeLabel(t.type), statusLabel(t.status)]),
+          rawTxs: g.txs.map(t => [t.date, t.amount, typeLabel(t.type), statusLabel(t.status)])
+        };
+      });
+      const grandIncome = projects.reduce((s, p) => s + p.income, 0);
+      const grandCost = projects.reduce((s, p) => s + p.cost, 0);
+      return {
+        date: new Date().toISOString().slice(0, 10),
+        projects,
+        grandIncome,
+        grandCost,
+        grandNet: grandIncome - grandCost
+      };
+    }
+
+    $('exportPdfByProject').addEventListener('click', async () => {
+      try { await ensureExportLibs(); } catch (e) { alert(e.message); return; }
+      const r = buildProjectGroups();
+      const t = i18n[state.lang];
+      const L = reportLabels();
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      const font = await applyPdfFont(doc);
+      doc.setFont(font, 'bold');
+      doc.setFontSize(16);
+      doc.text(`${L.title} — ${t.tabProjects || 'Projects'} (${r.date})`, 14, 18);
+      doc.setFont(font, 'normal');
+      let y = 26;
+      if (!r.projects.length) {
+        doc.setFontSize(11);
+        doc.text(t.noProjects || 'No projects yet', 14, y);
+      } else {
+        r.projects.forEach(p => {
+          if (y > 250) { doc.addPage(); y = 20; }
+          doc.setFont(font, 'bold');
+          doc.setFontSize(12);
+          doc.text(p.name, 14, y);
+          doc.setFont(font, 'normal');
+          doc.setFontSize(9);
+          doc.text(`${t.projSummaryIncome} ${fmt(p.income)}  ·  ${t.projSummaryCost} ${fmt(p.cost)}  ·  ${t.projSummaryNet} ${fmt(p.net)}`, 14, y + 5);
+          doc.autoTable({
+            startY: y + 9,
+            head: [[t.thDate, t.thAmount, t.thType, t.thStatus]],
+            body: p.txs,
+            styles: { font, fontStyle: 'normal', fontSize: 8, cellPadding: 2 },
+            headStyles: { font, fontStyle: 'bold', fillColor: [79, 70, 229], textColor: 255 },
+            columnStyles: { 1: { halign: 'right' } },
+            margin: { left: 14, right: 14 }
+          });
+          y = doc.lastAutoTable.finalY + 10;
+        });
+        if (y > 265) { doc.addPage(); y = 20; }
+        doc.setFont(font, 'bold');
+        doc.setFontSize(12);
+        doc.text(`${t.grandTotalLabel || 'Grand total'}: ${t.projSummaryIncome} ${fmt(r.grandIncome)}  ·  ${t.projSummaryCost} ${fmt(r.grandCost)}  ·  ${t.projSummaryNet} ${fmt(r.grandNet)}`, 14, y);
+      }
+      doc.save(`splitbooks-report-by-project-${r.date}.pdf`);
+      alert(L.done);
+    });
+
+    $('exportExcelByProject').addEventListener('click', async () => {
+      try { await ensureExportLibs(); } catch (e) { alert(e.message); return; }
+      const r = buildProjectGroups();
+      const t = i18n[state.lang];
+      const L = reportLabels();
+      const rows = [ [`${L.title} — ${t.tabProjects || 'Projects'}`, r.date], [] ];
+      const amountCells = [];
+      if (!r.projects.length) {
+        rows.push([t.noProjects || 'No projects yet']);
+      } else {
+        r.projects.forEach(p => {
+          rows.push([p.name]);
+          rows.push([t.projSummaryIncome, p.income, t.projSummaryCost, p.cost, t.projSummaryNet, p.net]);
+          amountCells.push([rows.length - 1, [1, 3, 5]]);
+          rows.push([t.thDate, t.thAmount, t.thType, t.thStatus]);
+          p.rawTxs.forEach(row => { rows.push(row); amountCells.push([rows.length - 1, [1]]); });
+          rows.push([]);
+        });
+        rows.push([t.grandTotalLabel || 'Grand total']);
+        rows.push([t.projSummaryIncome, r.grandIncome, t.projSummaryCost, r.grandCost, t.projSummaryNet, r.grandNet]);
+        amountCells.push([rows.length - 1, [1, 3, 5]]);
+      }
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.aoa_to_sheet(rows);
+      ws['!cols'] = [{ wch: 30 }, { wch: 16 }, { wch: 14 }, { wch: 16 }, { wch: 12 }, { wch: 16 }];
+      amountCells.forEach(([row, cols]) => applyAmountFormat(ws, cols, row, row));
+      XLSX.utils.book_append_sheet(wb, ws, 'By project');
+      XLSX.writeFile(wb, `splitbooks-report-by-project-${r.date}.xlsx`);
+      alert(L.done);
+    });
+
+    $('sendReport').addEventListener('click', () => {
+      const text = buildMonthlyReportText();
+      const subject = encodeURIComponent('Cashflow report');
+      const body = encodeURIComponent(text);
+      location.href = `mailto:?subject=${subject}&body=${body}`;
+    });
+
+    $('lockMonth').addEventListener('click', async () => {
+      if (state.role !== 'owner') return;
+      if (state.monthLocked) { alert(i18n[state.lang].monthAlreadyLocked || 'This month is already locked.'); return; }
+      if (!confirm(i18n[state.lang].monthLockConfirm || 'Lock the current month? No further changes will be possible for transactions dated in this month.')) return;
+      const { error } = await supabaseClient.from('locked_months').insert({
+        org_id: state.orgId,
+        year_month: currentYearMonth(),
+        locked_by: state.user.id
+      });
+      if (error) {
+        if (error.code === '23505') { state.monthLocked = true; renderMonthLockUI(); alert(i18n[state.lang].monthAlreadyLocked || 'This month is already locked.'); return; }
+        notifyError('Could not lock month.', error);
+        return;
+      }
+      state.monthLocked = true;
+      renderMonthLockUI();
+      alert(i18n[state.lang].monthLockedSuccess || 'Month locked.');
+    });
+
+    $('unlockMonth').addEventListener('click', async () => {
+      if (state.role !== 'owner') return;
+      if (!state.monthLocked) return;
+      if (!confirm(i18n[state.lang].monthUnlockConfirm || 'Unlock the current month? Transactions dated in this month can be added and edited again.')) return;
+      const { error } = await supabaseClient
+        .from('locked_months')
+        .delete()
+        .eq('org_id', state.orgId)
+        .eq('year_month', currentYearMonth());
+      if (error) {
+        notifyError('Could not unlock month.', error);
+        return;
+      }
+      state.monthLocked = false;
+      renderMonthLockUI();
+      alert(i18n[state.lang].monthUnlockedSuccess || 'Month unlocked.');
+    });
+
+    $('saveEdit').addEventListener('click', async () => {
+      const updates = {
+        date: $('editDate').value,
+        amount: Number($('editAmount').value || 0),
+        project: $('editProject').value,
+        type: $('editDirection').value,
+        category: $('editCategory').value,
+        status: $('editStatus').value
+      };
+      const { error } = await supabaseClient.from('transactions').update(updates).eq('id', state.editId);
+      if (error) { notifyError('Could not save changes.', error); return; }
+      await loadTransactions();
+      closeModal('editModal');
+      renderTxTable();
+      recalcPartnerBalances();
+    });
+
+    $('deleteEdit').addEventListener('click', async () => {
+      const { error } = await supabaseClient.from('transactions').delete().eq('id', state.editId);
+      if (error) { notifyError('Could not delete.', error); return; }
+      await loadTransactions();
+      closeModal('editModal');
+      populateFilters();
+      renderTxTable();
+      recalcPartnerBalances();
+    });
+
+    $('closeReceiptModal').addEventListener('click', () => closeModal('receiptModal'));
+    $('closeEditModal').addEventListener('click', () => closeModal('editModal'));
+    $('closeProjectTxModal').addEventListener('click', () => closeModal('projectTxModal'));
+    $('closeWithdrawModal').addEventListener('click', () => closeModal('withdrawModal'));
+    $('closeDrawHistoryModal').addEventListener('click', () => closeModal('drawHistoryModal'));
+
+    $('pinToggle').addEventListener('change', e => { state.pinEnabled = e.target.checked; });
+
+    $('themeToggle').addEventListener('change', e => { applyTheme(e.target.checked ? 'light' : 'dark'); });
+
+    $('btnResetDb').addEventListener('click', async () => {
+      if (!confirm(i18n[state.lang].confirmReset || 'Reset all local data for this session?')) return;
+      const { error } = await supabaseClient.from('transactions').delete().eq('org_id', state.orgId);
+      if (error) { notifyError('Could not reset.', error); return; }
+      await loadTransactions();
+      populateFilters();
+      renderTxTable();
+      recalcPartnerBalances();
+    });
+
+    $('btnNewProject').addEventListener('click', async () => {
+      const name = (prompt(i18n[state.lang].newProjectPrompt || 'Project name:') || '').trim();
+      if (!name) return;
+      const { error } = await supabaseClient.from('projects').insert({ org_id: state.orgId, name, created_by: state.user.id });
+      if (error) {
+        const msg = error.code === '23505'
+          ? (i18n[state.lang].projectExists || 'A project with this name already exists.')
+          : null;
+        if (msg) { alert(msg); return; }
+        notifyError('Could not create project.', error);
+        return;
+      }
+      ph('capture', 'project_created');
+      await loadProjects();
+      populateProjectSelect();
+      renderProjects();
+    });
+
+    $('btnAddCategory').addEventListener('click', async () => {
+      const name = ($('newCategoryName').value || '').trim();
+      if (!name) return;
+      const direction = $('newCategoryDirection').value;
+      const { error } = await supabaseClient.from('categories').insert({ org_id: state.orgId, name, direction, created_by: state.user.id });
+      if (error) {
+        const msg = error.code === '23505'
+          ? (i18n[state.lang].categoryExists || 'A category with this name already exists.')
+          : null;
+        if (msg) { alert(msg); return; }
+        notifyError('Could not create category.', error);
+        return;
+      }
+      $('newCategoryName').value = '';
+      await loadCategories();
+      populateCategorySelect();
+      renderCategoriesList();
+    });
+
+    $('btnSettingsLock').addEventListener('click', () => applySettingsLock(!settingsLocked));
+
+    $('btnGenerateInvite').addEventListener('click', async () => {
+      if (state.role !== 'owner') return;
+      const token = crypto.randomUUID().replace(/-/g, '') + crypto.randomUUID().replace(/-/g, '');
+      const invitedShare = Math.max(0, 100 - state.partnerA.share);
+      const { error } = await supabaseClient.from('invites').insert({
+        org_id: state.orgId,
+        token,
+        created_by: state.user.id,
+        role: 'member',
+        share_percent: invitedShare
+      });
+      if (error) { notifyError('Could not generate invite.', error); return; }
+      const link = `${location.origin}${location.pathname}?invite=${token}`;
+      $('inviteLinkInput').value = link;
+      $('inviteLinkBox').classList.remove('hidden');
+      $('inviteNote').classList.add('hidden');
+    });
+
+    $('btnCopyInvite').addEventListener('click', async () => {
+      const note = $('inviteNote');
+      try {
+        await navigator.clipboard.writeText($('inviteLinkInput').value);
+      } catch (e) {
+        $('inviteLinkInput').select();
+      }
+      note.textContent = i18n[state.lang].inviteCopied || 'Link copied';
+      note.classList.remove('hidden');
+    });
+
+    function refreshInviteUI(){
+      const isOwner = state.role === 'owner';
+      $('btnGenerateInvite').classList.toggle('hidden', !isOwner);
+      $('inviteMemberNote').classList.toggle('hidden', isOwner);
+      if (!isOwner) $('inviteLinkBox').classList.add('hidden');
+    }
+
+    function refreshUI(){
+      applyLang();
+      $('creator').value = state.user ? state.user.email : '—';
+      refreshTopStatic();
+      refreshInviteUI();
+      renderDeleteRequests();
+      renderMonthLockUI();
+      refreshTaxRateUI();
+      refreshPartnerNameUI();
+      renderCategoriesList();
+      renderPreview();
+      populateFilters();
+      renderTxTable();
+      recalcPartnerBalances();
+      $('monthlySummary').textContent = `Income: ${$('monthIncome').textContent}, Expenses: ${$('monthExpense').textContent}, Tax reserve: ${$('monthTax').textContent}, Distributable: ${$('monthDistrib').textContent}.`;
+    }
+
+    function refreshTopStatic(){
+      $('partnerAName').textContent = state.partnerA.name;
+      $('partnerBName').textContent = state.partnerB.name;
+      $('partnerAshare').textContent = state.partnerA.share + '%';
+      $('partnerBshare').textContent = state.partnerB.share + '%';
+    }
+
+    checkUserSession();
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+    }
+
+    // Fires when someone actually installs the PWA ("Add to Home Screen" /
+    // desktop install) — lets marketing see installs, not just visits.
+    window.addEventListener('appinstalled', () => {
+      ph('capture', 'pwa_installed');
+    });
+  </script>
+</body>
+</html>
