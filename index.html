@@ -54,11 +54,11 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="SplitBooks" />
+  <link rel="preconnect" href="https://bgbcyncpdfnsrhvunzkv.supabase.co" crossorigin />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link rel="preconnect" href="https://cdn.tailwindcss.com" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.106.2/dist/umd/supabase.js" integrity="sha384-m/8UHFJHeU6nrCKP2hBnAseuvAKUmLF+8e5bWos5CJL023vuxX7kiVL5t8yjsJhV" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha384-JcnsjUPPylna1s1fvi1u12X5qjY5OL56iySh75FdtrwhO/SWXgMjoVqcKyIIWOLk" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js" integrity="sha384-fCAW/rDWORTbQXSiB7mOg0QtQ5c+r0f544y6XoKjuVva0nMBlCpNUjiFeG5iMdS3" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" integrity="sha384-vtjasyidUo0kW94K5MXDXntzOJpQgBKXmE7e2Ga4LG0skTTLeBi97eFAXsqewJjw" crossorigin="anonymous"></script>
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   <style>
     html, body { background:#020617; }
@@ -945,11 +945,18 @@
       });
     }
 
+    let loginInFlightFor = null;
     async function handleUserLogin(user){
+      // onAuthStateChange fires more than once on page load (INITIAL_SESSION +
+      // SIGNED_IN). The orgId guard below only helps after the first load has
+      // finished, so an in-flight marker is needed too - without it every
+      // Supabase query ran twice on startup (visible in Lighthouse).
+      if (loginInFlightFor === user.id) { state.user = user; return; }
       if (state.user && state.user.id === user.id && state.orgId) {
         state.user = user;
         return;
       }
+      loginInFlightFor = user.id;
       state.user = user;
       if (window.posthog) posthog.identify(user.id, { email: user.email });
       $('user-display').textContent = user.email;
@@ -957,16 +964,21 @@
       $('main-app').classList.remove('hidden');
       try {
         await ensureOrganization();
-        await loadTaxRate();
-        await loadMembers();
-        await loadTransactions();
-        await loadProjects();
-        await loadCategories();
-        await loadDeleteRequests();
+        // Independent lookups - run in parallel instead of a 6-step waterfall.
+        await Promise.all([
+          loadTaxRate(),
+          loadMembers(),
+          loadTransactions(),
+          loadProjects(),
+          loadCategories(),
+          loadDeleteRequests()
+        ]);
         await checkMonthLocked();
         subscribeToTransactions();
       } catch (e) {
         alert('Could not load your workspace: ' + e.message);
+      } finally {
+        loginInFlightFor = null;
       }
       populateFilters();
       populateProjectSelect();
@@ -2346,7 +2358,28 @@
       return lines.join('\n');
     }
 
-    $('exportPdf').addEventListener('click', () => {
+    // Export libraries (~300 KB) are only needed when the user actually
+    // clicks an export button, so they are loaded on demand instead of
+    // blocking first paint (Lighthouse: -5.6s render-blocking).
+    let exportLibsPromise = null;
+    function ensureExportLibs(){
+      if (exportLibsPromise) return exportLibsPromise;
+      const load = (srcUrl, integrity) => new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = srcUrl; s.integrity = integrity; s.crossOrigin = 'anonymous';
+        s.onload = resolve; s.onerror = () => reject(new Error('Failed to load ' + srcUrl));
+        document.head.appendChild(s);
+      });
+      exportLibsPromise = Promise.all([
+        load('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', 'sha384-JcnsjUPPylna1s1fvi1u12X5qjY5OL56iySh75FdtrwhO/SWXgMjoVqcKyIIWOLk')
+          .then(() => load('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js', 'sha384-fCAW/rDWORTbQXSiB7mOg0QtQ5c+r0f544y6XoKjuVva0nMBlCpNUjiFeG5iMdS3')),
+        load('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js', 'sha384-vtjasyidUo0kW94K5MXDXntzOJpQgBKXmE7e2Ga4LG0skTTLeBi97eFAXsqewJjw')
+      ]).catch(e => { exportLibsPromise = null; throw e; });
+      return exportLibsPromise;
+    }
+
+    $('exportPdf').addEventListener('click', async () => {
+      try { await ensureExportLibs(); } catch (e) { alert(e.message); return; }
       const r = buildMonthlyReportData();
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
@@ -2372,7 +2405,8 @@
       alert(i18n[state.lang].reportGenerated || 'Report downloaded.');
     });
 
-    $('exportExcel').addEventListener('click', () => {
+    $('exportExcel').addEventListener('click', async () => {
+      try { await ensureExportLibs(); } catch (e) { alert(e.message); return; }
       const r = buildMonthlyReportData();
       const summaryRows = [
         ['SplitBooks — Report', r.date],
@@ -2429,7 +2463,8 @@
       };
     }
 
-    $('exportPdfByProject').addEventListener('click', () => {
+    $('exportPdfByProject').addEventListener('click', async () => {
+      try { await ensureExportLibs(); } catch (e) { alert(e.message); return; }
       const r = buildProjectGroups();
       const t = i18n[state.lang];
       const { jsPDF } = window.jspdf;
@@ -2464,7 +2499,8 @@
       alert(t.reportGenerated || 'Report downloaded.');
     });
 
-    $('exportExcelByProject').addEventListener('click', () => {
+    $('exportExcelByProject').addEventListener('click', async () => {
+      try { await ensureExportLibs(); } catch (e) { alert(e.message); return; }
       const r = buildProjectGroups();
       const t = i18n[state.lang];
       const rows = [ ['SplitBooks — Report by project', r.date], [] ];

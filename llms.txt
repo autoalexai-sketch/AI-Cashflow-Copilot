@@ -1,0 +1,11 @@
+# SplitBooks
+
+> SplitBooks is a shared cashflow and profit-split tool for business partners: track income, expenses, partner draws, tax reserve and monthly close together in real time. Available in English, Polish and Ukrainian.
+
+## Pages
+
+- [App](https://splitbooks.pl/): the SplitBooks application (sign-in required)
+- [Help](https://splitbooks.pl/help): user guide and FAQ
+- [Pricing](https://splitbooks.pl/pricing): plans and pricing
+- [Privacy](https://splitbooks.pl/privacy): privacy policy
+- [Terms](https://splitbooks.pl/terms): terms of service
