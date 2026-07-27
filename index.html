@@ -74,34 +74,72 @@
     .modal-backdrop { background: rgba(2,6,23,.85); }
     input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor:pointer; }
 
+
+    /* Тёмная тема: slate-500 (#64748b) на #0f172a давал ~4,0 - ниже нормы. */
+    .text-slate-500 { color:#8b98ab; }
+    .text-slate-400 { color:#a4b0c2; }
     /* Light theme — overrides the dark defaults above when <html> has class="light". */
-    html.light, html.light body { background:#f8fafc; }
-    html.light body { color:#0f172a; }
-    html.light .glass { background: rgba(255,255,255,.75); }
-    html.light .card { box-shadow: 0 10px 30px rgba(15,23,42,.08); }
-    html.light .modal-backdrop { background: rgba(15,23,42,.35); }
-    html.light .input, html.light .select, html.light .textarea { background:#ffffff; border:1px solid #cbd5e1; color:#0f172a; }
+    html.light, html.light body { background:#faf9f5; }
+    html.light body { color:#2a2a26; }
+    html.light .glass { background: rgba(255,254,251,.82); }
+    html.light .card { box-shadow: 0 8px 24px rgba(64,58,44,.07); }
+    html.light .modal-backdrop { background: rgba(52,48,40,.38); }
+    html.light .input, html.light .select, html.light .textarea { background:#fffefb; border:1px solid #ddd8cb; color:#2a2a26; }
     html.light .input:focus, html.light .select:focus, html.light .textarea:focus { border-color:#6366f1; box-shadow:0 0 0 3px rgba(99,102,241,.15); }
-    html.light .badge { border:1px solid rgba(79,70,229,.18); background: rgba(79,70,229,.06); }
-    html.light .tx-row:hover { background: rgba(226,232,240,.6); }
-    html.light .scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; }
-    html.light .bg-slate-900 { background-color:#ffffff; }
-    html.light .bg-slate-950\/60 { background-color: rgba(241,245,249,.8); }
-    html.light .bg-slate-950\/80 { background-color: rgba(241,245,249,.9); }
-    html.light .bg-slate-950\/40 { background-color: rgba(241,245,249,.6); }
-    html.light .bg-slate-800 { background-color:#e2e8f0; }
-    html.light .bg-slate-700 { background-color:#cbd5e1; }
-    html.light .bg-slate-600 { background-color:#94a3b8; }
-    html.light .hover\:bg-slate-700:hover { background-color:#cbd5e1; }
-    html.light .hover\:bg-slate-600:hover { background-color:#94a3b8; }
-    html.light .text-slate-100 { color:#0f172a; }
-    html.light .text-slate-200 { color:#1e293b; }
-    html.light .text-slate-300 { color:#334155; }
-    html.light .text-slate-400 { color:#475569; }
-    html.light .text-slate-500 { color:#64748b; }
-    html.light .hover\:text-slate-200:hover { color:#0f172a; }
-    html.light .hover\:text-slate-300:hover { color:#1e293b; }
-    html.light .border-slate-800 { border-color:#e2e8f0; }
+    html.light .badge { border:1px solid rgba(79,70,229,.22); background: rgba(79,70,229,.07); }
+    html.light .tx-row:hover { background: rgba(240,236,226,.7); }
+    html.light .scrollbar::-webkit-scrollbar-thumb { background: #d6d1c4; }
+    html.light .bg-slate-900 { background-color:#fffefb; }
+    html.light .bg-slate-950\/60 { background-color: rgba(244,241,233,.85); }
+    html.light .bg-slate-950\/80 { background-color: rgba(244,241,233,.92); }
+    html.light .bg-slate-950\/40 { background-color: rgba(244,241,233,.65); }
+    html.light .bg-slate-800 { background-color:#ece7db; }
+    html.light .bg-slate-700 { background-color:#ddd8cb; }
+    html.light .bg-slate-600 { background-color:#b8b2a3; }
+    html.light .hover\:bg-slate-700:hover { background-color:#ddd8cb; }
+    html.light .hover\:bg-slate-600:hover { background-color:#b8b2a3; }
+    html.light .text-slate-100 { color:#2a2a26; }
+    html.light .text-slate-200 { color:#33322c; }
+    html.light .text-slate-300 { color:#454339; }
+    html.light .text-slate-400 { color:#5c584c; }
+    html.light .text-slate-500 { color:#6b6659; }
+    html.light .hover\:text-slate-200:hover { color:#2a2a26; }
+    html.light .hover\:text-slate-300:hover { color:#33322c; }
+    html.light .border-slate-800 { border-color:#e6e1d5; }
+
+    /* Акцентные цвета рассчитаны на тёмный фон; на кремовом они давали контраст
+       1,3-2,8 при норме 4,5 (аудит Lighthouse). Здесь — тёмные варианты тех же
+       оттенков, все проверены на >= 4.5:1 к фону #faf9f5 / #f4f1e9. */
+    html.light .text-emerald-400, html.light .text-emerald-300 { color:#046c4e; }
+    html.light .text-rose-400, html.light .text-rose-300 { color:#b3123c; }
+    html.light .text-amber-400, html.light .text-amber-300 { color:#96590c; }
+    html.light .text-sky-400, html.light .text-sky-300 { color:#0263a1; }
+    html.light .text-fuchsia-300, html.light .text-fuchsia-400 { color:#9c1aa8; }
+    html.light .text-indigo-400, html.light .text-indigo-300 { color:#4338ca; }
+    html.light .text-blue-400 { color:#1d4ed8; }
+    html.light .tab.active { color:#1d4ed8; border-color:#1d4ed8; }
+
+    /* Белый текст на цветных кнопках: правило .text-slate-100 -> тёмный делало
+       надпись на индиго нечитаемой (контраст 2,83). */
+    html.light [class*="bg-indigo-5"], html.light [class*="bg-indigo-6"], html.light [class*="bg-indigo-7"],
+    html.light [class*="bg-emerald-5"], html.light [class*="bg-emerald-6"],
+    html.light [class*="bg-rose-5"], html.light [class*="bg-rose-6"],
+    html.light [class*="bg-sky-5"], html.light [class*="bg-sky-6"], html.light [class*="bg-sky-7"] { color:#ffffff; }
+    html.light .bg-indigo-600\/20, html.light .bg-indigo-600\/30 { background-color: rgba(79,70,229,.12); color:#3730a3; }
+    html.light .bg-rose-600\/20, html.light .bg-rose-600\/30 { background-color: rgba(190,18,60,.10); color:#9f1239; }
+    html.light .border-rose-600\/40 { border-color: rgba(190,18,60,.35); }
+    html.light .border-indigo-600\/40 { border-color: rgba(79,70,229,.35); }
+    html.light .text-rose-300, html.light .text-indigo-300 { color:#9f1239; }
+    /* Кнопки: в светлой теме берём на тон темнее, чтобы белая надпись
+       проходила AA и для мелкого текста (было 3,8-4,5). */
+    html.light .bg-emerald-600, html.light .bg-emerald-500 { background-color:#047857; }
+    html.light .hover\:bg-emerald-500:hover, html.light .hover\:bg-emerald-600:hover { background-color:#065f46; }
+    html.light .bg-sky-600, html.light .bg-sky-500 { background-color:#0369a1; }
+    html.light .hover\:bg-sky-500:hover, html.light .hover\:bg-sky-600:hover { background-color:#075985; }
+    html.light .bg-indigo-500 { background-color:#4f46e5; }
+    html.light .hover\:bg-indigo-500:hover { background-color:#4338ca; }
+    html.light .bg-amber-500 { background-color:#b45309; }
+    html.light .bg-rose-500 { background-color:#e11d48; }
     html.light input[type="date"]::-webkit-calendar-picker-indicator { filter: none; }
   </style>
   <!-- PostHog (EU-hosted product analytics) — see privacy.html for disclosure.
