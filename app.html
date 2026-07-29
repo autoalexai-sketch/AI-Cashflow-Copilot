@@ -71,7 +71,12 @@
     .card { box-shadow: 0 10px 30px rgba(0,0,0,.25); }
     .lang-pill { cursor:pointer; }
     .tx-row:hover { background: rgba(15,23,42,.9); }
-    .modal-backdrop { background: rgba(2,6,23,.85); }
+    .modal-backdrop { background: rgba(2,6,23,.85); overflow-y: auto; overscroll-behavior: contain; }
+    /* Панель окна центрируется через auto-поля: при высоком содержимом она
+       просто прокручивается внутри подложки, а не обрезается сверху. */
+    .modal-backdrop > div { margin: auto; }
+    /* Пока открыто любое окно, страница под ним не прокручивается. */
+    html.modal-open, body.modal-open { overflow: hidden; }
     input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor:pointer; }
 
 
@@ -2159,6 +2164,27 @@
         ? `<img src="${escapeHtml(url)}" class="max-w-full rounded-xl" alt="Receipt">`
         : `<a href="${escapeHtml(url)}" target="_blank" rel="noopener" class="text-sky-400 underline">${escapeHtml(receiptFileName(path))}</a>`;
     };
+
+
+    // Блокировка прокрутки фона, пока открыто окно. Наблюдатель повешен на сами
+    // окна, поэтому работает при любом способе открытия/закрытия — включая
+    // оверлей экскурсии, который создаётся динамически.
+    (function(){
+      const isOpen = el => el && !el.classList.contains('hidden');
+      function sync(){
+        const anyModal = [...document.querySelectorAll('.modal-backdrop')].some(isOpen);
+        const tour = !!document.getElementById('tourOverlay');
+        const lock = anyModal || tour;
+        document.documentElement.classList.toggle('modal-open', lock);
+        document.body.classList.toggle('modal-open', lock);
+      }
+      document.querySelectorAll('.modal-backdrop').forEach(m => {
+        new MutationObserver(sync).observe(m, { attributes: true, attributeFilter: ['class'] });
+      });
+      // оверлей тура добавляется/удаляется целиком — следим за body
+      new MutationObserver(sync).observe(document.body, { childList: true });
+      sync();
+    })();
 
     function closeModal(id){
       const el = $(id);
