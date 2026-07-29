@@ -74,7 +74,7 @@
     .modal-backdrop { background: rgba(2,6,23,.85); overflow-y: auto; overscroll-behavior: contain; }
     /* Панель окна центрируется через auto-поля: при высоком содержимом она
        просто прокручивается внутри подложки, а не обрезается сверху. */
-    .modal-backdrop > div { margin: auto; }
+    .modal-backdrop > div { margin: auto !important; }
     /* Пока открыто любое окно, страница под ним не прокручивается. */
     html.modal-open, body.modal-open { overflow: hidden; }
     input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor:pointer; }
