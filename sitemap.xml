@@ -7,37 +7,31 @@
     <xhtml:link rel="alternate" hreflang="uk" href="https://splitbooks.pl/?lang=uk"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://splitbooks.pl/?lang=en"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://splitbooks.pl/"/>
-    <lastmod>2026-07-27</lastmod>
+    <lastmod>2026-08-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://splitbooks.pl/pricing.html</loc>
-    <lastmod>2026-07-27</lastmod>
+    <loc>https://splitbooks.pl/pricing</loc>
+    <lastmod>2026-08-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://splitbooks.pl/help.html</loc>
-    <lastmod>2026-07-27</lastmod>
+    <loc>https://splitbooks.pl/help</loc>
+    <lastmod>2026-08-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://splitbooks.pl/app</loc>
-    <lastmod>2026-07-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://splitbooks.pl/privacy.html</loc>
-    <lastmod>2026-07-27</lastmod>
+    <loc>https://splitbooks.pl/privacy</loc>
+    <lastmod>2026-08-19</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://splitbooks.pl/terms.html</loc>
-    <lastmod>2026-07-27</lastmod>
+    <loc>https://splitbooks.pl/terms</loc>
+    <lastmod>2026-08-19</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>

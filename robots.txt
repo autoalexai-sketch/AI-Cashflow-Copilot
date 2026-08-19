@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
 Disallow: /demo
+Disallow: /app
 
 Sitemap: https://splitbooks.pl/sitemap.xml
