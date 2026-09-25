@@ -747,7 +747,7 @@
   <script>
     const i18n = {
       en: {
-        uiState:'Live · synced', appTitle:'SplitBooks', subtitle:'Shared finance control for partners, projects, receipts and monthly closing.',
+        uiState:'Live · synced', inviteAlreadyMember:"You already have a workspace, so this invite link was not applied. To join your partner's workspace, sign up with a different email.", inviteExpired:'This invite link has expired. Ask your partner for a new one.', inviteUsed:'This invite link has already been used. Ask your partner for a new one.', inviteNotFound:'This invite link is not valid. Ask your partner for a new one.', storageBlocked:'Your browser is blocking storage (cookies) for this site, so the workspace cannot load. Allow cookies for splitbooks.pl or turn off strict tracking protection, then reload.', appTitle:'SplitBooks', subtitle:'Shared finance control for partners, projects, receipts and monthly closing.',
         activeUserLabel:'Signed in as', authSubtitle:'Sign in to access your shared workspace', btnLogin:'Log In', btnSignup:'Sign Up', btnLogout:'Sign out',
         btnForgotPassword:'Forgot password?', forgotPasswordTitle:'Reset your password', forgotPasswordDesc:"Enter your email — we'll send a link to set a new password.", btnSendResetLink:'Send reset link', resetPasswordTitle:'Set a new password', btnSaveNewPassword:'Save new password', placeholderConfirmPassword:'Confirm password (for Sign Up)', placeholderNewPassword:'New password',
         monthlyCloseBtn:'Monthly Close', tabDashboard:'Dashboard', tabTransactions:'Transactions', tabProjects:'Projects', tabReceipts:'Receipts', tabMonthly:'Monthly Close', tabSettings:'Settings',
@@ -797,7 +797,7 @@
         helpFooterTitle:'Help & guide', helpFooterDesc:'Replay the quick tour, or read the full written guide.'
       },
       pl: {
-        uiState:'Na żywo · zsynchronizowane', appTitle:'SplitBooks', subtitle:'Wspólny system finansowy dla partnerów, projektów, paragonów i zamknięcia miesiąca.',
+        uiState:'Na żywo · zsynchronizowane', inviteAlreadyMember:'Masz już swoje konto firmowe, więc ten link zaproszenia nie został użyty. Aby dołączyć do konta partnera, zarejestruj się innym adresem e-mail.', inviteExpired:'Ten link zaproszenia wygasł. Poproś partnera o nowy.', inviteUsed:'Ten link zaproszenia został już użyty. Poproś partnera o nowy.', inviteNotFound:'Ten link zaproszenia jest nieprawidłowy. Poproś partnera o nowy.', storageBlocked:'Przeglądarka blokuje zapisywanie danych (cookies) dla tej strony, więc konto nie może się wczytać. Zezwól na cookies dla splitbooks.pl lub wyłącz ścisłą ochronę przed śledzeniem i odśwież stronę.', appTitle:'SplitBooks', subtitle:'Wspólny system finansowy dla partnerów, projektów, paragonów i zamknięcia miesiąca.',
         activeUserLabel:'Zalogowano jako', authSubtitle:'Zaloguj się, aby uzyskać dostęp do wspólnego konta', btnLogin:'Zaloguj się', btnSignup:'Zarejestruj się', btnLogout:'Wyloguj się',
         btnForgotPassword:'Nie pamiętasz hasła?', forgotPasswordTitle:'Zresetuj hasło', forgotPasswordDesc:'Podaj swój e-mail — wyślemy link do ustawienia nowego hasła.', btnSendResetLink:'Wyślij link resetujący', resetPasswordTitle:'Ustaw nowe hasło', btnSaveNewPassword:'Zapisz nowe hasło', placeholderConfirmPassword:'Potwierdź hasło (przy rejestracji)', placeholderNewPassword:'Nowe hasło',
         monthlyCloseBtn:'Zamknięcie miesiąca', tabDashboard:'Dashboard', tabTransactions:'Transakcje', tabProjects:'Projekty', tabReceipts:'Paragony', tabMonthly:'Zamknięcie miesiąca', tabSettings:'Ustawienia',
@@ -847,7 +847,7 @@
         helpFooterTitle:'Pomoc i poradnik', helpFooterDesc:'Uruchom krótki przewodnik ponownie albo przeczytaj pełny poradnik.'
       },
       uk: {
-        uiState:'Наживо · синхронізовано', appTitle:'SplitBooks', subtitle:'Спільний фінансовий контроль для партнерів, проєктів, чеків і закриття місяця.',
+        uiState:'Наживо · синхронізовано', inviteAlreadyMember:'У вас уже є робочий простір, тому це запрошення не застосовано. Щоб приєднатися до простору партнера, зареєструйтеся з іншою електронною адресою.', inviteExpired:'Термін дії цього запрошення минув. Попросіть партнера надіслати нове.', inviteUsed:'Це запрошення вже використано. Попросіть партнера надіслати нове.', inviteNotFound:'Це запрошення недійсне. Попросіть партнера надіслати нове.', storageBlocked:'Браузер блокує збереження даних (cookies) для цього сайту, тому робочий простір не завантажується. Дозвольте cookies для splitbooks.pl або вимкніть сувору протидію відстеженню й оновіть сторінку.', appTitle:'SplitBooks', subtitle:'Спільний фінансовий контроль для партнерів, проєктів, чеків і закриття місяця.',
         activeUserLabel:'Ви увійшли як', authSubtitle:'Увійдіть, щоб отримати доступ до спільного простору', btnLogin:'Увійти', btnSignup:'Зареєструватися', btnLogout:'Вийти',
         btnForgotPassword:'Забули пароль?', forgotPasswordTitle:'Скидання пароля', forgotPasswordDesc:'Введіть email — надішлемо посилання для встановлення нового пароля.', btnSendResetLink:'Надіслати посилання', resetPasswordTitle:'Встановіть новий пароль', btnSaveNewPassword:'Зберегти новий пароль', placeholderConfirmPassword:'Підтвердіть пароль (для реєстрації)', placeholderNewPassword:'Новий пароль',
         monthlyCloseBtn:'Закриття місяця', tabDashboard:'Панель', tabTransactions:'Транзакції', tabProjects:'Проєкти', tabReceipts:'Чеки', tabMonthly:'Закриття місяця', tabSettings:'Налаштування',
@@ -959,18 +959,25 @@
     }
 
     const PENDING_INVITE_KEY = 'cashflow_pending_invite_token';
+    let memoryInviteToken = null;
     (function capturePendingInviteFromUrl(){
       const params = new URLSearchParams(location.search);
       const token = params.get('invite');
       if (token) {
-        localStorage.setItem(PENDING_INVITE_KEY, token);
+        memoryInviteToken = token;
+        try { localStorage.setItem(PENDING_INVITE_KEY, token); } catch (e) { /* storage blocked: keep it in memory for this page load */ }
         params.delete('invite');
         const cleanUrl = location.pathname + (params.toString() ? '?' + params.toString() : '');
         history.replaceState(null, '', cleanUrl);
       }
     })();
-    function getPendingInviteToken(){ return localStorage.getItem(PENDING_INVITE_KEY); }
-    function clearPendingInviteToken(){ localStorage.removeItem(PENDING_INVITE_KEY); }
+    function getPendingInviteToken(){
+      try { return localStorage.getItem(PENDING_INVITE_KEY) || memoryInviteToken; } catch (e) { return memoryInviteToken; }
+    }
+    function clearPendingInviteToken(){
+      memoryInviteToken = null;
+      try { localStorage.removeItem(PENDING_INVITE_KEY); } catch (e) {}
+    }
 
     const SUPABASE_URL = "https://bgbcyncpdfnsrhvunzkv.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJnYmN5bmNwZGZuc3JodnVuemt2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxOTA0ODgsImV4cCI6MjA5ODc2NjQ4OH0.hhbeo4hxCKwURz_hqXmJQMNy6TxOJV6vpcbTxp0VNNw";
@@ -1047,7 +1054,15 @@
         await checkMonthLocked();
         subscribeToTransactions();
       } catch (e) {
-        alert('Could not load your workspace: ' + e.message);
+        if (e.inviteFailed) {
+          alert(e.message);
+          loginInFlightFor = null;
+          await supabaseClient.auth.signOut();
+          showAuthScreen();
+          return;
+        }
+        if (e.name === 'SecurityError') alert(i18n[state.lang].storageBlocked);
+        else alert('Could not load your workspace: ' + e.message);
       } finally {
         loginInFlightFor = null;
       }
@@ -1079,23 +1094,42 @@
         .maybeSingle();
       if (findErr) throw findErr;
 
+      const pendingToken = getPendingInviteToken();
+
       if (existing) {
         state.orgId = existing.org_id;
         state.role = existing.role;
+        // Invite opened by someone who already has a workspace: tell them
+        // instead of silently ignoring the link.
+        if (pendingToken) {
+          clearPendingInviteToken();
+          alert(i18n[state.lang].inviteAlreadyMember);
+        }
         return;
       }
 
-      const pendingToken = getPendingInviteToken();
       if (pendingToken) {
-        clearPendingInviteToken();
         const { data, error } = await supabaseClient.rpc('accept_invite', { p_token: pendingToken });
         if (!error) {
+          clearPendingInviteToken();
           const row = Array.isArray(data) ? data[0] : data;
           state.orgId = row.out_org_id;
           state.role = row.out_role;
           return;
         }
-        console.warn('Invite could not be redeemed, creating a new organization instead:', error.message);
+        // Known invite errors: do NOT fall through to creating an empty
+        // organization - the person came to join their partner, an orphan
+        // workspace would hide the problem from both of them.
+        const code = (error.message.match(/INVITE_[A-Z_]+/) || [])[0];
+        if (!code) throw error; // network/unknown: keep the token so a reload can retry
+        clearPendingInviteToken();
+        const t = i18n[state.lang];
+        const msg = code === 'INVITE_EXPIRED' ? t.inviteExpired
+          : code === 'INVITE_ALREADY_USED' ? t.inviteUsed
+          : t.inviteNotFound;
+        const inviteErr = new Error(msg);
+        inviteErr.inviteFailed = true;
+        throw inviteErr;
       }
 
       const { data: org, error: orgErr } = await supabaseClient
