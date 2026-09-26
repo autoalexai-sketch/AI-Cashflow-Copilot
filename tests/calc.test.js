@@ -2,7 +2,7 @@
 // No dependencies: uses Node's built-in test runner (Node 18+).
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { computeTotals, computeProjectSplit, accountBalance, signedAmount } = require('../calc.js');
+const { computeTotals, computeProjectSplit, accountBalance, signedAmount, projectTotals } = require('../calc.js');
 
 // Money is stored as floats today, so compare to the cent.
 const cents = (x) => Math.round(x * 100);
@@ -148,4 +148,55 @@ test('BruClean case (2026-09-26): owner paid 13 100 for work, 10 % tax, 50/50', 
   eqMoney(t.partnerA.total, 17565.69);
   eqMoney(t.partnerA.share, 4465.69);
   eqMoney(t.partnerB.total, 4465.69);
+});
+
+// ---- Money in cents (2026-09-26) ------------------------------------------
+
+test('shares add up exactly to what is split (no grosz lost to rounding)', () => {
+  // 0.03 split 50/50: rounding each half separately would show 0.02 + 0.02 = 0.04
+  const t = computeTotals([tx('income', 0.03)], { taxRate: 0, shareA: 50, shareB: 50 });
+  assert.equal(t.partnerA.share, 0.02);
+  assert.equal(t.partnerB.share, 0.01);
+  assert.equal(cents(t.partnerA.share) + cents(t.partnerB.share), cents(t.distributable));
+});
+
+test('results are whole cents (no float tails like 0.30000000000000004)', () => {
+  const t = computeTotals([tx('income', 0.1), tx('income', 0.2), tx('expense', 0.07)],
+    { taxRate: 19, shareA: 33, shareB: 67 });
+  for (const v of [t.income, t.net, t.reserve, t.distributable, t.partnerA.share, t.partnerB.share]) {
+    assert.equal(Math.round(v * 100) / 100, v);
+  }
+  assert.equal(t.income, 0.3);
+});
+
+test('invariant holds exactly on 2000 random sets: work + shares + reserve == net', () => {
+  let seed = 42;
+  const rnd = () => { seed = (seed * 1103515245 + 12345) % 2147483648; return seed / 2147483648; };
+  for (let i = 0; i < 2000; i++) {
+    const txs = [];
+    const n = Math.floor(rnd() * 20);
+    for (let k = 0; k < n; k++) {
+      txs.push(tx(['income', 'expense', 'draw'][Math.floor(rnd() * 3)], Math.round(rnd() * 500000) / 100,
+        { partnerSlot: rnd() < 0.5 ? 'owner' : 'member' }));
+    }
+    const shareA = Math.floor(rnd() * 101);
+    const t = computeTotals(txs, { taxRate: [0, 8.5, 12, 19, 23][Math.floor(rnd() * 5)], shareA, shareB: 100 - shareA });
+    assert.equal(
+      cents(t.partnerA.total) + cents(t.partnerB.total) + cents(t.reserve),
+      cents(t.net), `case ${i}`);
+  }
+});
+
+test('project totals: verified only (pending is not money yet, rejected never is)', () => {
+  const p = projectTotals([
+    tx('income', 1000),
+    tx('income', 500, { status: 'pending' }),
+    tx('income', 700, { status: 'rejected' }),
+    tx('expense', 200),
+    tx('expense', 50, { status: 'rejected' }),
+    tx('draw', 300)
+  ]);
+  assert.equal(p.income, 1000);
+  assert.equal(p.cost, 200);
+  assert.equal(p.net, 800);
 });
