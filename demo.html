@@ -1835,14 +1835,15 @@
     function renderProjects(){
       const grid = $('projectsGrid');
       const byProject = {};
-      state.projects.forEach(p => { byProject[p.name] = { income: 0, cost: 0, id: p.id }; });
+      state.projects.forEach(p => { byProject[p.name] = { txs: [], id: p.id }; });
       state.txs.forEach(t => {
         const name = (t.project || '').trim();
         if (!name) return;
-        if (!byProject[name]) byProject[name] = { income: 0, cost: 0, id: null };
-        if (t.type === 'income') byProject[name].income += t.amount;
-        if (t.type === 'expense') byProject[name].cost += t.amount;
+        if (!byProject[name]) byProject[name] = { txs: [], id: null };
+        byProject[name].txs.push(t);
       });
+      // Verified only, same rule as the balances (see SBCalc.projectTotals).
+      Object.values(byProject).forEach(g => Object.assign(g, SBCalc.projectTotals(g.txs)));
       const names = Object.keys(byProject);
       if (!names.length) {
         grid.innerHTML = `<div class="text-sm text-slate-500">${i18n[state.lang].noProjects || 'No projects yet'}</div>`;
@@ -1886,8 +1887,7 @@
     window.openProjectTransactions = function(name){
       ph('capture', 'project_card_opened');
       const txs = state.txs.filter(t => (t.project || '').trim() === name);
-      const income = txs.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
-      const cost = txs.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+      const { income, cost } = SBCalc.projectTotals(txs);
       const t = i18n[state.lang];
       $('projectTxModalTitle').textContent = name;
       $('projectTxModalSummary').textContent = `${t.projSummaryIncome} ${fmt(income)} · ${t.projSummaryCost} ${fmt(cost)} · ${t.projSummaryNet} ${fmt(income - cost)} · ${txs.length} ${t.projSummaryTxCount}`;
@@ -2673,18 +2673,17 @@
       state.txs.forEach(t => {
         const name = (t.project || '').trim();
         if (!name) return;
-        if (!byProject[name]) byProject[name] = { income: 0, cost: 0, txs: [] };
-        if (t.type === 'income') byProject[name].income += t.amount;
-        if (t.type === 'expense') byProject[name].cost += t.amount;
+        if (!byProject[name]) byProject[name] = { txs: [] };
         byProject[name].txs.push(t);
       });
       const projects = Object.keys(byProject).sort().map(name => {
         const g = byProject[name];
+        const tot = SBCalc.projectTotals(g.txs);
         return {
           name,
-          income: g.income,
-          cost: g.cost,
-          net: g.income - g.cost,
+          income: tot.income,
+          cost: tot.cost,
+          net: tot.net,
           txs: g.txs.map(t => [t.date, fmt(t.amount), typeLabel(t.type), statusLabel(t.status)]),
           rawTxs: g.txs.map(t => [t.date, t.amount, typeLabel(t.type), statusLabel(t.status)])
         };
