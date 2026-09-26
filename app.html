@@ -546,6 +546,10 @@
               <input id="inviteLinkInput" class="input w-full rounded-2xl px-4 py-2.5 text-sm" readonly>
               <button id="btnCopyInvite" class="px-4 py-2 rounded-2xl bg-slate-800 hover:bg-slate-700 font-semibold text-sm" data-i18n="btnCopyInvite">Copy</button>
             </div>
+            <form id="inviteEmailBox" class="hidden mt-2 flex flex-col sm:flex-row gap-2">
+              <input id="inviteEmailInput" type="email" required maxlength="254" autocomplete="off" class="input w-full rounded-2xl px-4 py-2.5 text-sm" placeholder="partner@example.com" data-i18n-placeholder="inviteEmailPlaceholder">
+              <button id="btnSendInvite" type="submit" class="px-4 py-2 rounded-2xl bg-indigo-600 hover:bg-indigo-500 font-semibold text-sm whitespace-nowrap" data-i18n="btnSendInvite">Send by email</button>
+            </form>
             <p id="inviteNote" class="text-xs text-emerald-400 mt-2 hidden"></p>
           </div>
         </div>
@@ -776,6 +780,7 @@
         settingsLockHint:"Settings are locked by default so you don't change them by accident. Unlock to edit, then it locks again next time you open Settings.", confirmReset:'Reset all local data for this session?',
         inviteTitle:'Invite your partner', inviteDesc:'Generate a one-time link. Whoever opens it and signs up joins this same workspace instead of creating their own.',
         btnGenerateInvite:'Generate invite link', btnCopyInvite:'Copy', inviteCopied:'Link copied', inviteMemberNote:'You joined this workspace via an invite from the owner.',
+        inviteEmailPlaceholder:'Partner e-mail', btnSendInvite:'Send by email', inviteSending:'Sending…', inviteSent:'Invite sent to', inviteSendFailed:'Could not send the e-mail. Copy the link and send it yourself.', inviteAlreadySent:'This link was already e-mailed. Generate a new one.', inviteRateLimited:'Too many e-mails in the last hour. Try later or copy the link.',
         deleteRequestsTitle:'Pending delete requests', btnApprove:'Approve', btnReject:'Reject',
         deleteRequestConfirm:"You don't have permission to delete this directly. Send a delete request to the workspace owner for approval?",
         deleteRequestSent:'Delete request sent to the owner.', deleteRequestDuplicate:'A delete request for this transaction is already pending.',
@@ -826,6 +831,7 @@
         settingsLockHint:'Ustawienia są domyślnie zablokowane, aby uniknąć przypadkowej zmiany. Odblokuj, aby edytować — zablokują się ponownie przy następnym otwarciu.', confirmReset:'Zresetować wszystkie lokalne dane tej sesji?',
         inviteTitle:'Zaproś partnera', inviteDesc:'Wygeneruj jednorazowy link. Osoba, która go otworzy i się zarejestruje, dołączy do tego samego workspace zamiast tworzyć własny.',
         btnGenerateInvite:'Wygeneruj link zaproszenia', btnCopyInvite:'Kopiuj', inviteCopied:'Link skopiowany', inviteMemberNote:'Dołączyłeś do tego workspace dzięki zaproszeniu właściciela.',
+        inviteEmailPlaceholder:'E-mail partnera', btnSendInvite:'Wyślij e-mailem', inviteSending:'Wysyłanie…', inviteSent:'Zaproszenie wysłane do', inviteSendFailed:'Nie udało się wysłać e-maila. Skopiuj link i wyślij go sam.', inviteAlreadySent:'Ten link został już wysłany. Wygeneruj nowy.', inviteRateLimited:'Za dużo e-maili w ciągu ostatniej godziny. Spróbuj później lub skopiuj link.',
         deleteRequestsTitle:'Oczekujące prośby o usunięcie', btnApprove:'Zatwierdź', btnReject:'Odrzuć',
         deleteRequestConfirm:'Nie masz uprawnień, by usunąć to bezpośrednio. Wysłać prośbę o usunięcie do właściciela workspace?',
         deleteRequestSent:'Prośba o usunięcie została wysłana do właściciela.', deleteRequestDuplicate:'Prośba o usunięcie tej transakcji już oczekuje.',
@@ -876,6 +882,7 @@
         settingsLockHint:'Налаштування заблоковані за замовчуванням, щоб ви випадково їх не змінили. Розблокуйте для редагування — вони знову заблокуються при наступному відкритті.', confirmReset:'Скинути всі локальні дані цієї сесії?',
         inviteTitle:'Запросити партнера', inviteDesc:'Згенеруйте одноразове посилання. Той, хто відкриє його і зареєструється, приєднається до цього ж робочого простору замість створення власного.',
         btnGenerateInvite:'Згенерувати посилання-запрошення', btnCopyInvite:'Копіювати', inviteCopied:'Посилання скопійовано', inviteMemberNote:'Ви приєдналися до цього робочого простору за запрошенням власника.',
+        inviteEmailPlaceholder:'E-mail партнера', btnSendInvite:'Надіслати e-mail', inviteSending:'Надсилання…', inviteSent:'Запрошення надіслано на', inviteSendFailed:'Не вдалося надіслати лист. Скопіюйте посилання і надішліть його самі.', inviteAlreadySent:'Це посилання вже надіслано. Згенеруйте нове.', inviteRateLimited:'Забагато листів за останню годину. Спробуйте пізніше або скопіюйте посилання.',
         deleteRequestsTitle:'Запити на видалення, що очікують', btnApprove:'Схвалити', btnReject:'Відхилити',
         deleteRequestConfirm:'У вас немає прав видалити це напряму. Надіслати запит на видалення власнику робочого простору?',
         deleteRequestSent:'Запит на видалення надіслано власнику.', deleteRequestDuplicate:'Запит на видалення цієї транзакції вже очікує.',
@@ -2998,9 +3005,46 @@
       });
       if (error) { notifyError('Could not generate invite.', error); return; }
       const link = `${location.origin}${location.pathname}?invite=${token}`;
+      currentInviteToken = token;
       $('inviteLinkInput').value = link;
       $('inviteLinkBox').classList.remove('hidden');
+      $('inviteEmailBox').classList.remove('hidden');
+      $('btnSendInvite').disabled = false;
       $('inviteNote').classList.add('hidden');
+    });
+
+    // E-mail the current invite link via the send-invite Edge Function (Resend).
+    // The copy-link flow above stays as the fallback if e-mail fails.
+    let currentInviteToken = null;
+    $('inviteEmailBox').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const t = i18n[state.lang];
+      const note = $('inviteNote');
+      const btn = $('btnSendInvite');
+      const email = $('inviteEmailInput').value.trim();
+      if (!currentInviteToken || !email) return;
+      btn.disabled = true;
+      btn.textContent = t.inviteSending;
+      const { error } = await supabaseClient.functions.invoke('send-invite', {
+        body: { token: currentInviteToken, email, lang: state.lang }
+      });
+      btn.textContent = t.btnSendInvite;
+      let code = null;
+      if (error) {
+        try { code = (await error.context.json()).error; } catch (_) {}
+      }
+      note.classList.remove('hidden', 'text-emerald-400', 'text-rose-400');
+      if (!error) {
+        note.textContent = `${t.inviteSent} ${email}`;
+        note.classList.add('text-emerald-400');
+        $('inviteEmailInput').value = '';
+        return; // one e-mail per link; the button stays disabled
+      }
+      note.textContent = code === 'already_sent' ? t.inviteAlreadySent
+        : code === 'rate_limited' ? t.inviteRateLimited
+        : t.inviteSendFailed;
+      note.classList.add('text-rose-400');
+      btn.disabled = code === 'already_sent';
     });
 
     $('btnCopyInvite').addEventListener('click', async () => {
@@ -3011,14 +3055,15 @@
         $('inviteLinkInput').select();
       }
       note.textContent = i18n[state.lang].inviteCopied || 'Link copied';
-      note.classList.remove('hidden');
+      note.classList.remove('hidden', 'text-rose-400');
+      note.classList.add('text-emerald-400');
     });
 
     function refreshInviteUI(){
       const isOwner = state.role === 'owner';
       $('btnGenerateInvite').classList.toggle('hidden', !isOwner);
       $('inviteMemberNote').classList.toggle('hidden', isOwner);
-      if (!isOwner) $('inviteLinkBox').classList.add('hidden');
+      if (!isOwner) { $('inviteLinkBox').classList.add('hidden'); $('inviteEmailBox').classList.add('hidden'); }
     }
 
     function refreshUI(){
