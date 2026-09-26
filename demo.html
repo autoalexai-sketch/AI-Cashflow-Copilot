@@ -1659,6 +1659,19 @@
       if (user) handleUserLogin(user);
     });
 
+    // Currencies offered for an organization (one base currency per org,
+    // no conversion). Names come from the browser in the UI language.
+    const CURRENCIES = ['PLN','EUR','USD','UAH','GBP','CHF','CZK','HUF','RON','SEK','NOK','DKK','ISK','RSD','MDL','GEL','TRY','ALL','MKD','BAM'];
+    function populateCurrencySelect(){
+      const sel = $('currency');
+      if (!sel) return;
+      let names = null;
+      try { names = new Intl.DisplayNames([state.lang], { type: 'currency' }); } catch (e) {}
+      const list = CURRENCIES.includes(state.currency) ? CURRENCIES : [state.currency].concat(CURRENCIES);
+      sel.innerHTML = list.map(c => `<option value="${c}">${c}${names ? ' — ' + names.of(c) : ''}</option>`).join('');
+      sel.value = state.currency;
+    }
+
     function fmt(n){ return new Intl.NumberFormat(state.lang === 'en' ? 'en-US' : 'pl-PL', {minimumFractionDigits:2, maximumFractionDigits:2}).format(n) + ' ' + state.currency; }
 
     function signedAmount(t){ return SBCalc.signedAmount(t); }
@@ -2054,6 +2067,7 @@
       $('tx-list-sub').textContent = state.lang === 'pl' ? 'najnowsze na górze' : state.lang === 'uk' ? 'новіші зверху' : 'latest first';
       populateFilters();
       populateCategorySelect();
+      populateCurrencySelect();
       recalcPartnerBalances();
       renderTxTable();
     }
