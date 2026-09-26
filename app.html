@@ -70,6 +70,7 @@
     .input, .select, .textarea { background:#111827; border:1px solid #334155; color:#e5e7eb; }
     .input:focus, .select:focus, .textarea:focus { outline:none; border-color:#60a5fa; box-shadow:0 0 0 3px rgba(59,130,246,.15); }
     .card { box-shadow: 0 10px 30px rgba(0,0,0,.25); }
+    button:disabled, .input:disabled, .select:disabled { opacity:.45; cursor:not-allowed; }
     .lang-pill { cursor:pointer; }
     .tx-row:hover { background: rgba(15,23,42,.9); }
     .modal-backdrop { background: rgba(2,6,23,.85); overflow-y: auto; overscroll-behavior: contain; }
@@ -555,6 +556,7 @@
         </div>
         <div class="glass border border-slate-800 rounded-3xl p-5 card space-y-4">
           <h2 class="text-lg font-bold" data-i18n="settingsOrgTitle">Organization settings</h2>
+          <div><label class="text-xs text-slate-400" data-i18n="orgNameLabel">Organization name</label><input id="orgName" maxlength="80" class="input w-full rounded-2xl px-4 py-3 mt-1" placeholder="e.g. BruClean Service" data-i18n-placeholder="orgNamePlaceholder"></div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div><label class="text-xs text-slate-400" data-i18n="baseCurrencyLabel">Base currency</label><select id="currency" class="select w-full rounded-2xl px-4 py-3 mt-1"><option>PLN</option><option>EUR</option><option>USD</option><option>UAH</option></select></div>
             <div><label class="text-xs text-slate-400" data-i18n="taxRateLabel">Tax reserve rate</label><input id="taxRate" type="number" value="10" min="0" max="100" class="input w-full rounded-2xl px-4 py-3 mt-1"><p id="taxRateOwnerOnlyNote" class="text-xs text-slate-500 mt-1 hidden" data-i18n="taxRateOwnerOnlyNote">Only the workspace owner can change this.</p></div>
@@ -772,7 +774,7 @@
         projectsTitle:'Projects', projectsSubtitle:'See which object is profitable and which one eats margin.', noProjects:'No projects yet', receiptsTitle:'Receipts', noReceipts:'No receipts yet', receiptLoading:'Loading…',
         monthlyTitle:'Monthly close', monthlySubtitle:'Export the report as PDF or Excel, send it to both partners, then lock the month.', monthlyIncome:'Income', monthlyExpenses:'Expenses', monthlyTax:'Tax reserve', monthlyDistrib:'Distributable',
         settingsPartnerTitle:'Partner settings', settingsOrgTitle:'Organization settings', partnerANameLabel:'Partner A name', partnerBNameLabel:'Partner B name', shareALabel:'Share A %', shareBLabel:'Share B %',
-        baseCurrencyLabel:'Base currency', taxRateLabel:'Tax reserve rate', defaultLangLabel:'Default language', storageModeLabel:'Storage mode', storageModeValue:'Synced to your account (Supabase)',
+        orgNameLabel:'Organization name', orgNamePlaceholder:'e.g. your company name', inviteSessionExpired:'Your session has expired. Log out and log in again, then retry.', baseCurrencyLabel:'Base currency', taxRateLabel:'Tax reserve rate', defaultLangLabel:'Default language', storageModeLabel:'Storage mode', storageModeValue:'Synced to your account (Supabase)',
         filterProject:'Filter by project', filterStatus:'Filter by status', taxReserveCalc:'Tax reserve from income', receiptModalTitle:'Receipt preview', editTransactionTitle:'Edit transaction', btnSaveChanges:'Save changes', btnDeleteTx:'Delete',
         settingsSecurityTitle:'Security & sync', themeTitle:'Appearance', themeDesc:'Switch between dark and light theme on this device.', pinTitle:'Device PIN lock', pinDesc:'Optional 4-digit code for this device only. Local convenience lock, not a substitute for account security.',
         syncTitle:'Cloud sync between partners', syncDesc:'Active — transactions sync live between partners via Supabase.', syncActiveBadge:'Active',
@@ -823,7 +825,7 @@
         projectsTitle:'Projekty', projectsSubtitle:'Zobacz, które zlecenie jest rentowne, a które zjada marżę.', noProjects:'Brak projektów', receiptsTitle:'Paragony', noReceipts:'Brak paragonów', receiptLoading:'Ładowanie…',
         monthlyTitle:'Zamknięcie miesiąca', monthlySubtitle:'Wyeksportuj raport do PDF lub Excela, wyślij do partnerów i zablokuj miesiąc.', monthlyIncome:'Przychody', monthlyExpenses:'Koszty', monthlyTax:'Rezerwa podatkowa', monthlyDistrib:'Do podziału',
         settingsPartnerTitle:'Ustawienia partnerów', settingsOrgTitle:'Ustawienia organizacji', partnerANameLabel:'Nazwa partnera A', partnerBNameLabel:'Nazwa partnera B', shareALabel:'Udział A %', shareBLabel:'Udział B %',
-        baseCurrencyLabel:'Waluta bazowa', taxRateLabel:'Stawka rezerwy podatkowej', defaultLangLabel:'Język domyślny', storageModeLabel:'Tryb zapisu', storageModeValue:'Synchronizowane z Twoim kontem (Supabase)',
+        orgNameLabel:'Nazwa organizacji', orgNamePlaceholder:'np. nazwa Twojej firmy', inviteSessionExpired:'Sesja wygasła. Wyloguj się i zaloguj ponownie, potem spróbuj jeszcze raz.', baseCurrencyLabel:'Waluta bazowa', taxRateLabel:'Stawka rezerwy podatkowej', defaultLangLabel:'Język domyślny', storageModeLabel:'Tryb zapisu', storageModeValue:'Synchronizowane z Twoim kontem (Supabase)',
         filterProject:'Filtruj po projekcie', filterStatus:'Filtruj po statusie', taxReserveCalc:'Rezerwa podatkowa z przychodu', receiptModalTitle:'Podgląd paragonu', editTransactionTitle:'Edytuj transakcję', btnSaveChanges:'Zapisz zmiany', btnDeleteTx:'Usuń',
         settingsSecurityTitle:'Bezpieczeństwo i synchronizacja', themeTitle:'Wygląd', themeDesc:'Przełącz między ciemnym a jasnym motywem na tym urządzeniu.', pinTitle:'Blokada PIN urządzenia', pinDesc:'Opcjonalny 4-cyfrowy kod tylko dla tego urządzenia. Lokalna wygoda, nie zabezpieczenie konta.',
         syncTitle:'Synchronizacja w chmurze między partnerami', syncDesc:'Aktywna — transakcje synchronizują się na żywo między partnerami przez Supabase.', syncActiveBadge:'Aktywna',
@@ -874,7 +876,7 @@
         projectsTitle:'Проєкти', projectsSubtitle:'Дивіться, який об’єкт прибутковий, а який з’їдає маржу.', noProjects:'Ще немає проєктів', receiptsTitle:'Чеки', noReceipts:'Ще немає чеків', receiptLoading:'Завантаження…',
         monthlyTitle:'Закриття місяця', monthlySubtitle:'Експортуйте звіт у PDF або Excel, надішліть партнерам і заблокуйте місяць.', monthlyIncome:'Дохід', monthlyExpenses:'Витрати', monthlyTax:'Податковий резерв', monthlyDistrib:'До розподілу',
         settingsPartnerTitle:'Налаштування партнерів', settingsOrgTitle:'Налаштування організації', partnerANameLabel:'Ім’я партнера A', partnerBNameLabel:'Ім’я партнера B', shareALabel:'Частка A %', shareBLabel:'Частка B %',
-        baseCurrencyLabel:'Базова валюта', taxRateLabel:'Ставка податкового резерву', defaultLangLabel:'Мова за замовчуванням', storageModeLabel:'Режим збереження', storageModeValue:'Синхронізовано з вашим акаунтом (Supabase)',
+        orgNameLabel:'Назва організації', orgNamePlaceholder:'напр. назва вашої компанії', inviteSessionExpired:'Сесія завершилась. Вийдіть і увійдіть знову, потім повторіть.', baseCurrencyLabel:'Базова валюта', taxRateLabel:'Ставка податкового резерву', defaultLangLabel:'Мова за замовчуванням', storageModeLabel:'Режим збереження', storageModeValue:'Синхронізовано з вашим акаунтом (Supabase)',
         filterProject:'Фільтр за проєктом', filterStatus:'Фільтр за статусом', taxReserveCalc:'Податковий резерв з доходу', receiptModalTitle:'Перегляд чека', editTransactionTitle:'Редагувати транзакцію', btnSaveChanges:'Зберегти зміни', btnDeleteTx:'Видалити',
         settingsSecurityTitle:'Безпека та синхронізація', themeTitle:'Вигляд', themeDesc:'Перемикайте темну та світлу тему на цьому пристрої.', pinTitle:'PIN-блокування пристрою', pinDesc:'Необов’язковий 4-значний код лише для цього пристрою. Локальна зручність, не захист акаунта.',
         syncTitle:'Хмарна синхронізація між партнерами', syncDesc:'Активна — транзакції синхронізуються наживо між партнерами через Supabase.', syncActiveBadge:'Активна',
@@ -1065,7 +1067,7 @@
         if (e.inviteFailed) {
           alert(e.message);
           loginInFlightFor = null;
-          await supabaseClient.auth.signOut();
+          await supabaseClient.auth.signOut({ scope: 'local' });
           showAuthScreen();
           return;
         }
@@ -1169,10 +1171,13 @@
     async function loadTaxRate(){
       const { data, error } = await supabaseClient
         .from('organizations')
-        .select('tax_rate, currency')
+        .select('tax_rate, currency, name')
         .eq('id', state.orgId)
         .single();
       if (error) { console.warn('Could not load tax rate:', error.message); return; }
+      // Auto-created names ("<email>'s organization") are shown as empty so the
+      // placeholder invites the owner to type the real company name.
+      $('orgName').value = /['’]s organization$/.test(data.name || '') ? '' : (data.name || '');
       state.taxRate = Number(data.tax_rate);
       $('taxRate').value = state.taxRate;
       // Currency is an organization setting: both partners see the same one.
@@ -1428,11 +1433,12 @@
     // to touch what once unlocked.
     function applySettingsLock(locked){
       settingsLocked = locked;
-      ['defaultLang','pinToggle','btnGenerateInvite','btnCopyInvite','btnResetDb'].forEach(id => {
+      // Invite buttons are not locked: creating a link changes no settings.
+      ['defaultLang','pinToggle','btnResetDb'].forEach(id => {
         $(id).disabled = locked;
       });
       // Shares and currency are organization-wide: owner only.
-      ['shareA','currency'].forEach(id => { $(id).disabled = locked || state.role !== 'owner'; });
+      ['shareA','currency','orgName'].forEach(id => { $(id).disabled = locked || state.role !== 'owner'; });
       refreshTaxRateUI();
       refreshPartnerNameUI();
       const btn = $('btnSettingsLock');
@@ -1670,7 +1676,9 @@
     });
 
     $('btnLogout').addEventListener('click', async () => {
-      await supabaseClient.auth.signOut();
+      // Local scope: logging out here must not end sessions on other devices
+      // or in the admin panel.
+      await supabaseClient.auth.signOut({ scope: 'local' });
       showAuthScreen();
     });
 
@@ -2534,6 +2542,14 @@
     $('setNameA').addEventListener('change', () => { if (state.role === 'owner') saveMyDisplayName(); });
     $('setNameB').addEventListener('change', () => { if (state.role !== 'owner') saveMyDisplayName(); });
 
+    $('orgName').addEventListener('change', async e => {
+      const name = e.target.value.replace(/\s+/g, ' ').trim().slice(0, 80);
+      e.target.value = name;
+      if (state.role !== 'owner' || !state.orgId || !name) return;
+      const { error } = await supabaseClient.from('organizations').update({ name }).eq('id', state.orgId);
+      if (error) notifyError('Could not save organization name.', error);
+    });
+
     $('currency').addEventListener('change', async e => {
       state.currency = e.target.value;
       refreshUI();
@@ -3040,7 +3056,8 @@
         $('inviteEmailInput').value = '';
         return; // one e-mail per link; the button stays disabled
       }
-      note.textContent = code === 'already_sent' ? t.inviteAlreadySent
+      note.textContent = code === 'unauthorized' ? t.inviteSessionExpired
+        : code === 'already_sent' ? t.inviteAlreadySent
         : code === 'rate_limited' ? t.inviteRateLimited
         : t.inviteSendFailed;
       note.classList.add('text-rose-400');

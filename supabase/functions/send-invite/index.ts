@@ -49,10 +49,10 @@ const esc = (s: string) =>
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 type Lang = 'en' | 'pl' | 'uk';
-const TEXT: Record<Lang, { subject: (who: string) => string; lead: (who: string, org: string) => string; body: string; cta: string; expires: string; ignore: string }> = {
+const TEXT: Record<Lang, { subject: (who: string) => string; lead: (who: string, org: string | null) => string; body: string; cta: string; expires: string; ignore: string }> = {
   en: {
     subject: (who) => `${who} invites you to SplitBooks`,
-    lead: (who, org) => `${who} invites you to the shared workspace <b>${org}</b> in SplitBooks.`,
+    lead: (who, org) => org ? `${who} invites you to the shared workspace <b>${org}</b> in SplitBooks.` : `${who} invites you to a shared workspace in SplitBooks.`,
     body: 'You will see the same income, expenses and partner split in real time.',
     cta: 'Accept invite',
     expires: 'The link works once and expires in 30 days.',
@@ -60,7 +60,7 @@ const TEXT: Record<Lang, { subject: (who: string) => string; lead: (who: string,
   },
   pl: {
     subject: (who) => `${who} zaprasza Cię do SplitBooks`,
-    lead: (who, org) => `${who} zaprasza Cię do wspólnego workspace <b>${org}</b> w SplitBooks.`,
+    lead: (who, org) => org ? `${who} zaprasza Cię do wspólnego workspace <b>${org}</b> w SplitBooks.` : `${who} zaprasza Cię do wspólnego workspace w SplitBooks.`,
     body: 'Zobaczysz te same przychody, koszty i podział między partnerami w czasie rzeczywistym.',
     cta: 'Przyjmij zaproszenie',
     expires: 'Link działa jednorazowo i wygasa po 30 dniach.',
@@ -68,7 +68,7 @@ const TEXT: Record<Lang, { subject: (who: string) => string; lead: (who: string,
   },
   uk: {
     subject: (who) => `${who} запрошує вас до SplitBooks`,
-    lead: (who, org) => `${who} запрошує вас до спільного робочого простору <b>${org}</b> у SplitBooks.`,
+    lead: (who, org) => org ? `${who} запрошує вас до спільного робочого простору <b>${org}</b> у SplitBooks.` : `${who} запрошує вас до спільного робочого простору у SplitBooks.`,
     body: 'Ви бачитимете ті самі доходи, витрати та розподіл між партнерами в реальному часі.',
     cta: 'Прийняти запрошення',
     expires: 'Посилання одноразове і діє 30 днів.',
@@ -76,9 +76,9 @@ const TEXT: Record<Lang, { subject: (who: string) => string; lead: (who: string,
   },
 };
 
-function renderEmail(lang: Lang, who: string, org: string, link: string) {
+function renderEmail(lang: Lang, who: string, org: string | null, link: string) {
   const t = TEXT[lang];
-  const w = esc(who), o = esc(org), l = esc(link);
+  const w = esc(who), o = org ? esc(org) : null, l = esc(link);
   const html = `<!doctype html><html><body style="margin:0;background:#f1f5f9;font-family:Arial,Helvetica,sans-serif;color:#0f172a">
 <div style="max-width:520px;margin:0 auto;padding:32px 20px">
 <div style="background:#ffffff;border-radius:16px;padding:28px">
@@ -155,7 +155,10 @@ Deno.serve(async (req) => {
   ]);
   const clean = (s: string) => s.replace(/\s+/g, ' ').trim().slice(0, 80);
   const who = clean(me?.display_name || user.email || 'SplitBooks');
-  const orgName = clean(org?.name || 'SplitBooks');
+  // Auto-created names ("<email>'s organization") look like spam in an e-mail
+  // (and Gmail turns the address into a link), so leave them out.
+  const rawOrg = clean(org?.name || '');
+  const orgName = rawOrg && !/['’]s organization$/.test(rawOrg) ? rawOrg : null;
   const { subject, html, text } = renderEmail(lang, who, orgName, `${APP_URL}?invite=${token}`);
 
   const res = await fetch('https://api.resend.com/emails', {
