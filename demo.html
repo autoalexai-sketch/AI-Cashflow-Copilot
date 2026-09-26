@@ -319,19 +319,19 @@
               <div class="rounded-2xl p-4 bg-slate-950/60 border border-slate-800">
                 <div class="flex justify-between text-sm"><span id="partnerAName">Partner A</span><span class="text-slate-400" id="partnerAshare">50%</span></div>
                 <div class="mt-2 grid grid-cols-2 gap-2 text-xs">
-                  <div class="text-slate-400"><div data-i18n="earnedShare">Earned share</div><div class="text-slate-100 text-sm font-bold" id="partnerAearned">4,650.00 PLN</div></div>
-                  <div class="text-slate-400"><div data-i18n="withdrawnDraws">Withdrawn draws</div><div class="text-rose-400 text-sm font-bold underline cursor-pointer" id="partnerAwithdrawn" onclick="openDrawHistory('owner')">2,000.00 PLN</div></div>
+                  <div class="text-slate-400"><div data-i18n="projSplitShare">Profit share</div><div class="text-slate-100 text-sm font-bold" id="partnerAearned">4,650.00 PLN</div></div>
+                  <div class="text-slate-400"><div data-i18n="projSplitLabor">Paid for work</div><div class="text-rose-400 text-sm font-bold underline cursor-pointer" id="partnerAwithdrawn" onclick="openDrawHistory('owner')">2,000.00 PLN</div></div>
                 </div>
-                <div class="mt-3 flex justify-between items-center border-t border-slate-800 pt-3"><span class="text-slate-400 text-xs" data-i18n="remainingLabel">Remaining</span><span class="text-sky-400 font-black" id="partnerAremaining">2,650.00 PLN</span></div>
+                <div class="mt-3 flex justify-between items-center border-t border-slate-800 pt-3"><span class="text-slate-400 text-xs" data-i18n="partnerTotalLabel">Total</span><span class="text-sky-400 font-black" id="partnerAremaining">2,650.00 PLN</span></div>
                 <button class="mt-3 w-full px-3 py-2 rounded-xl bg-rose-600/20 border border-rose-600/40 text-rose-300 text-xs font-bold hover:bg-rose-600/30" onclick="openWithdrawModal('owner')" data-i18n="withdrawBtn">Withdraw</button>
               </div>
               <div class="rounded-2xl p-4 bg-slate-950/60 border border-slate-800">
                 <div class="flex justify-between text-sm"><span id="partnerBName">Partner B</span><span class="text-slate-400" id="partnerBshare">50%</span></div>
                 <div class="mt-2 grid grid-cols-2 gap-2 text-xs">
-                  <div class="text-slate-400"><div data-i18n="earnedShare">Earned share</div><div class="text-slate-100 text-sm font-bold" id="partnerBearned">4,650.00 PLN</div></div>
-                  <div class="text-slate-400"><div data-i18n="withdrawnDraws">Withdrawn draws</div><div class="text-rose-400 text-sm font-bold underline cursor-pointer" id="partnerBwithdrawn" onclick="openDrawHistory('member')">1,100.00 PLN</div></div>
+                  <div class="text-slate-400"><div data-i18n="projSplitShare">Profit share</div><div class="text-slate-100 text-sm font-bold" id="partnerBearned">4,650.00 PLN</div></div>
+                  <div class="text-slate-400"><div data-i18n="projSplitLabor">Paid for work</div><div class="text-rose-400 text-sm font-bold underline cursor-pointer" id="partnerBwithdrawn" onclick="openDrawHistory('member')">1,100.00 PLN</div></div>
                 </div>
-                <div class="mt-3 flex justify-between items-center border-t border-slate-800 pt-3"><span class="text-slate-400 text-xs" data-i18n="remainingLabel">Remaining</span><span class="text-sky-400 font-black" id="partnerBremaining">3,550.00 PLN</span></div>
+                <div class="mt-3 flex justify-between items-center border-t border-slate-800 pt-3"><span class="text-slate-400 text-xs" data-i18n="partnerTotalLabel">Total</span><span class="text-sky-400 font-black" id="partnerBremaining">3,550.00 PLN</span></div>
                 <button class="mt-3 w-full px-3 py-2 rounded-xl bg-rose-600/20 border border-rose-600/40 text-rose-300 text-xs font-bold hover:bg-rose-600/30" onclick="openWithdrawModal('member')" data-i18n="withdrawBtn">Withdraw</button>
               </div>
             </div>
@@ -755,12 +755,12 @@
   <script>
     const i18n = {
       en: {
-        uiState:'Live · synced', appTitle:'SplitBooks', subtitle:'Shared finance control for partners, projects, receipts and monthly closing.',
+        uiState:'Live · synced', partnerTotalLabel:'Total', appTitle:'SplitBooks', subtitle:'Shared finance control for partners, projects, receipts and monthly closing.',
         activeUserLabel:'Signed in as', authSubtitle:'Sign in to access your shared workspace', btnLogin:'Log In', btnSignup:'Sign Up', btnLogout:'Sign out',
         btnForgotPassword:'Forgot password?', forgotPasswordTitle:'Reset your password', forgotPasswordDesc:"Enter your email — we'll send a link to set a new password.", btnSendResetLink:'Send reset link', resetPasswordTitle:'Set a new password', btnSaveNewPassword:'Save new password', placeholderConfirmPassword:'Confirm password (for Sign Up)', placeholderNewPassword:'New password',
         monthlyCloseBtn:'Monthly Close', tabDashboard:'Dashboard', tabTransactions:'Transactions', tabProjects:'Projects', tabReceipts:'Receipts', tabMonthly:'Monthly Close', tabSettings:'Settings',
         mIncomeLabel:'Total Income', mExpenseLabel:'Total Expenses', mTaxLabel:'Tax Reserve', mProfitLabel:'Net Profit', cashflowTitle:'Cashflow overview', cashflowSubtitle:'Bank, cash and reserve balances in one place.', currentMonth:'Current month',
-        bankLabel:'Bank Account', cashLabel:'Cash Box', reserveLabel:'Virtual Tax Buffer', splitTitle:'Partner balance', earnedShare:'Earned share', withdrawnDraws:'Withdrawn draws', remainingLabel:'Remaining', withdrawBtn:'Withdraw', drawHistoryTitle:'Withdrawal history', noWithdrawals:'No withdrawals yet', projSummaryIncome:'income', projSummaryCost:'cost', projSummaryNet:'net', projSummaryTxCount:'transaction(s)', projNoTransactions:'No transactions', projSplitTitle:'Partner split', projSplitLabor:'Paid for work', projSplitShare:'Profit share', projSplitTotal:'Total for project', projSplitForecastNote:'figures in ( ) include pending transactions',
+        bankLabel:'Bank Account', cashLabel:'Cash Box', reserveLabel:'Virtual Tax Buffer', splitTitle:'Partner balance', withdrawBtn:'Withdraw', drawHistoryTitle:'Withdrawal history', noWithdrawals:'No withdrawals yet', projSummaryIncome:'income', projSummaryCost:'cost', projSummaryNet:'net', projSummaryTxCount:'transaction(s)', projNoTransactions:'No transactions', projSplitTitle:'Partner split', projSplitLabor:'Paid for work', projSplitShare:'Profit share', projSplitTotal:'Total for project', projSplitForecastNote:'figures in ( ) include pending transactions',
         whatsNewTitle:"What's new", whatsNewGotIt:'Got it', whatsNewWithdrawTitle:'Withdraw button on partner balances', whatsNewWithdrawDesc:'Each partner balance card now has a Withdraw button, plus a clickable history showing who withdrew how much and when.', whatsNewProjectDetailTitle:'Tap a project to see its transactions', whatsNewProjectDetailDesc:'Click any project card to open the full list of transactions filed under it.',
         pendingTxTitle:'Pending — not yet paid', pendingTxSubtitle:"Recorded but not verified. These don't affect any balance or profit yet — mark as paid once the money actually moves.", noPendingTx:'Nothing pending — everything recorded has been verified.', btnMarkPaid:'Mark as paid', thDescription:'Description',
         txTitle:'Transactions', txSubtitle:'Create income, expense, draw, and verify with receipts.', txPreviewTitle:'Preview', txListTitle:'Transaction list',
@@ -805,12 +805,12 @@
         helpFooterTitle:'Help & guide', helpFooterDesc:'Replay the quick tour, or read the full written guide.'
       },
       pl: {
-        uiState:'Na żywo · zsynchronizowane', appTitle:'SplitBooks', subtitle:'Wspólny system finansowy dla partnerów, projektów, paragonów i zamknięcia miesiąca.',
+        uiState:'Na żywo · zsynchronizowane', partnerTotalLabel:'Razem', appTitle:'SplitBooks', subtitle:'Wspólny system finansowy dla partnerów, projektów, paragonów i zamknięcia miesiąca.',
         activeUserLabel:'Zalogowano jako', authSubtitle:'Zaloguj się, aby uzyskać dostęp do wspólnego konta', btnLogin:'Zaloguj się', btnSignup:'Zarejestruj się', btnLogout:'Wyloguj się',
         btnForgotPassword:'Nie pamiętasz hasła?', forgotPasswordTitle:'Zresetuj hasło', forgotPasswordDesc:'Podaj swój e-mail — wyślemy link do ustawienia nowego hasła.', btnSendResetLink:'Wyślij link resetujący', resetPasswordTitle:'Ustaw nowe hasło', btnSaveNewPassword:'Zapisz nowe hasło', placeholderConfirmPassword:'Potwierdź hasło (przy rejestracji)', placeholderNewPassword:'Nowe hasło',
         monthlyCloseBtn:'Zamknięcie miesiąca', tabDashboard:'Dashboard', tabTransactions:'Transakcje', tabProjects:'Projekty', tabReceipts:'Paragony', tabMonthly:'Zamknięcie miesiąca', tabSettings:'Ustawienia',
         mIncomeLabel:'Przychody', mExpenseLabel:'Koszty', mTaxLabel:'Rezerwa podatkowa', mProfitLabel:'Zysk netto', cashflowTitle:'Przegląd przepływów pieniężnych', cashflowSubtitle:'Konto bankowe, kasa i rezerwa podatkowa w jednym miejscu.', currentMonth:'Bieżący miesiąc',
-        bankLabel:'Konto bankowe', cashLabel:'Kasa', reserveLabel:'Wirtualna rezerwa podatkowa', splitTitle:'Saldo partnerów', earnedShare:'Należna część', withdrawnDraws:'Wypłacone środki', remainingLabel:'Pozostało', withdrawBtn:'Wypłać', drawHistoryTitle:'Historia wypłat', noWithdrawals:'Brak wypłat', projSummaryIncome:'przychód', projSummaryCost:'koszt', projSummaryNet:'netto', projSummaryTxCount:'transakcji', projNoTransactions:'Brak transakcji', projSplitTitle:'Podział partnerów', projSplitLabor:'Wypłacono za pracę', projSplitShare:'Udział w zysku', projSplitTotal:'Razem za projekt', projSplitForecastNote:'kwoty w ( ) zawierają oczekujące transakcje',
+        bankLabel:'Konto bankowe', cashLabel:'Kasa', reserveLabel:'Wirtualna rezerwa podatkowa', splitTitle:'Saldo partnerów', withdrawBtn:'Wypłać', drawHistoryTitle:'Historia wypłat', noWithdrawals:'Brak wypłat', projSummaryIncome:'przychód', projSummaryCost:'koszt', projSummaryNet:'netto', projSummaryTxCount:'transakcji', projNoTransactions:'Brak transakcji', projSplitTitle:'Podział partnerów', projSplitLabor:'Wypłacono za pracę', projSplitShare:'Udział w zysku', projSplitTotal:'Razem za projekt', projSplitForecastNote:'kwoty w ( ) zawierają oczekujące transakcje',
         whatsNewTitle:'Co nowego', whatsNewGotIt:'Rozumiem', whatsNewWithdrawTitle:'Przycisk Wypłać na saldzie wspólników', whatsNewWithdrawDesc:'Każda karta salda wspólnika ma teraz przycisk Wypłać oraz klikalną historię, kto i ile wypłacił i kiedy.', whatsNewProjectDetailTitle:'Kliknij projekt, aby zobaczyć jego transakcje', whatsNewProjectDetailDesc:'Kliknij kartę projektu, aby zobaczyć pełną listę transakcji przypisanych do niego.',
         pendingTxTitle:'Oczekujące — jeszcze nie zapłacone', pendingTxSubtitle:'Zarejestrowane, ale niezweryfikowane. Nie wpływają jeszcze na żaden bilans ani zysk — oznacz jako zapłacone, gdy pieniądze faktycznie się przemieszczą.', noPendingTx:'Brak oczekujących — wszystko zostało zweryfikowane.', btnMarkPaid:'Oznacz jako zapłacone', thDescription:'Opis',
         txTitle:'Transakcje', txSubtitle:'Dodawaj przychody, koszty, wypłaty i potwierdzaj paragonami.', txPreviewTitle:'Podgląd', txListTitle:'Lista transakcji',
@@ -855,12 +855,12 @@
         helpFooterTitle:'Pomoc i poradnik', helpFooterDesc:'Uruchom krótki przewodnik ponownie albo przeczytaj pełny poradnik.'
       },
       uk: {
-        uiState:'Наживо · синхронізовано', appTitle:'SplitBooks', subtitle:'Спільний фінансовий контроль для партнерів, проєктів, чеків і закриття місяця.',
+        uiState:'Наживо · синхронізовано', partnerTotalLabel:'Разом', appTitle:'SplitBooks', subtitle:'Спільний фінансовий контроль для партнерів, проєктів, чеків і закриття місяця.',
         activeUserLabel:'Ви увійшли як', authSubtitle:'Увійдіть, щоб отримати доступ до спільного простору', btnLogin:'Увійти', btnSignup:'Зареєструватися', btnLogout:'Вийти',
         btnForgotPassword:'Забули пароль?', forgotPasswordTitle:'Скидання пароля', forgotPasswordDesc:'Введіть email — надішлемо посилання для встановлення нового пароля.', btnSendResetLink:'Надіслати посилання', resetPasswordTitle:'Встановіть новий пароль', btnSaveNewPassword:'Зберегти новий пароль', placeholderConfirmPassword:'Підтвердіть пароль (для реєстрації)', placeholderNewPassword:'Новий пароль',
         monthlyCloseBtn:'Закриття місяця', tabDashboard:'Панель', tabTransactions:'Транзакції', tabProjects:'Проєкти', tabReceipts:'Чеки', tabMonthly:'Закриття місяця', tabSettings:'Налаштування',
         mIncomeLabel:'Дохід', mExpenseLabel:'Витрати', mTaxLabel:'Податковий резерв', mProfitLabel:'Чистий прибуток', cashflowTitle:'Огляд руху коштів', cashflowSubtitle:'Банк, каса і податковий резерв в одному місці.', currentMonth:'Поточний місяць',
-        bankLabel:'Банківський рахунок', cashLabel:'Каса', reserveLabel:'Віртуальний податковий буфер', splitTitle:'Баланс партнерів', earnedShare:'Нарахована частка', withdrawnDraws:'Виплачені кошти', remainingLabel:'Залишок', withdrawBtn:'Вивести', drawHistoryTitle:'Історія виплат', noWithdrawals:'Виплат ще немає', projSummaryIncome:'дохід', projSummaryCost:'витрати', projSummaryNet:'нетто', projSummaryTxCount:'транзакцій', projNoTransactions:'Немає транзакцій', projSplitTitle:'Розподіл між партнерами', projSplitLabor:'Виплачено за роботу', projSplitShare:'Частка прибутку', projSplitTotal:'Разом за проєктом', projSplitForecastNote:'суми в ( ) враховують очікуючі транзакції',
+        bankLabel:'Банківський рахунок', cashLabel:'Каса', reserveLabel:'Віртуальний податковий буфер', splitTitle:'Баланс партнерів', withdrawBtn:'Вивести', drawHistoryTitle:'Історія виплат', noWithdrawals:'Виплат ще немає', projSummaryIncome:'дохід', projSummaryCost:'витрати', projSummaryNet:'нетто', projSummaryTxCount:'транзакцій', projNoTransactions:'Немає транзакцій', projSplitTitle:'Розподіл між партнерами', projSplitLabor:'Виплачено за роботу', projSplitShare:'Частка прибутку', projSplitTotal:'Разом за проєктом', projSplitForecastNote:'суми в ( ) враховують очікуючі транзакції',
         whatsNewTitle:'Що нового', whatsNewGotIt:'Зрозуміло', whatsNewWithdrawTitle:'Кнопка «Вивести» на балансі партнерів', whatsNewWithdrawDesc:'На кожній картці балансу партнера тепер є кнопка «Вивести» та клікабельна історія — хто скільки і коли вивів.', whatsNewProjectDetailTitle:'Натисніть на проєкт, щоб побачити його транзакції', whatsNewProjectDetailDesc:'Натисніть на картку проєкту, щоб відкрити повний список транзакцій, прив’язаних до нього.',
         pendingTxTitle:'Очікує — ще не сплачено', pendingTxSubtitle:'Записано, але не підтверджено. Це поки не впливає на жоден баланс чи прибуток — позначте як сплачено, коли гроші фактично підуть.', noPendingTx:'Нічого очікуваного — все записане підтверджено.', btnMarkPaid:'Позначити як сплачено', thDescription:'Опис',
         txTitle:'Транзакції', txSubtitle:'Додавайте дохід, витрати, виплати та підтверджуйте чеками.', txPreviewTitle:'Перегляд', txListTitle:'Список транзакцій',
@@ -1671,18 +1671,18 @@
       // Money logic lives in calc.js (unit-tested in tests/calc.test.js).
       const totals = SBCalc.computeTotals(state.txs, { taxRate: state.taxRate, shareA: state.partnerA.share, shareB: state.partnerB.share });
       const { income, expenses, net, reserve, distributable } = totals;
-      const drawA = totals.partnerA.withdrawn, drawB = totals.partnerB.withdrawn;
-      const aEarned = totals.partnerA.earned, bEarned = totals.partnerB.earned;
-      state.partnerA.earned = aEarned;
-      state.partnerB.earned = bEarned;
-      state.partnerA.withdrawn = drawA;
-      state.partnerB.withdrawn = drawB;
-      $('partnerAremaining').textContent = fmt(aEarned - drawA);
-      $('partnerBremaining').textContent = fmt(bEarned - drawB);
-      $('partnerAearned').textContent = fmt(aEarned);
-      $('partnerBearned').textContent = fmt(bEarned);
-      $('partnerAwithdrawn').textContent = fmt(drawA);
-      $('partnerBwithdrawn').textContent = fmt(drawB);
+      // Partner card: profit share (still to pay out) · paid for work (draws) · total.
+      const A = totals.partnerA, B = totals.partnerB;
+      state.partnerA.earned = A.share;
+      state.partnerB.earned = B.share;
+      state.partnerA.withdrawn = A.labor;
+      state.partnerB.withdrawn = B.labor;
+      $('partnerAremaining').textContent = fmt(A.total);
+      $('partnerBremaining').textContent = fmt(B.total);
+      $('partnerAearned').textContent = fmt(A.share);
+      $('partnerBearned').textContent = fmt(B.share);
+      $('partnerAwithdrawn').textContent = fmt(A.labor);
+      $('partnerBwithdrawn').textContent = fmt(B.labor);
       $('split-ratio').textContent = state.partnerA.share + ' / ' + state.partnerB.share;
       $('shareDisplay').textContent = state.partnerA.share + ' / ' + state.partnerB.share;
       $('m-income').textContent = fmt(income);
@@ -2559,7 +2559,7 @@
         title: `SplitBooks — ${t.repTitle || 'Report'}`,
         income: t.monthlyIncome, expenses: t.monthlyExpenses,
         tax: t.monthlyTax, rate: t.repRate || 'rate', distributable: t.monthlyDistrib,
-        earned: t.earnedShare, withdrawn: t.withdrawnDraws, remaining: t.remainingLabel,
+        earned: t.projSplitShare, withdrawn: t.projSplitLabor, remaining: t.partnerTotalLabel,
         txs: t.txTitle, total: t.repTotalRow || 'TOTAL',
         head: [t.thDate, t.thProject, t.thAmount, t.thType, t.thStatus],
         done: t.reportGenerated || 'Report downloaded.'

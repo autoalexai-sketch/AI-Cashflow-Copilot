@@ -29,32 +29,33 @@ test('month where both partners are in plus', () => {
   ], OPTS_50);
   eqMoney(t.net, 6000);
   eqMoney(t.reserve, 1200);            // 20 % of 6000
-  eqMoney(t.distributable, 4800);
-  eqMoney(t.partnerA.earned, 2400);
-  eqMoney(t.partnerA.remaining, 1400); // 2400 - 1000
-  eqMoney(t.partnerB.remaining, 1900); // 2400 - 500
-  // Invariant: earned shares add up to the distributable profit.
-  eqMoney(t.partnerA.earned + t.partnerB.earned, t.distributable);
+  eqMoney(t.distributable, 3300);      // 6000 - 1200 - 1000 - 500
+  eqMoney(t.partnerA.labor, 1000);
+  eqMoney(t.partnerA.share, 1650);
+  eqMoney(t.partnerA.total, 2650);
+  eqMoney(t.partnerB.total, 2150);     // 500 + 1650
+  // Invariant: work payments + shares + reserve == net profit
+  eqMoney(t.partnerA.total + t.partnerB.total + t.reserve, t.net);
 });
 
-test('one partner withdrew more than earned -> negative remaining (owes the other)', () => {
+test('one partner was paid a lot for work -> still gets their share of the rest', () => {
   const t = computeTotals([
     tx('income', 5000),
     tx('expense', 1000),
     tx('draw', 3000, { partnerSlot: 'owner' })
   ], OPTS_50);
-  eqMoney(t.distributable, 3200);      // (4000 - 800)
-  eqMoney(t.partnerA.remaining, -1400);// 1600 - 3000
-  eqMoney(t.partnerB.remaining, 1600);
+  eqMoney(t.distributable, 200);       // 4000 - 800 - 3000
+  eqMoney(t.partnerA.total, 3100);
+  eqMoney(t.partnerB.total, 100);
 });
 
-test('loss month: no tax reserve, nothing to distribute', () => {
+test('loss month: no tax reserve, the loss is shared by share %', () => {
   const t = computeTotals([tx('income', 1000), tx('expense', 3000)], OPTS_50);
   eqMoney(t.net, -2000);
   eqMoney(t.reserve, 0);
-  eqMoney(t.distributable, 0);
-  eqMoney(t.partnerA.earned, 0);
-  eqMoney(t.partnerB.earned, 0);
+  eqMoney(t.distributable, -2000);
+  eqMoney(t.partnerA.share, -1000);
+  eqMoney(t.partnerB.share, -1000);
 });
 
 test('only verified transactions count; pending and rejected are ignored', () => {
@@ -62,23 +63,25 @@ test('only verified transactions count; pending and rejected are ignored', () =>
     tx('income', 1000),
     tx('income', 5000, { status: 'pending' }),
     tx('income', 7000, { status: 'rejected' }),
-    tx('expense', 300, { status: 'pending' })
+    tx('expense', 300, { status: 'pending' }),
+    tx('draw', 400, { status: 'pending' })
   ], OPTS_50);
   eqMoney(t.income, 1000);
   eqMoney(t.expenses, 0);
+  eqMoney(t.partnerA.labor, 0);
 });
 
 test('unequal shares 70/30 and tax rate 0', () => {
   const t = computeTotals([tx('income', 1000)], { taxRate: 0, shareA: 70, shareB: 30 });
-  eqMoney(t.partnerA.earned, 700);
-  eqMoney(t.partnerB.earned, 300);
+  eqMoney(t.partnerA.share, 700);
+  eqMoney(t.partnerB.share, 300);
 });
 
-test('draws are advances: they do not change distributable profit', () => {
+test('work payments reduce what is left to split', () => {
   const base = [tx('income', 10000), tx('expense', 2000)];
   const a = computeTotals(base, OPTS_50);
   const b = computeTotals([...base, tx('draw', 5000)], OPTS_50);
-  eqMoney(a.distributable, b.distributable);
+  eqMoney(a.distributable - b.distributable, 5000);
 });
 
 test('account balances: Bank and Cash tracked separately, verified only', () => {
@@ -95,7 +98,7 @@ test('account balances: Bank and Cash tracked separately, verified only', () => 
 test('float sums stay correct to the cent (0.1 + 0.2 case)', () => {
   const t = computeTotals([tx('income', 0.1), tx('income', 0.2)], { taxRate: 0, shareA: 50, shareB: 50 });
   eqMoney(t.income, 0.3);
-  eqMoney(t.partnerA.earned, 0.15);
+  eqMoney(t.partnerA.share, 0.15);
 });
 
 test('project split: labor draws first, then shares of the remainder', () => {
@@ -121,24 +124,28 @@ test('project split forecast includes pending when asked', () => {
   eqMoney(f.shareA, 1000);
 });
 
-// ---- Documented current behaviour that needs a product decision ----------
-// These tests pin today's behaviour so any change is deliberate.
+// ---- Dashboard and project view must agree (decision 2026-09-26) ---------
+// Model: draws = payment for work; the rest is split by share, no floor.
 
-test('OPEN QUESTION: dashboard and project view treat draws differently', () => {
-  // Same data, owner drew 3000, member drew nothing, 50/50, no tax.
-  const txs = [tx('income', 10000), tx('draw', 3000, { partnerSlot: 'owner' })];
-  const opts = { taxRate: 0, shareA: 50, shareB: 50 };
+test('dashboard totals == project split over the same transactions', () => {
+  const txs = [
+    tx('income', 10000), tx('expense', 1500),
+    tx('draw', 3000, { partnerSlot: 'owner' }), tx('draw', 700, { partnerSlot: 'member' }),
+    tx('income', 999, { status: 'pending' })
+  ];
+  const opts = { taxRate: 12, shareA: 60, shareB: 40 };
   const dash = computeTotals(txs, opts);
   const proj = computeProjectSplit(txs, opts, ['verified']);
-  // Dashboard: draw = advance. Owner is entitled to 5000 in total.
-  eqMoney(dash.partnerA.earned, 5000);
-  // Project view: draw = paid labor. Owner is entitled to 3000 + 3500 = 6500.
-  eqMoney(proj.laborA + proj.shareA, 6500);
+  eqMoney(dash.partnerA.total, proj.laborA + proj.shareA);
+  eqMoney(dash.partnerB.total, proj.laborB + proj.shareB);
+  eqMoney(dash.reserve, proj.reserve);
 });
 
-test('OPEN QUESTION: project split can go negative (no floor), dashboard floors at 0', () => {
-  const txs = [tx('income', 1000), tx('draw', 3000, { partnerSlot: 'owner' })];
-  const opts = { taxRate: 0, shareA: 50, shareB: 50 };
-  eqMoney(computeProjectSplit(txs, opts, ['verified']).shareB, -1000);
-  eqMoney(computeTotals(txs, opts).partnerB.earned, 500);
+test('BruClean case (2026-09-26): owner paid 13 100 for work, 10 % tax, 50/50', () => {
+  const t = computeTotals([
+    tx('income', 27918.54), tx('expense', 3439.23), tx('draw', 13100, { partnerSlot: 'owner' })
+  ], { taxRate: 10, shareA: 50, shareB: 50 });
+  eqMoney(t.partnerA.total, 17565.69);
+  eqMoney(t.partnerA.share, 4465.69);
+  eqMoney(t.partnerB.total, 4465.69);
 });

@@ -21,29 +21,24 @@
     return 0;
   }
 
-  // Organisation-wide totals and partner balances.
-  // Only 'verified' transactions count; 'pending' and 'rejected' never do.
-  // Draws are advances against a partner's earned share: they do not reduce
-  // the distributable profit, they reduce what is left for that partner.
+  // Organisation-wide totals and partner balances (verified transactions only).
+  // Same model as a single project (computeProjectSplit): a partner's draws
+  // are payment for their work; what is left after expenses, the tax reserve
+  // and both partners' work payments is split by share. The remainder is not
+  // floored at 0 - if work payments exceed profit, the loss is shared too.
   function computeTotals(txs, opts) {
     var verified = function (t) { return t.status === 'verified'; };
     var income = sum(txs, function (t) { return t.type === 'income' && verified(t); });
     var expenses = sum(txs, function (t) { return t.type === 'expense' && verified(t); });
-    var drawA = sum(txs, function (t) { return t.type === 'draw' && verified(t) && t.partnerSlot === 'owner'; });
-    var drawB = sum(txs, function (t) { return t.type === 'draw' && verified(t) && t.partnerSlot === 'member'; });
-    var net = income - expenses;
-    var reserve = Math.max(0, net) * opts.taxRate / 100;
-    var distributable = Math.max(0, net - reserve);
-    var earnedA = distributable * opts.shareA / 100;
-    var earnedB = distributable * opts.shareB / 100;
+    var split = computeProjectSplit(txs, opts, ['verified']);
     return {
       income: income,
       expenses: expenses,
-      net: net,
-      reserve: reserve,
-      distributable: distributable,
-      partnerA: { earned: earnedA, withdrawn: drawA, remaining: earnedA - drawA },
-      partnerB: { earned: earnedB, withdrawn: drawB, remaining: earnedB - drawB },
+      net: income - expenses,
+      reserve: split.reserve,
+      distributable: split.remainder,
+      partnerA: { labor: split.laborA, share: split.shareA, total: split.laborA + split.shareA },
+      partnerB: { labor: split.laborB, share: split.shareB, total: split.laborB + split.shareB },
       bank: accountBalance(txs, 'Bank'),
       cash: accountBalance(txs, 'Cash')
     };
@@ -73,6 +68,7 @@
       laborA: laborA,
       laborB: laborB,
       reserve: reserve,
+      remainder: remainder,
       shareA: remainder * opts.shareA / 100,
       shareB: remainder * opts.shareB / 100
     };
