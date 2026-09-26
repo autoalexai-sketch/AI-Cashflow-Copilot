@@ -60,6 +60,7 @@
   <link rel="preconnect" href="https://cdn.tailwindcss.com" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.106.2/dist/umd/supabase.js" integrity="sha384-m/8UHFJHeU6nrCKP2hBnAseuvAKUmLF+8e5bWos5CJL023vuxX7kiVL5t8yjsJhV" crossorigin="anonymous"></script>
+  <script src="/calc.js"></script>
   <style>
     html, body { background:#020617; }
     .glass { background: rgba(15,23,42,.72); backdrop-filter: blur(12px); }
@@ -1660,26 +1661,18 @@
 
     function fmt(n){ return new Intl.NumberFormat(state.lang === 'en' ? 'en-US' : 'pl-PL', {minimumFractionDigits:2, maximumFractionDigits:2}).format(n) + ' ' + state.currency; }
 
-    function signedAmount(t){
-      if (t.type === 'income') return t.amount;
-      if (t.type === 'expense' || t.type === 'draw') return -t.amount;
-      return 0;
-    }
+    function signedAmount(t){ return SBCalc.signedAmount(t); }
 
     function recalcPartnerBalances(){
       // Only status === 'verified' transactions affect balances / net profit.
       // 'pending' = accrued/recorded but not yet actually paid or confirmed —
       // stays out of every total below until the user explicitly marks it
       // verified (see markTxPaid()). 'rejected' never counts.
-      const income = state.txs.filter(t=>t.type==='income' && t.status==='verified').reduce((s,t)=>s+t.amount,0);
-      const expenses = state.txs.filter(t=>t.type==='expense' && t.status==='verified').reduce((s,t)=>s+t.amount,0);
-      const drawA = state.txs.filter(t=>t.type==='draw' && t.status==='verified' && t.partnerSlot==='owner').reduce((s,t)=>s+t.amount,0);
-      const drawB = state.txs.filter(t=>t.type==='draw' && t.status==='verified' && t.partnerSlot==='member').reduce((s,t)=>s+t.amount,0);
-      const net = income - expenses;
-      const reserve = Math.max(0, net) * state.taxRate / 100;
-      const distributable = Math.max(0, net - reserve);
-      const aEarned = distributable * state.partnerA.share / 100;
-      const bEarned = distributable * state.partnerB.share / 100;
+      // Money logic lives in calc.js (unit-tested in tests/calc.test.js).
+      const totals = SBCalc.computeTotals(state.txs, { taxRate: state.taxRate, shareA: state.partnerA.share, shareB: state.partnerB.share });
+      const { income, expenses, net, reserve, distributable } = totals;
+      const drawA = totals.partnerA.withdrawn, drawB = totals.partnerB.withdrawn;
+      const aEarned = totals.partnerA.earned, bEarned = totals.partnerB.earned;
       state.partnerA.earned = aEarned;
       state.partnerB.earned = bEarned;
       state.partnerA.withdrawn = drawA;
@@ -1696,8 +1689,8 @@
       $('m-expense').textContent = fmt(expenses);
       $('m-tax').textContent = fmt(reserve);
       $('m-profit').textContent = fmt(net);
-      const bankBalance = state.txs.filter(t=>t.account==='Bank' && t.status==='verified').reduce((s,t)=>s+signedAmount(t),0);
-      const cashBalance = state.txs.filter(t=>t.account==='Cash' && t.status==='verified').reduce((s,t)=>s+signedAmount(t),0);
+      const bankBalance = totals.bank;
+      const cashBalance = totals.cash;
       $('bank-balance').textContent = fmt(bankBalance);
       $('cash-balance').textContent = fmt(cashBalance);
       $('reserve-balance').textContent = fmt(reserve);
@@ -1890,19 +1883,8 @@
       // share % of what remains after labor and the tax reserve. Main figures
       // use verified transactions only; the parenthesised forecast adds
       // pending ones. Mirrors the accounting in recalcPartnerBalances().
-      const splitFor = (statuses) => {
-        const ok = x => statuses.includes(x.status);
-        const inc = txs.filter(x => x.type === 'income' && ok(x)).reduce((s, x) => s + x.amount, 0);
-        const exp = txs.filter(x => x.type === 'expense' && ok(x)).reduce((s, x) => s + x.amount, 0);
-        const laborA = txs.filter(x => x.type === 'draw' && ok(x) && x.partnerSlot === 'owner').reduce((s, x) => s + x.amount, 0);
-        const laborB = txs.filter(x => x.type === 'draw' && ok(x) && x.partnerSlot === 'member').reduce((s, x) => s + x.amount, 0);
-        const net = inc - exp;
-        const reserve = Math.max(0, net) * state.taxRate / 100;
-        const remainder = net - reserve - laborA - laborB;
-        return { laborA, laborB, reserve,
-          shareA: remainder * state.partnerA.share / 100,
-          shareB: remainder * state.partnerB.share / 100 };
-      };
+      const splitFor = (statuses) => SBCalc.computeProjectSplit(txs,
+        { taxRate: state.taxRate, shareA: state.partnerA.share, shareB: state.partnerB.share }, statuses);
       const sv = splitFor(['verified']);
       const sf = splitFor(['verified', 'pending']);
       const pair = (a, b) => fmt(a) + (Math.abs(b - a) > 0.005 ? ` <span class="text-slate-500 font-normal">(${fmt(b)})</span>` : '');
