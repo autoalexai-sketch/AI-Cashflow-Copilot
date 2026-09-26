@@ -1162,12 +1162,15 @@
     async function loadTaxRate(){
       const { data, error } = await supabaseClient
         .from('organizations')
-        .select('tax_rate')
+        .select('tax_rate, currency')
         .eq('id', state.orgId)
         .single();
       if (error) { console.warn('Could not load tax rate:', error.message); return; }
       state.taxRate = Number(data.tax_rate);
       $('taxRate').value = state.taxRate;
+      // Currency is an organization setting: both partners see the same one.
+      if (data.currency) state.currency = data.currency;
+      populateCurrencySelect();
     }
 
     // Partner names are each person's own display_name on their membership
@@ -1178,13 +1181,23 @@
     async function loadMembers(){
       const { data, error } = await supabaseClient
         .from('memberships')
-        .select('id, user_id, role, display_name')
+        .select('id, user_id, role, display_name, share_percent')
         .eq('org_id', state.orgId);
       if (error) { console.warn('Could not load members:', error.message); return; }
       const mine = data.find(m => m.user_id === state.user.id);
       const owner = data.find(m => m.role === 'owner');
       const member = data.find(m => m.role !== 'owner');
       if (mine) state.myMembershipId = mine.id;
+      state.ownerMembershipId = owner ? owner.id : null;
+      state.memberMembershipId = member ? member.id : null;
+      // Shares live on the membership rows, so both partners see the same
+      // split. Owner's row is Partner A; B is the member's row, or the
+      // remainder while nobody has joined yet.
+      if (owner && owner.share_percent != null) {
+        state.partnerA.share = Number(owner.share_percent);
+        state.partnerB.share = member && member.share_percent != null ? Number(member.share_percent) : 100 - state.partnerA.share;
+        $('shareA').value = state.partnerA.share;
+      }
       state.partnerA.name = (owner && owner.display_name) || 'Partner A';
       state.partnerB.name = (member && member.display_name) || 'Partner B';
       $('setNameA').value = state.partnerA.name;
@@ -1408,9 +1421,11 @@
     // to touch what once unlocked.
     function applySettingsLock(locked){
       settingsLocked = locked;
-      ['shareA','currency','defaultLang','pinToggle','btnGenerateInvite','btnCopyInvite','btnResetDb'].forEach(id => {
+      ['defaultLang','pinToggle','btnGenerateInvite','btnCopyInvite','btnResetDb'].forEach(id => {
         $(id).disabled = locked;
       });
+      // Shares and currency are organization-wide: owner only.
+      ['shareA','currency'].forEach(id => { $(id).disabled = locked || state.role !== 'owner'; });
       refreshTaxRateUI();
       refreshPartnerNameUI();
       const btn = $('btnSettingsLock');
@@ -1685,6 +1700,19 @@
       const { data: { user } } = await supabaseClient.auth.getUser();
       if (user) handleUserLogin(user);
     });
+
+    // Currencies offered for an organization (one base currency per org,
+    // no conversion). Names come from the browser in the UI language.
+    const CURRENCIES = ['PLN','EUR','USD','UAH','GBP','CHF','CZK','HUF','RON','SEK','NOK','DKK','ISK','RSD','MDL','GEL','TRY','ALL','MKD','BAM'];
+    function populateCurrencySelect(){
+      const sel = $('currency');
+      if (!sel) return;
+      let names = null;
+      try { names = new Intl.DisplayNames([state.lang], { type: 'currency' }); } catch (e) {}
+      const list = CURRENCIES.includes(state.currency) ? CURRENCIES : [state.currency].concat(CURRENCIES);
+      sel.innerHTML = list.map(c => `<option value="${c}">${c}${names ? ' — ' + names.of(c) : ''}</option>`).join('');
+      sel.value = state.currency;
+    }
 
     function fmt(n){ return new Intl.NumberFormat(state.lang === 'en' ? 'en-US' : 'pl-PL', {minimumFractionDigits:2, maximumFractionDigits:2}).format(n) + ' ' + state.currency; }
 
@@ -2081,6 +2109,7 @@
       $('tx-list-sub').textContent = state.lang === 'pl' ? 'najnowsze na górze' : state.lang === 'uk' ? 'новіші зверху' : 'latest first';
       populateFilters();
       populateCategorySelect();
+      populateCurrencySelect();
       recalcPartnerBalances();
       renderTxTable();
     }
@@ -2463,6 +2492,17 @@
       recalcPartnerBalances();
     });
 
+    // Saved when the slider is released. Only the owner may change shares
+    // (RLS membership_update + membership_self_update_guard trigger).
+    $('shareA').addEventListener('change', async () => {
+      if (state.role !== 'owner' || !state.ownerMembershipId) return;
+      const updates = [supabaseClient.from('memberships').update({ share_percent: state.partnerA.share }).eq('id', state.ownerMembershipId)];
+      if (state.memberMembershipId) updates.push(supabaseClient.from('memberships').update({ share_percent: state.partnerB.share }).eq('id', state.memberMembershipId));
+      const results = await Promise.all(updates);
+      const failed = results.find(r => r.error);
+      if (failed) notifyError('Could not save partner shares.', failed.error);
+    });
+
     $('setNameA').addEventListener('input', e => {
       state.partnerA.name = e.target.value || 'Partner A';
       refreshUI();
@@ -2487,9 +2527,12 @@
     $('setNameA').addEventListener('change', () => { if (state.role === 'owner') saveMyDisplayName(); });
     $('setNameB').addEventListener('change', () => { if (state.role !== 'owner') saveMyDisplayName(); });
 
-    $('currency').addEventListener('change', e => {
+    $('currency').addEventListener('change', async e => {
       state.currency = e.target.value;
       refreshUI();
+      if (state.role !== 'owner' || !state.orgId) return;
+      const { error } = await supabaseClient.from('organizations').update({ currency: state.currency }).eq('id', state.orgId);
+      if (error) notifyError('Could not save currency.', error);
     });
 
     $('taxRate').addEventListener('input', e => {
