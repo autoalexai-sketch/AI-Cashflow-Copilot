@@ -2242,6 +2242,9 @@
       overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(2,6,23,.7);';
 
       const targetEl = step.view ? document.querySelector('.tab[data-view="' + step.view + '"]') : null;
+      // On phones the tab bar scrolls sideways and the page may be scrolled:
+      // bring the highlighted tab into view before measuring it.
+      if (targetEl) targetEl.scrollIntoView({ block: 'nearest', inline: 'center' });
       const rect = targetEl ? targetEl.getBoundingClientRect() : null;
 
       if (rect) {
@@ -2256,12 +2259,11 @@
 
       const card = document.createElement('div');
       card.className = 'glass border border-slate-800 rounded-3xl p-5 shadow-2xl';
-      card.style.cssText = 'position:fixed;z-index:10000;width:calc(100% - 32px);max-width:22rem;';
+      card.style.cssText = 'position:fixed;z-index:10000;width:calc(100% - 32px);max-width:22rem;max-height:calc(100% - 32px);overflow-y:auto;';
       if (rect) {
-        const top = Math.min(rect.bottom + 14, window.innerHeight - 220);
-        const left = Math.max(16, Math.min(rect.left, window.innerWidth - 22 * 16 - 16));
-        card.style.top = top + 'px';
-        card.style.left = left + 'px';
+        // Real position is set below, once the card's size is known.
+        card.style.top = '16px';
+        card.style.left = '16px';
       } else {
         card.style.top = '50%';
         card.style.left = '50%';
@@ -2284,6 +2286,16 @@
         + '</div></div>';
       overlay.appendChild(card);
       document.body.appendChild(overlay);
+      if (rect) {
+        // Below the tab if it fits, otherwise above it, otherwise as low as
+        // the screen allows — the card must never end up off screen.
+        const vw = window.innerWidth, vh = window.innerHeight;
+        const cw = card.offsetWidth, ch = card.offsetHeight;
+        let top = rect.bottom + 14;
+        if (top + ch > vh - 16) top = rect.top - 14 - ch >= 16 ? rect.top - 14 - ch : vh - 16 - ch;
+        card.style.top = Math.max(16, top) + 'px';
+        card.style.left = Math.max(16, Math.min(rect.left, vw - cw - 16)) + 'px';
+      }
 
       $('tourSkipBtn').addEventListener('click', endTour);
       const backBtn = $('tourBackBtn');

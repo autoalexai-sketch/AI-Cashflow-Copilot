@@ -200,3 +200,42 @@ test('project totals: verified only (pending is not money yet, rejected never is
   assert.equal(p.cost, 200);
   assert.equal(p.net, 800);
 });
+
+// ---- Draw mode: 'advance' = draws are paid out of the partner's share -----
+// (decision 2026-09-26: owner picks 'labor' or 'advance' in Settings)
+
+test('advance mode, BruClean case: draws come out of the share', () => {
+  const opts = { taxRate: 10, shareA: 50, shareB: 50, drawMode: 'advance' };
+  const t = computeTotals([
+    tx('income', 27918.54), tx('expense', 3439.23), tx('draw', 13100, { partnerSlot: 'owner' })
+  ], opts);
+  eqMoney(t.distributable, 22031.38);   // net 24479.31 − reserve 2447.93, draws not deducted
+  eqMoney(t.partnerA.share, 11015.69);
+  eqMoney(t.partnerA.labor, 13100);     // already paid out
+  eqMoney(t.partnerA.total, -2084.31);  // still to pay: share − paid (overpaid)
+  eqMoney(t.partnerB.total, 11015.69);
+});
+
+test('advance mode: shares + reserve == net; still-to-pay + paid + reserve == net', () => {
+  const txs = [tx('income', 10000), tx('expense', 4000),
+    tx('draw', 1000, { partnerSlot: 'owner' }), tx('draw', 500, { partnerSlot: 'member' })];
+  const t = computeTotals(txs, { ...OPTS_50, drawMode: 'advance' });
+  eqMoney(t.partnerA.share + t.partnerB.share + t.reserve, t.net);
+  eqMoney(t.partnerA.total + t.partnerB.total + t.partnerA.labor + t.partnerB.labor + t.reserve, t.net);
+  eqMoney(t.partnerA.total, 2400 - 1000);
+});
+
+test('default draw mode is labor (unchanged behaviour)', () => {
+  const txs = [tx('income', 10000), tx('draw', 1000)];
+  assert.deepEqual(computeTotals(txs, OPTS_50), computeTotals(txs, { ...OPTS_50, drawMode: 'labor' }));
+});
+
+test('project split follows the draw mode and returns totals', () => {
+  const txs = [tx('income', 10000), tx('expense', 2000), tx('draw', 1000, { partnerSlot: 'owner' })];
+  const lab = computeProjectSplit(txs, OPTS_50, ['verified']);
+  const adv = computeProjectSplit(txs, { ...OPTS_50, drawMode: 'advance' }, ['verified']);
+  eqMoney(lab.totalA, lab.laborA + lab.shareA);
+  eqMoney(adv.shareA, 3200);            // (8000 − 1600) / 2
+  eqMoney(adv.totalA, 3200 - 1000);
+  eqMoney(adv.totalB, 3200);
+});

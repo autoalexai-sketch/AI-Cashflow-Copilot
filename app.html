@@ -314,18 +314,18 @@
                 <div class="flex justify-between text-sm"><span id="partnerAName">Partner A</span><span class="text-slate-400" id="partnerAshare">50%</span></div>
                 <div class="mt-2 grid grid-cols-2 gap-2 text-xs">
                   <div class="text-slate-400"><div data-i18n="projSplitShare">Profit share</div><div class="text-slate-100 text-sm font-bold" id="partnerAearned">4,650.00 PLN</div></div>
-                  <div class="text-slate-400"><div data-i18n="projSplitLabor">Paid for work</div><div class="text-rose-400 text-sm font-bold underline cursor-pointer" id="partnerAwithdrawn" onclick="openDrawHistory('owner')">2,000.00 PLN</div></div>
+                  <div class="text-slate-400"><div class="draw-labor-label" data-i18n="projSplitLabor">Paid for work</div><div class="text-rose-400 text-sm font-bold underline cursor-pointer" id="partnerAwithdrawn" onclick="openDrawHistory('owner')">2,000.00 PLN</div></div>
                 </div>
-                <div class="mt-3 flex justify-between items-center border-t border-slate-800 pt-3"><span class="text-slate-400 text-xs" data-i18n="partnerTotalLabel">Total</span><span class="text-sky-400 font-black" id="partnerAremaining">2,650.00 PLN</span></div>
+                <div class="mt-3 flex justify-between items-center border-t border-slate-800 pt-3"><span class="text-slate-400 text-xs draw-total-label" data-i18n="partnerTotalLabel">Total</span><span class="text-sky-400 font-black" id="partnerAremaining">2,650.00 PLN</span></div>
                 <button class="mt-3 w-full px-3 py-2 rounded-xl bg-rose-600/20 border border-rose-600/40 text-rose-300 text-xs font-bold hover:bg-rose-600/30" onclick="openWithdrawModal('owner')" data-i18n="withdrawBtn">Withdraw</button>
               </div>
               <div class="rounded-2xl p-4 bg-slate-950/60 border border-slate-800">
                 <div class="flex justify-between text-sm"><span id="partnerBName">Partner B</span><span class="text-slate-400" id="partnerBshare">50%</span></div>
                 <div class="mt-2 grid grid-cols-2 gap-2 text-xs">
                   <div class="text-slate-400"><div data-i18n="projSplitShare">Profit share</div><div class="text-slate-100 text-sm font-bold" id="partnerBearned">4,650.00 PLN</div></div>
-                  <div class="text-slate-400"><div data-i18n="projSplitLabor">Paid for work</div><div class="text-rose-400 text-sm font-bold underline cursor-pointer" id="partnerBwithdrawn" onclick="openDrawHistory('member')">1,100.00 PLN</div></div>
+                  <div class="text-slate-400"><div class="draw-labor-label" data-i18n="projSplitLabor">Paid for work</div><div class="text-rose-400 text-sm font-bold underline cursor-pointer" id="partnerBwithdrawn" onclick="openDrawHistory('member')">1,100.00 PLN</div></div>
                 </div>
-                <div class="mt-3 flex justify-between items-center border-t border-slate-800 pt-3"><span class="text-slate-400 text-xs" data-i18n="partnerTotalLabel">Total</span><span class="text-sky-400 font-black" id="partnerBremaining">3,550.00 PLN</span></div>
+                <div class="mt-3 flex justify-between items-center border-t border-slate-800 pt-3"><span class="text-slate-400 text-xs draw-total-label" data-i18n="partnerTotalLabel">Total</span><span class="text-sky-400 font-black" id="partnerBremaining">3,550.00 PLN</span></div>
                 <button class="mt-3 w-full px-3 py-2 rounded-xl bg-rose-600/20 border border-rose-600/40 text-rose-300 text-xs font-bold hover:bg-rose-600/30" onclick="openWithdrawModal('member')" data-i18n="withdrawBtn">Withdraw</button>
               </div>
             </div>
@@ -557,6 +557,7 @@
         <div class="glass border border-slate-800 rounded-3xl p-5 card space-y-4">
           <h2 class="text-lg font-bold" data-i18n="settingsOrgTitle">Organization settings</h2>
           <div><label class="text-xs text-slate-400" data-i18n="orgNameLabel">Organization name</label><input id="orgName" maxlength="80" class="input w-full rounded-2xl px-4 py-3 mt-1" placeholder="e.g. BruClean Service" data-i18n-placeholder="orgNamePlaceholder"></div>
+          <div><label class="text-xs text-slate-400" data-i18n="drawModeLabel">Partner payouts are</label><select id="drawMode" class="select w-full rounded-2xl px-4 py-3 mt-1"><option value="labor" data-i18n="drawModeLabor">Payment for work (on top of the profit share)</option><option value="advance" data-i18n="drawModeAdvance">An advance from the profit share</option></select><p id="drawModeHint" class="text-xs text-slate-500 mt-1"></p></div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div><label class="text-xs text-slate-400" data-i18n="baseCurrencyLabel">Base currency</label><select id="currency" class="select w-full rounded-2xl px-4 py-3 mt-1"><option>PLN</option><option>EUR</option><option>USD</option><option>UAH</option></select></div>
             <div><label class="text-xs text-slate-400" data-i18n="taxRateLabel">Tax reserve rate</label><input id="taxRate" type="number" value="10" min="0" max="100" class="input w-full rounded-2xl px-4 py-3 mt-1"><p id="taxRateOwnerOnlyNote" class="text-xs text-slate-500 mt-1 hidden" data-i18n="taxRateOwnerOnlyNote">Only the workspace owner can change this.</p></div>
@@ -760,7 +761,7 @@
         monthlyCloseBtn:'Monthly Close', tabDashboard:'Dashboard', tabTransactions:'Transactions', tabProjects:'Projects', tabReceipts:'Receipts', tabMonthly:'Monthly Close', tabSettings:'Settings',
         mIncomeLabel:'Total Income', mExpenseLabel:'Total Expenses', mTaxLabel:'Tax Reserve', mProfitLabel:'Net Profit', cashflowTitle:'Cashflow overview', cashflowSubtitle:'Bank, cash and reserve balances in one place.', currentMonth:'Current month',
         bankLabel:'Bank Account', cashLabel:'Cash Box', reserveLabel:'Virtual Tax Buffer', splitTitle:'Partner balance', withdrawBtn:'Withdraw', drawHistoryTitle:'Withdrawal history', noWithdrawals:'No withdrawals yet', projSummaryIncome:'income', projSummaryCost:'cost', projSummaryNet:'net', projSummaryTxCount:'transaction(s)', projNoTransactions:'No transactions', projSplitTitle:'Partner split', projSplitLabor:'Paid for work', projSplitShare:'Profit share', projSplitTotal:'Total for project', projSplitForecastNote:'figures in ( ) include pending transactions',
-        whatsNewTitle:"What's new", whatsNewGotIt:'Got it', whatsNewWithdrawTitle:'Withdraw button on partner balances', whatsNewWithdrawDesc:'Each partner balance card now has a Withdraw button, plus a clickable history showing who withdrew how much and when.', whatsNewProjectDetailTitle:'Tap a project to see its transactions', whatsNewProjectDetailDesc:'Click any project card to open the full list of transactions filed under it.',
+        whatsNewTitle:"What's new", whatsNewGotIt:'Got it', whatsNewPayoutTitle:'Choose how partner payouts count', whatsNewPayoutDesc:'Settings → "Partner payouts are": payment for work (added to the profit share) or an advance from the share (Profit share − Paid out = Still to pay). The dashboard, projects and reports follow your choice.', whatsNewInviteTitle:'Invite your partner by e-mail', whatsNewInviteDesc:'Generate the invite link and send it straight to your partner\'s inbox — or copy it as before.', whatsNewOrgTitle:'Your company name', whatsNewOrgDesc:'Name your workspace in Settings — the invite e-mail shows it.', whatsNewCurrencyTitle:'Any European currency', whatsNewCurrencyDesc:'PLN, EUR, USD, UAH, GBP, CHF, CZK and more — pick yours in Settings. Amounts are counted to the cent.',
         pendingTxTitle:'Pending — not yet paid', pendingTxSubtitle:"Recorded but not verified. These don't affect any balance or profit yet — mark as paid once the money actually moves.", noPendingTx:'Nothing pending — everything recorded has been verified.', btnMarkPaid:'Mark as paid', thDescription:'Description',
         txTitle:'Transactions', txSubtitle:'Create income, expense, draw, and verify with receipts.', txPreviewTitle:'Preview', txListTitle:'Transaction list',
         thDate:'Date', thProject:'Project', thAmount:'Amount', thType:'Type', thStatus:'Status', thActions:'Actions',
@@ -774,7 +775,7 @@
         projectsTitle:'Projects', projectsSubtitle:'See which object is profitable and which one eats margin.', noProjects:'No projects yet', receiptsTitle:'Receipts', noReceipts:'No receipts yet', receiptLoading:'Loading…',
         monthlyTitle:'Monthly close', monthlySubtitle:'Export the report as PDF or Excel, send it to both partners, then lock the month.', monthlyIncome:'Income', monthlyExpenses:'Expenses', monthlyTax:'Tax reserve', monthlyDistrib:'Distributable',
         settingsPartnerTitle:'Partner settings', settingsOrgTitle:'Organization settings', partnerANameLabel:'Partner A name', partnerBNameLabel:'Partner B name', shareALabel:'Share A %', shareBLabel:'Share B %',
-        orgNameLabel:'Organization name', orgNamePlaceholder:'e.g. your company name', inviteSessionExpired:'Your session has expired. Log out and log in again, then retry.', baseCurrencyLabel:'Base currency', taxRateLabel:'Tax reserve rate', defaultLangLabel:'Default language', storageModeLabel:'Storage mode', storageModeValue:'Synced to your account (Supabase)',
+        drawModeLabel:'Partner payouts are', drawModeLabor:'Payment for work (on top of the profit share)', drawModeAdvance:'An advance from the profit share', drawModeHintLabor:'Each payout is paid for the partner\'s work. It is added to their profit share: Profit share + Paid for work = Total.', drawModeHintAdvance:'Payouts are taken from the partner\'s own profit share: Profit share − Paid out = Still to pay.', projSplitPaid:'Paid out', partnerToPayLabel:'Still to pay', projSplitToPay:'Still to pay for project', orgNameLabel:'Organization name', orgNamePlaceholder:'e.g. your company name', inviteSessionExpired:'Your session has expired. Log out and log in again, then retry.', baseCurrencyLabel:'Base currency', taxRateLabel:'Tax reserve rate', defaultLangLabel:'Default language', storageModeLabel:'Storage mode', storageModeValue:'Synced to your account (Supabase)',
         filterProject:'Filter by project', filterStatus:'Filter by status', taxReserveCalc:'Tax reserve from income', receiptModalTitle:'Receipt preview', editTransactionTitle:'Edit transaction', btnSaveChanges:'Save changes', btnDeleteTx:'Delete',
         settingsSecurityTitle:'Security & sync', themeTitle:'Appearance', themeDesc:'Switch between dark and light theme on this device.', pinTitle:'Device PIN lock', pinDesc:'Optional 4-digit code for this device only. Local convenience lock, not a substitute for account security.',
         syncTitle:'Cloud sync between partners', syncDesc:'Active — transactions sync live between partners via Supabase.', syncActiveBadge:'Active',
@@ -794,13 +795,13 @@
         deleteProjectConfirm:'Delete project "{name}"? This cannot be undone.', projectDeleted:'Project deleted.', deleteProjectTitle:'Delete project',
         footerDisclaimer:'SplitBooks is a bookkeeping and expense-tracking tool for business partners. It does not provide financial, tax, investment, or legal advice, and is not a payment processor or licensed financial institution. You are responsible for your own tax and legal compliance.',
         footerPrivacy:'Privacy Policy', footerTerms:'Terms of Use', footerPricing:'Pricing', footerHelp:'Guide', footerSupport:'Support',
-        tourWelcomeDesc:'Two minutes to see where everything lives. You can skip anytime — the tour is always in Settings.', tourSplitTitle:'Split inside a project', tourSplitDesc:'Click any project card: besides its transactions you get the split — how much each partner earned for their work on it, plus their share of the profit. Verified figures, with the pending forecast in brackets.', tourWelcomeTitle:'Quick tour of SplitBooks', tourWelcomeDesc:"Take 30 seconds to see where everything is. You can skip anytime — find this tour again in Settings.",
-        tourDashboardTitle:'Dashboard — who is owed what', tourDashboardDesc:'One glance answers the money question: what came in, what went out, what is set aside for tax and what is left. Below it each partner sees their share, what they already withdrew and what is still owed.',
+        tourWelcomeDesc:'Two minutes to see where everything lives. You can skip anytime — the tour is always in Settings.', tourSplitTitle:'Split inside a project', tourSplitDesc:'Click any project card: besides its transactions you get the split — each partner’s profit share, what they were paid on this job and the result, counted the way you chose in Settings. Verified figures, with the pending forecast in brackets.', tourWelcomeTitle:'Quick tour of SplitBooks', tourWelcomeDesc:"Take 30 seconds to see where everything is. You can skip anytime — find this tour again in Settings.",
+        tourDashboardTitle:'Dashboard — who is owed what', tourDashboardDesc:'One glance answers the money question: what came in, what went out, what is set aside for tax and what is left. Below it each partner sees their profit share, what they were paid and the result — the payout model is chosen in Settings.',
         tourTransactionsTitle:'Transactions — 10 seconds per entry', tourTransactionsDesc:'Money in, money out, partner payouts — amount, project, cash or transfer, photo of the receipt. Add it from your phone right when it happens; your partner sees it instantly.',
         tourProjectsTitle:'Projects — which job actually paid off', tourProjectsDesc:'Every job separately: income, costs and the real result. The one that felt profitable often is not — here you see numbers instead of guessing.',
         tourReceiptsTitle:'Receipts — no more shoebox', tourReceiptsDesc:'Every photo attached to a transaction, gathered in one place. When the accountant asks for proof it takes seconds instead of an evening.',
         tourMonthlyTitle:'Month close — the awkward talk, solved', tourMonthlyDesc:'Report in PDF or Excel — for the whole month or broken down by project, in your language. Send it to your partner, then lock the month so nothing changes after the fact.',
-        tourSettingsTitle:'Settings — set once', tourSettingsDesc:'Partner shares, tax reserve rate, currency, language and inviting your partner. Set the percentages here and the app does the maths from then on.',
+        tourSettingsTitle:'Settings — set once', tourSettingsDesc:'Company name, partner shares, how partner payouts count (payment for work or an advance from the share), tax reserve, currency and language. Here you also invite your partner — by link or straight to their e-mail.',
         tourNext:'Next', tourBack:'Back', tourSkip:'Skip', tourDone:'Got it', tourStepOf:'Step {n} of {total}', btnReplayTour:'Replay tour',
         helpFooterTitle:'Help & guide', helpFooterDesc:'Replay the quick tour, or read the full written guide.'
       },
@@ -811,7 +812,7 @@
         monthlyCloseBtn:'Zamknięcie miesiąca', tabDashboard:'Dashboard', tabTransactions:'Transakcje', tabProjects:'Projekty', tabReceipts:'Paragony', tabMonthly:'Zamknięcie miesiąca', tabSettings:'Ustawienia',
         mIncomeLabel:'Przychody', mExpenseLabel:'Koszty', mTaxLabel:'Rezerwa podatkowa', mProfitLabel:'Zysk netto', cashflowTitle:'Przegląd przepływów pieniężnych', cashflowSubtitle:'Konto bankowe, kasa i rezerwa podatkowa w jednym miejscu.', currentMonth:'Bieżący miesiąc',
         bankLabel:'Konto bankowe', cashLabel:'Kasa', reserveLabel:'Wirtualna rezerwa podatkowa', splitTitle:'Saldo partnerów', withdrawBtn:'Wypłać', drawHistoryTitle:'Historia wypłat', noWithdrawals:'Brak wypłat', projSummaryIncome:'przychód', projSummaryCost:'koszt', projSummaryNet:'netto', projSummaryTxCount:'transakcji', projNoTransactions:'Brak transakcji', projSplitTitle:'Podział partnerów', projSplitLabor:'Wypłacono za pracę', projSplitShare:'Udział w zysku', projSplitTotal:'Razem za projekt', projSplitForecastNote:'kwoty w ( ) zawierają oczekujące transakcje',
-        whatsNewTitle:'Co nowego', whatsNewGotIt:'Rozumiem', whatsNewWithdrawTitle:'Przycisk Wypłać na saldzie wspólników', whatsNewWithdrawDesc:'Każda karta salda wspólnika ma teraz przycisk Wypłać oraz klikalną historię, kto i ile wypłacił i kiedy.', whatsNewProjectDetailTitle:'Kliknij projekt, aby zobaczyć jego transakcje', whatsNewProjectDetailDesc:'Kliknij kartę projektu, aby zobaczyć pełną listę transakcji przypisanych do niego.',
+        whatsNewTitle:'Co nowego', whatsNewGotIt:'Rozumiem', whatsNewPayoutTitle:'Wybierz, jak liczyć wypłaty wspólników', whatsNewPayoutDesc:'Ustawienia → „Wypłaty wspólników to”: wynagrodzenie za pracę (dodawane do udziału w zysku) albo zaliczka z udziału (Udział w zysku − Wypłacono = Do wypłaty). Panel, projekty i raporty liczą według Twojego wyboru.', whatsNewInviteTitle:'Zaproś wspólnika e-mailem', whatsNewInviteDesc:'Wygeneruj link zaproszenia i wyślij go od razu na e-mail wspólnika — albo skopiuj jak dotąd.', whatsNewOrgTitle:'Nazwa Twojej firmy', whatsNewOrgDesc:'Nazwij swój workspace w Ustawieniach — pokaże się w e-mailu z zaproszeniem.', whatsNewCurrencyTitle:'Dowolna waluta europejska', whatsNewCurrencyDesc:'PLN, EUR, USD, UAH, GBP, CHF, CZK i inne — wybierz swoją w Ustawieniach. Kwoty liczone co do grosza.',
         pendingTxTitle:'Oczekujące — jeszcze nie zapłacone', pendingTxSubtitle:'Zarejestrowane, ale niezweryfikowane. Nie wpływają jeszcze na żaden bilans ani zysk — oznacz jako zapłacone, gdy pieniądze faktycznie się przemieszczą.', noPendingTx:'Brak oczekujących — wszystko zostało zweryfikowane.', btnMarkPaid:'Oznacz jako zapłacone', thDescription:'Opis',
         txTitle:'Transakcje', txSubtitle:'Dodawaj przychody, koszty, wypłaty i potwierdzaj paragonami.', txPreviewTitle:'Podgląd', txListTitle:'Lista transakcji',
         thDate:'Data', thProject:'Projekt', thAmount:'Kwota', thType:'Typ', thStatus:'Status', thActions:'Akcje',
@@ -825,7 +826,7 @@
         projectsTitle:'Projekty', projectsSubtitle:'Zobacz, które zlecenie jest rentowne, a które zjada marżę.', noProjects:'Brak projektów', receiptsTitle:'Paragony', noReceipts:'Brak paragonów', receiptLoading:'Ładowanie…',
         monthlyTitle:'Zamknięcie miesiąca', monthlySubtitle:'Wyeksportuj raport do PDF lub Excela, wyślij do partnerów i zablokuj miesiąc.', monthlyIncome:'Przychody', monthlyExpenses:'Koszty', monthlyTax:'Rezerwa podatkowa', monthlyDistrib:'Do podziału',
         settingsPartnerTitle:'Ustawienia partnerów', settingsOrgTitle:'Ustawienia organizacji', partnerANameLabel:'Nazwa partnera A', partnerBNameLabel:'Nazwa partnera B', shareALabel:'Udział A %', shareBLabel:'Udział B %',
-        orgNameLabel:'Nazwa organizacji', orgNamePlaceholder:'np. nazwa Twojej firmy', inviteSessionExpired:'Sesja wygasła. Wyloguj się i zaloguj ponownie, potem spróbuj jeszcze raz.', baseCurrencyLabel:'Waluta bazowa', taxRateLabel:'Stawka rezerwy podatkowej', defaultLangLabel:'Język domyślny', storageModeLabel:'Tryb zapisu', storageModeValue:'Synchronizowane z Twoim kontem (Supabase)',
+        drawModeLabel:'Wypłaty wspólników to', drawModeLabor:'Wynagrodzenie za pracę (oprócz udziału w zysku)', drawModeAdvance:'Zaliczka z udziału w zysku', drawModeHintLabor:'Każda wypłata to zapłata za pracę wspólnika. Dodaje się do jego udziału: Udział w zysku + Wypłacono za pracę = Razem.', drawModeHintAdvance:'Wypłaty są pobierane z własnego udziału wspólnika: Udział w zysku − Wypłacono = Do wypłaty.', projSplitPaid:'Wypłacono', partnerToPayLabel:'Do wypłaty', projSplitToPay:'Do wypłaty za projekt', orgNameLabel:'Nazwa organizacji', orgNamePlaceholder:'np. nazwa Twojej firmy', inviteSessionExpired:'Sesja wygasła. Wyloguj się i zaloguj ponownie, potem spróbuj jeszcze raz.', baseCurrencyLabel:'Waluta bazowa', taxRateLabel:'Stawka rezerwy podatkowej', defaultLangLabel:'Język domyślny', storageModeLabel:'Tryb zapisu', storageModeValue:'Synchronizowane z Twoim kontem (Supabase)',
         filterProject:'Filtruj po projekcie', filterStatus:'Filtruj po statusie', taxReserveCalc:'Rezerwa podatkowa z przychodu', receiptModalTitle:'Podgląd paragonu', editTransactionTitle:'Edytuj transakcję', btnSaveChanges:'Zapisz zmiany', btnDeleteTx:'Usuń',
         settingsSecurityTitle:'Bezpieczeństwo i synchronizacja', themeTitle:'Wygląd', themeDesc:'Przełącz między ciemnym a jasnym motywem na tym urządzeniu.', pinTitle:'Blokada PIN urządzenia', pinDesc:'Opcjonalny 4-cyfrowy kod tylko dla tego urządzenia. Lokalna wygoda, nie zabezpieczenie konta.',
         syncTitle:'Synchronizacja w chmurze między partnerami', syncDesc:'Aktywna — transakcje synchronizują się na żywo między partnerami przez Supabase.', syncActiveBadge:'Aktywna',
@@ -845,13 +846,13 @@
         deleteProjectConfirm:'Usunąć projekt "{name}"? Tej operacji nie można cofnąć.', projectDeleted:'Projekt usunięty.', deleteProjectTitle:'Usuń projekt',
         footerDisclaimer:'SplitBooks to narzędzie księgowe do śledzenia wspólnych wydatków dla wspólników. Nie świadczy usług doradztwa finansowego, podatkowego, inwestycyjnego ani prawnego i nie jest instytucją płatniczą ani licencjonowaną instytucją finansową. Użytkownik odpowiada za własne rozliczenia podatkowe i zgodność z prawem.',
         footerPrivacy:'Polityka prywatności', footerTerms:'Regulamin', footerPricing:'Cennik', footerHelp:'Poradnik', footerSupport:'Pomoc',
-        tourSplitTitle:'Podział wewnątrz projektu', tourSplitDesc:'Kliknij kartę projektu: obok transakcji zobaczysz podział — ile każdy wspólnik zarobił za swoją pracę przy nim i jaka część zysku mu przypada. Kwoty potwierdzone, a w nawiasie prognoza z oczekującymi.', tourWelcomeTitle:'Krótki przewodnik po SplitBooks', tourWelcomeDesc:'Dwie minuty, żeby zobaczyć, co gdzie jest. Możesz pominąć w każdej chwili — przewodnik zawsze znajdziesz w Ustawieniach.',
-        tourDashboardTitle:'Panel — komu ile się należy', tourDashboardDesc:'Jedno spojrzenie odpowiada na pytanie o pieniądze: ile weszło, ile wyszło, ile odłożone na podatek i ile zostało. Niżej każdy wspólnik widzi swoją część, ile już wypłacił i ile mu się jeszcze należy.',
+        tourSplitTitle:'Podział wewnątrz projektu', tourSplitDesc:'Kliknij kartę projektu: obok transakcji zobaczysz podział — udział każdego wspólnika w zysku, ile mu wypłacono przy tym zleceniu i wynik, liczony tak, jak wybrałeś w Ustawieniach. Kwoty potwierdzone, a w nawiasie prognoza z oczekującymi.', tourWelcomeTitle:'Krótki przewodnik po SplitBooks', tourWelcomeDesc:'Dwie minuty, żeby zobaczyć, co gdzie jest. Możesz pominąć w każdej chwili — przewodnik zawsze znajdziesz w Ustawieniach.',
+        tourDashboardTitle:'Panel — komu ile się należy', tourDashboardDesc:'Jedno spojrzenie odpowiada na pytanie o pieniądze: ile weszło, ile wyszło, ile odłożone na podatek i ile zostało. Niżej każdy wspólnik widzi swój udział w zysku, ile mu wypłacono i wynik — sposób liczenia wypłat wybierasz w Ustawieniach.',
         tourTransactionsTitle:'Transakcje — 10 sekund na wpis', tourTransactionsDesc:'Wpływy, wydatki, wypłaty wspólników — kwota, projekt, gotówka czy przelew, zdjęcie paragonu. Dodajesz z telefonu od razu po zdarzeniu, wspólnik widzi to natychmiast.',
         tourProjectsTitle:'Projekty — która robota naprawdę zarobiła', tourProjectsDesc:'Każde zlecenie osobno: przychód, koszty i realny wynik. To, co wydawało się opłacalne, często takie nie jest — tutaj widać liczby zamiast wrażeń.',
         tourReceiptsTitle:'Paragony — koniec z pudełkiem', tourReceiptsDesc:'Wszystkie zdjęcia dołączone do transakcji, zebrane w jednym miejscu. Gdy księgowa poprosi o dokument, zajmuje to sekundy zamiast wieczoru.',
         tourMonthlyTitle:'Zamknięcie miesiąca — koniec trudnej rozmowy', tourMonthlyDesc:'Raport w PDF lub Excelu — za cały miesiąc albo z podziałem na projekty, w twoim języku. Wyślij wspólnikowi i zablokuj miesiąc, żeby nic nie zmieniło się wstecz.',
-        tourSettingsTitle:'Ustawienia — ustawiasz raz', tourSettingsDesc:'Udziały wspólników, stawka rezerwy podatkowej, waluta, język i zaproszenie wspólnika. Ustawiasz procenty tutaj, a program liczy już sam.',
+        tourSettingsTitle:'Ustawienia — ustawiasz raz', tourSettingsDesc:'Nazwa firmy, udziały wspólników, jak liczyć wypłaty wspólników (wynagrodzenie za pracę albo zaliczka z udziału), rezerwa podatkowa, waluta i język. Tutaj też zapraszasz wspólnika — linkiem albo od razu na jego e-mail.',
         tourNext:'Dalej', tourBack:'Wstecz', tourSkip:'Pomiń', tourDone:'Rozumiem', tourStepOf:'Krok {n} z {total}', btnReplayTour:'Pokaż przewodnik ponownie',
         helpFooterTitle:'Pomoc i poradnik', helpFooterDesc:'Uruchom krótki przewodnik ponownie albo przeczytaj pełny poradnik.'
       },
@@ -862,7 +863,7 @@
         monthlyCloseBtn:'Закриття місяця', tabDashboard:'Панель', tabTransactions:'Транзакції', tabProjects:'Проєкти', tabReceipts:'Чеки', tabMonthly:'Закриття місяця', tabSettings:'Налаштування',
         mIncomeLabel:'Дохід', mExpenseLabel:'Витрати', mTaxLabel:'Податковий резерв', mProfitLabel:'Чистий прибуток', cashflowTitle:'Огляд руху коштів', cashflowSubtitle:'Банк, каса і податковий резерв в одному місці.', currentMonth:'Поточний місяць',
         bankLabel:'Банківський рахунок', cashLabel:'Каса', reserveLabel:'Віртуальний податковий буфер', splitTitle:'Баланс партнерів', withdrawBtn:'Вивести', drawHistoryTitle:'Історія виплат', noWithdrawals:'Виплат ще немає', projSummaryIncome:'дохід', projSummaryCost:'витрати', projSummaryNet:'нетто', projSummaryTxCount:'транзакцій', projNoTransactions:'Немає транзакцій', projSplitTitle:'Розподіл між партнерами', projSplitLabor:'Виплачено за роботу', projSplitShare:'Частка прибутку', projSplitTotal:'Разом за проєктом', projSplitForecastNote:'суми в ( ) враховують очікуючі транзакції',
-        whatsNewTitle:'Що нового', whatsNewGotIt:'Зрозуміло', whatsNewWithdrawTitle:'Кнопка «Вивести» на балансі партнерів', whatsNewWithdrawDesc:'На кожній картці балансу партнера тепер є кнопка «Вивести» та клікабельна історія — хто скільки і коли вивів.', whatsNewProjectDetailTitle:'Натисніть на проєкт, щоб побачити його транзакції', whatsNewProjectDetailDesc:'Натисніть на картку проєкту, щоб відкрити повний список транзакцій, прив’язаних до нього.',
+        whatsNewTitle:'Що нового', whatsNewGotIt:'Зрозуміло', whatsNewPayoutTitle:'Оберіть, як рахувати виплати партнерам', whatsNewPayoutDesc:'Налаштування → «Виплати партнерам — це»: оплата за роботу (додається до частки прибутку) або аванс із частки (Частка прибутку − Виплачено = До виплати). Панель, проєкти й звіти рахують за вашим вибором.', whatsNewInviteTitle:'Запросіть партнера e-mailом', whatsNewInviteDesc:'Згенеруйте посилання-запрошення й надішліть його одразу на пошту партнера — або скопіюйте, як раніше.', whatsNewOrgTitle:'Назва вашої компанії', whatsNewOrgDesc:'Назвіть робочий простір у Налаштуваннях — назва з’явиться в листі-запрошенні.', whatsNewCurrencyTitle:'Будь-яка європейська валюта', whatsNewCurrencyDesc:'PLN, EUR, USD, UAH, GBP, CHF, CZK та інші — оберіть свою в Налаштуваннях. Суми рахуються з точністю до копійки.',
         pendingTxTitle:'Очікує — ще не сплачено', pendingTxSubtitle:'Записано, але не підтверджено. Це поки не впливає на жоден баланс чи прибуток — позначте як сплачено, коли гроші фактично підуть.', noPendingTx:'Нічого очікуваного — все записане підтверджено.', btnMarkPaid:'Позначити як сплачено', thDescription:'Опис',
         txTitle:'Транзакції', txSubtitle:'Додавайте дохід, витрати, виплати та підтверджуйте чеками.', txPreviewTitle:'Перегляд', txListTitle:'Список транзакцій',
         thDate:'Дата', thProject:'Проєкт', thAmount:'Сума', thType:'Тип', thStatus:'Статус', thActions:'Дії',
@@ -876,7 +877,7 @@
         projectsTitle:'Проєкти', projectsSubtitle:'Дивіться, який об’єкт прибутковий, а який з’їдає маржу.', noProjects:'Ще немає проєктів', receiptsTitle:'Чеки', noReceipts:'Ще немає чеків', receiptLoading:'Завантаження…',
         monthlyTitle:'Закриття місяця', monthlySubtitle:'Експортуйте звіт у PDF або Excel, надішліть партнерам і заблокуйте місяць.', monthlyIncome:'Дохід', monthlyExpenses:'Витрати', monthlyTax:'Податковий резерв', monthlyDistrib:'До розподілу',
         settingsPartnerTitle:'Налаштування партнерів', settingsOrgTitle:'Налаштування організації', partnerANameLabel:'Ім’я партнера A', partnerBNameLabel:'Ім’я партнера B', shareALabel:'Частка A %', shareBLabel:'Частка B %',
-        orgNameLabel:'Назва організації', orgNamePlaceholder:'напр. назва вашої компанії', inviteSessionExpired:'Сесія завершилась. Вийдіть і увійдіть знову, потім повторіть.', baseCurrencyLabel:'Базова валюта', taxRateLabel:'Ставка податкового резерву', defaultLangLabel:'Мова за замовчуванням', storageModeLabel:'Режим збереження', storageModeValue:'Синхронізовано з вашим акаунтом (Supabase)',
+        drawModeLabel:'Виплати партнерам — це', drawModeLabor:'Оплата за роботу (крім частки прибутку)', drawModeAdvance:'Аванс із частки прибутку', drawModeHintLabor:'Кожна виплата — це оплата роботи партнера. Вона додається до його частки: Частка прибутку + Виплачено за роботу = Разом.', drawModeHintAdvance:'Виплати беруться з власної частки партнера: Частка прибутку − Виплачено = До виплати.', projSplitPaid:'Виплачено', partnerToPayLabel:'До виплати', projSplitToPay:'До виплати за проєктом', orgNameLabel:'Назва організації', orgNamePlaceholder:'напр. назва вашої компанії', inviteSessionExpired:'Сесія завершилась. Вийдіть і увійдіть знову, потім повторіть.', baseCurrencyLabel:'Базова валюта', taxRateLabel:'Ставка податкового резерву', defaultLangLabel:'Мова за замовчуванням', storageModeLabel:'Режим збереження', storageModeValue:'Синхронізовано з вашим акаунтом (Supabase)',
         filterProject:'Фільтр за проєктом', filterStatus:'Фільтр за статусом', taxReserveCalc:'Податковий резерв з доходу', receiptModalTitle:'Перегляд чека', editTransactionTitle:'Редагувати транзакцію', btnSaveChanges:'Зберегти зміни', btnDeleteTx:'Видалити',
         settingsSecurityTitle:'Безпека та синхронізація', themeTitle:'Вигляд', themeDesc:'Перемикайте темну та світлу тему на цьому пристрої.', pinTitle:'PIN-блокування пристрою', pinDesc:'Необов’язковий 4-значний код лише для цього пристрою. Локальна зручність, не захист акаунта.',
         syncTitle:'Хмарна синхронізація між партнерами', syncDesc:'Активна — транзакції синхронізуються наживо між партнерами через Supabase.', syncActiveBadge:'Активна',
@@ -896,13 +897,13 @@
         deleteProjectConfirm:'Видалити проєкт "{name}"? Цю дію не можна скасувати.', projectDeleted:'Проєкт видалено.', deleteProjectTitle:'Видалити проєкт',
         footerDisclaimer:'SplitBooks — інструмент для обліку та відстеження спільних витрат бізнес-партнерів. Сервіс не надає фінансових, податкових, інвестиційних чи юридичних консультацій і не є платіжною установою чи ліцензованою фінансовою організацією. Ви самостійно відповідаєте за податкову та юридичну відповідність.',
         footerPrivacy:'Політика конфіденційності', footerTerms:'Умови використання', footerPricing:'Тарифи', footerHelp:'Посібник', footerSupport:'Підтримка',
-        tourSplitTitle:'Розподіл усередині проєкту', tourSplitDesc:'Натисніть картку проєкту: поряд із транзакціями побачите розподіл — скільки кожен партнер заробив за свою роботу на ньому і яка частка прибутку йому належить. Суми підтверджені, а в дужках — прогноз з очікуючими.', tourWelcomeTitle:'Коротка екскурсія по SplitBooks', tourWelcomeDesc:'Дві хвилини, щоб побачити, де що є. Можна пропустити будь-коли — екскурсія завжди є в Налаштуваннях.',
-        tourDashboardTitle:'Панель — кому скільки належить', tourDashboardDesc:'Один погляд відповідає на грошове питання: скільки надійшло, скільки витрачено, скільки відкладено на податок і скільки лишилось. Нижче кожен партнер бачить свою частку, скільки вже вивів і скільки йому ще належить.',
+        tourSplitTitle:'Розподіл усередині проєкту', tourSplitDesc:'Натисніть картку проєкту: поряд із транзакціями побачите розподіл — частку прибутку кожного партнера, скільки йому виплачено на цьому замовленні й підсумок, пораховані так, як ви обрали в Налаштуваннях. Суми підтверджені, а в дужках — прогноз з очікуючими.', tourWelcomeTitle:'Коротка екскурсія по SplitBooks', tourWelcomeDesc:'Дві хвилини, щоб побачити, де що є. Можна пропустити будь-коли — екскурсія завжди є в Налаштуваннях.',
+        tourDashboardTitle:'Панель — кому скільки належить', tourDashboardDesc:'Один погляд відповідає на грошове питання: скільки надійшло, скільки витрачено, скільки відкладено на податок і скільки лишилось. Нижче кожен партнер бачить свою частку прибутку, скільки йому виплачено і підсумок — спосіб рахувати виплати обираєте в Налаштуваннях.',
         tourTransactionsTitle:'Транзакції — 10 секунд на запис', tourTransactionsDesc:'Доходи, витрати, виплати партнерам — сума, проєкт, готівка чи переказ, фото чека. Додаєте з телефона одразу після події, партнер бачить це миттєво.',
         tourProjectsTitle:'Проєкти — яка робота справді заробила', tourProjectsDesc:'Кожне замовлення окремо: дохід, витрати й реальний результат. Те, що здавалося прибутковим, часто таким не є — тут видно цифри замість відчуттів.',
         tourReceiptsTitle:'Чеки — кінець коробці з паперами', tourReceiptsDesc:'Усі фото, прикріплені до транзакцій, зібрані в одному місці. Коли бухгалтер попросить документ, це займає секунди замість вечора.',
         tourMonthlyTitle:'Закриття місяця — замість незручної розмови', tourMonthlyDesc:'Звіт у PDF чи Excel — за весь місяць або з розбивкою за проєктами, вашою мовою. Надішліть партнеру й заблокуйте місяць, щоб нічого не змінилося заднім числом.',
-        tourSettingsTitle:'Налаштування — задаєте один раз', tourSettingsDesc:'Частки партнерів, ставка податкового резерву, валюта, мова та запрошення партнера. Задаєте відсотки тут — далі програма рахує сама.',
+        tourSettingsTitle:'Налаштування — задаєте один раз', tourSettingsDesc:'Назва компанії, частки партнерів, як рахувати виплати партнерам (оплата за роботу чи аванс із частки), податковий резерв, валюта й мова. Тут же запрошуєте партнера — посиланням або одразу на його e-mail.',
         tourNext:'Далі', tourBack:'Назад', tourSkip:'Пропустити', tourDone:'Зрозуміло', tourStepOf:'Крок {n} з {total}', btnReplayTour:'Показати екскурсію знову',
         helpFooterTitle:'Допомога та посібник', helpFooterDesc:'Запустіть коротку екскурсію знову або прочитайте повний посібник.'
       }
@@ -928,6 +929,7 @@
       partnerB:{name:'Partner B', share:50, earned:4650, withdrawn:1100},
       currency:'PLN',
       taxRate:10,
+      drawMode:'labor', // 'labor' | 'advance' — see calc.js computeProjectSplit
       txs:[],
       projects:[],
       categories:[],
@@ -1171,7 +1173,7 @@
     async function loadTaxRate(){
       const { data, error } = await supabaseClient
         .from('organizations')
-        .select('tax_rate, currency, name')
+        .select('tax_rate, currency, name, draw_mode')
         .eq('id', state.orgId)
         .single();
       if (error) { console.warn('Could not load tax rate:', error.message); return; }
@@ -1179,6 +1181,7 @@
       // placeholder invites the owner to type the real company name.
       $('orgName').value = /['’]s organization$/.test(data.name || '') ? '' : (data.name || '');
       state.taxRate = Number(data.tax_rate);
+      state.drawMode = data.draw_mode === 'advance' ? 'advance' : 'labor';
       $('taxRate').value = state.taxRate;
       // Currency is an organization setting: both partners see the same one.
       if (data.currency) state.currency = data.currency;
@@ -1438,7 +1441,7 @@
         $(id).disabled = locked;
       });
       // Shares and currency are organization-wide: owner only.
-      ['shareA','currency','orgName'].forEach(id => { $(id).disabled = locked || state.role !== 'owner'; });
+      ['shareA','currency','orgName','drawMode'].forEach(id => { $(id).disabled = locked || state.role !== 'owner'; });
       refreshTaxRateUI();
       refreshPartnerNameUI();
       const btn = $('btnSettingsLock');
@@ -1733,13 +1736,23 @@
 
     function signedAmount(t){ return SBCalc.signedAmount(t); }
 
+    // Card labels and the Settings hint depend on the draw mode.
+    function applyDrawModeLabels(){
+      const t = i18n[state.lang];
+      const adv = state.drawMode === 'advance';
+      document.querySelectorAll('.draw-labor-label').forEach(el => { el.dataset.i18n = adv ? 'projSplitPaid' : 'projSplitLabor'; el.textContent = t[el.dataset.i18n]; });
+      document.querySelectorAll('.draw-total-label').forEach(el => { el.dataset.i18n = adv ? 'partnerToPayLabel' : 'partnerTotalLabel'; el.textContent = t[el.dataset.i18n]; });
+      $('drawMode').value = state.drawMode;
+      $('drawModeHint').textContent = adv ? t.drawModeHintAdvance : t.drawModeHintLabor;
+    }
+
     function recalcPartnerBalances(){
       // Only status === 'verified' transactions affect balances / net profit.
       // 'pending' = accrued/recorded but not yet actually paid or confirmed —
       // stays out of every total below until the user explicitly marks it
       // verified (see markTxPaid()). 'rejected' never counts.
       // Money logic lives in calc.js (unit-tested in tests/calc.test.js).
-      const totals = SBCalc.computeTotals(state.txs, { taxRate: state.taxRate, shareA: state.partnerA.share, shareB: state.partnerB.share });
+      const totals = SBCalc.computeTotals(state.txs, { taxRate: state.taxRate, shareA: state.partnerA.share, shareB: state.partnerB.share, drawMode: state.drawMode });
       const { income, expenses, net, reserve, distributable } = totals;
       // Partner card: profit share (still to pay out) · paid for work (draws) · total.
       const A = totals.partnerA, B = totals.partnerB;
@@ -1753,6 +1766,7 @@
       $('partnerBearned').textContent = fmt(B.share);
       $('partnerAwithdrawn').textContent = fmt(A.labor);
       $('partnerBwithdrawn').textContent = fmt(B.labor);
+      applyDrawModeLabels();
       $('split-ratio').textContent = state.partnerA.share + ' / ' + state.partnerB.share;
       $('shareDisplay').textContent = state.partnerA.share + ' / ' + state.partnerB.share;
       $('m-income').textContent = fmt(income);
@@ -1948,28 +1962,30 @@
       const t = i18n[state.lang];
       $('projectTxModalTitle').textContent = name;
       $('projectTxModalSummary').textContent = `${t.projSummaryIncome} ${fmt(income)} · ${t.projSummaryCost} ${fmt(cost)} · ${t.projSummaryNet} ${fmt(income - cost)} · ${txs.length} ${t.projSummaryTxCount}`;
-      // Partner split for this project (feature 2026-07-27): each partner is
-      // entitled to their labor draws filed under this project plus their
-      // share % of what remains after labor and the tax reserve. Main figures
+      // Partner split for this project (feature 2026-07-27); how draws count
+      // depends on the draw mode (see calc.js computeProjectSplit). Main figures
       // use verified transactions only; the parenthesised forecast adds
       // pending ones. Mirrors the accounting in recalcPartnerBalances().
       const splitFor = (statuses) => SBCalc.computeProjectSplit(txs,
-        { taxRate: state.taxRate, shareA: state.partnerA.share, shareB: state.partnerB.share }, statuses);
+        { taxRate: state.taxRate, shareA: state.partnerA.share, shareB: state.partnerB.share, drawMode: state.drawMode }, statuses);
       const sv = splitFor(['verified']);
       const sf = splitFor(['verified', 'pending']);
       const pair = (a, b) => fmt(a) + (Math.abs(b - a) > 0.005 ? ` <span class="text-slate-500 font-normal">(${fmt(b)})</span>` : '');
-      const partnerRow = (pname, share, labor, laborF, shareAmt, shareAmtF) => `
+      const adv = state.drawMode === 'advance';
+      const laborLabel = adv ? t.projSplitPaid : t.projSplitLabor;
+      const totalLabel = adv ? t.projSplitToPay : t.projSplitTotal;
+      const partnerRow = (pname, share, labor, laborF, shareAmt, shareAmtF, total, totalF) => `
         <div class="rounded-2xl border border-slate-800 bg-slate-950/60 p-3">
           <div class="text-sm font-semibold mb-1">${escapeHtml(pname)} · ${share}%</div>
-          <div class="text-xs text-slate-400 flex justify-between gap-2"><span>${t.projSplitLabor}</span><span>${pair(labor, laborF)}</span></div>
+          <div class="text-xs text-slate-400 flex justify-between gap-2"><span>${laborLabel}</span><span>${pair(labor, laborF)}</span></div>
           <div class="text-xs text-slate-400 flex justify-between gap-2"><span>${t.projSplitShare}</span><span>${pair(shareAmt, shareAmtF)}</span></div>
-          <div class="text-sm font-bold flex justify-between gap-2 mt-1 border-t border-slate-800 pt-1"><span>${t.projSplitTotal}</span><span>${pair(labor + shareAmt, laborF + shareAmtF)}</span></div>
+          <div class="text-sm font-bold flex justify-between gap-2 mt-1 border-t border-slate-800 pt-1"><span>${totalLabel}</span><span>${pair(total, totalF)}</span></div>
         </div>`;
       $('projectTxModalSplit').innerHTML = `
         <div class="text-xs text-slate-400 font-semibold mb-2">${t.projSplitTitle}</div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          ${partnerRow(state.partnerA.name, state.partnerA.share, sv.laborA, sf.laborA, sv.shareA, sf.shareA)}
-          ${partnerRow(state.partnerB.name, state.partnerB.share, sv.laborB, sf.laborB, sv.shareB, sf.shareB)}
+          ${partnerRow(state.partnerA.name, state.partnerA.share, sv.laborA, sf.laborA, sv.shareA, sf.shareA, sv.totalA, sf.totalA)}
+          ${partnerRow(state.partnerB.name, state.partnerB.share, sv.laborB, sf.laborB, sv.shareB, sf.shareB, sv.totalB, sf.totalB)}
         </div>
         <div class="text-[11px] text-slate-500 mt-2">${t.monthlyTax}: ${pair(sv.reserve, sf.reserve)} · ${t.projSplitForecastNote}</div>`;
       const list = $('projectTxModalList');
@@ -2299,6 +2315,9 @@
       overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(2,6,23,.7);';
 
       const targetEl = step.view ? document.querySelector('.tab[data-view="' + step.view + '"]') : null;
+      // On phones the tab bar scrolls sideways and the page may be scrolled:
+      // bring the highlighted tab into view before measuring it.
+      if (targetEl) targetEl.scrollIntoView({ block: 'nearest', inline: 'center' });
       const rect = targetEl ? targetEl.getBoundingClientRect() : null;
 
       if (rect) {
@@ -2313,12 +2332,11 @@
 
       const card = document.createElement('div');
       card.className = 'glass border border-slate-800 rounded-3xl p-5 shadow-2xl';
-      card.style.cssText = 'position:fixed;z-index:10000;width:calc(100% - 32px);max-width:22rem;';
+      card.style.cssText = 'position:fixed;z-index:10000;width:calc(100% - 32px);max-width:22rem;max-height:calc(100% - 32px);overflow-y:auto;';
       if (rect) {
-        const top = Math.min(rect.bottom + 14, window.innerHeight - 220);
-        const left = Math.max(16, Math.min(rect.left, window.innerWidth - 22 * 16 - 16));
-        card.style.top = top + 'px';
-        card.style.left = left + 'px';
+        // Real position is set below, once the card's size is known.
+        card.style.top = '16px';
+        card.style.left = '16px';
       } else {
         card.style.top = '50%';
         card.style.left = '50%';
@@ -2341,6 +2359,16 @@
         + '</div></div>';
       overlay.appendChild(card);
       document.body.appendChild(overlay);
+      if (rect) {
+        // Below the tab if it fits, otherwise above it, otherwise as low as
+        // the screen allows — the card must never end up off screen.
+        const vw = window.innerWidth, vh = window.innerHeight;
+        const cw = card.offsetWidth, ch = card.offsetHeight;
+        let top = rect.bottom + 14;
+        if (top + ch > vh - 16) top = rect.top - 14 - ch >= 16 ? rect.top - 14 - ch : vh - 16 - ch;
+        card.style.top = Math.max(16, top) + 'px';
+        card.style.left = Math.max(16, Math.min(rect.left, vw - cw - 16)) + 'px';
+      }
 
       $('tourSkipBtn').addEventListener('click', endTour);
       const backBtn = $('tourBackBtn');
@@ -2364,10 +2392,12 @@
     // people who've used the app before and are seeing this version for
     // the first time. Tracked via localStorage, a local device
     // preference like the tour flag, not org data.
-    const WHATS_NEW_VERSION = '2026-07-withdraw-and-project-detail';
+    const WHATS_NEW_VERSION = '2026-09-payout-mode-email-invite';
     const WHATS_NEW_ITEMS = [
-      { titleKey: 'whatsNewWithdrawTitle', descKey: 'whatsNewWithdrawDesc' },
-      { titleKey: 'whatsNewProjectDetailTitle', descKey: 'whatsNewProjectDetailDesc' }
+      { titleKey: 'whatsNewPayoutTitle', descKey: 'whatsNewPayoutDesc' },
+      { titleKey: 'whatsNewInviteTitle', descKey: 'whatsNewInviteDesc' },
+      { titleKey: 'whatsNewOrgTitle', descKey: 'whatsNewOrgDesc' },
+      { titleKey: 'whatsNewCurrencyTitle', descKey: 'whatsNewCurrencyDesc' }
     ];
 
     function renderWhatsNew(){
@@ -2542,6 +2572,15 @@
     $('setNameA').addEventListener('change', () => { if (state.role === 'owner') saveMyDisplayName(); });
     $('setNameB').addEventListener('change', () => { if (state.role !== 'owner') saveMyDisplayName(); });
 
+    $('drawMode').addEventListener('change', async e => {
+      if (state.role !== 'owner' || !state.orgId) { e.target.value = state.drawMode; return; }
+      const prev = state.drawMode;
+      state.drawMode = e.target.value === 'advance' ? 'advance' : 'labor';
+      recalcPartnerBalances();
+      const { error } = await supabaseClient.from('organizations').update({ draw_mode: state.drawMode }).eq('id', state.orgId);
+      if (error) { state.drawMode = prev; recalcPartnerBalances(); notifyError('Could not save payout mode.', error); }
+    });
+
     $('orgName').addEventListener('change', async e => {
       const name = e.target.value.replace(/\s+/g, ' ').trim().slice(0, 80);
       e.target.value = name;
@@ -2676,7 +2715,9 @@
         title: `SplitBooks — ${t.repTitle || 'Report'}`,
         income: t.monthlyIncome, expenses: t.monthlyExpenses,
         tax: t.monthlyTax, rate: t.repRate || 'rate', distributable: t.monthlyDistrib,
-        earned: t.projSplitShare, withdrawn: t.projSplitLabor, remaining: t.partnerTotalLabel,
+        earned: t.projSplitShare,
+        withdrawn: state.drawMode === 'advance' ? t.projSplitPaid : t.projSplitLabor,
+        remaining: state.drawMode === 'advance' ? t.partnerToPayLabel : t.partnerTotalLabel,
         txs: t.txTitle, total: t.repTotalRow || 'TOTAL',
         head: [t.thDate, t.thProject, t.thAmount, t.thType, t.thStatus],
         done: t.reportGenerated || 'Report downloaded.'

@@ -29,10 +29,9 @@
   }
 
   // Organisation-wide totals and partner balances (verified transactions only).
-  // Same model as a single project (computeProjectSplit): a partner's draws
-  // are payment for their work; what is left after expenses, the tax reserve
-  // and both partners' work payments is split by share. The remainder is not
-  // floored at 0 - if work payments exceed profit, the loss is shared too.
+  // Same model as a single project (computeProjectSplit), which depends on
+  // opts.drawMode (see there). partnerX.total is what the card shows last:
+  // 'labor' -> work payment + share; 'advance' -> share still to pay out.
   function computeTotals(txs, opts) {
     var verified = function (t) { return t.status === 'verified'; };
     var income = sumCents(txs, function (t) { return t.type === 'income' && verified(t); });
@@ -44,8 +43,8 @@
       net: fromCents(income - expenses),
       reserve: split.reserve,
       distributable: split.remainder,
-      partnerA: { labor: split.laborA, share: split.shareA, total: fromCents(toCents(split.laborA) + toCents(split.shareA)) },
-      partnerB: { labor: split.laborB, share: split.shareB, total: fromCents(toCents(split.laborB) + toCents(split.shareB)) },
+      partnerA: { labor: split.laborA, share: split.shareA, total: split.totalA },
+      partnerB: { labor: split.laborB, share: split.shareB, total: split.totalB },
       bank: accountBalance(txs, 'Bank'),
       cash: accountBalance(txs, 'Cash')
     };
@@ -60,8 +59,14 @@
 
   // Partner split for the transactions of one project, counting only the
   // given statuses (e.g. ['verified'] or ['verified','pending'] for a forecast).
-  // Here draws are treated as payment for work on the project: each partner
-  // gets their draws plus their share of what remains after labor and reserve.
+  // opts.drawMode decides what a partner's draws are:
+  //   'labor' (default): payment for work, on top of the share. The share is
+  //     split from what remains after the reserve and both work payments, not
+  //     floored at 0 - if work payments exceed profit, the loss is shared too.
+  //     total = draws + share.
+  //   'advance': an advance out of the partner's own share. The share is split
+  //     from net - reserve; total = share - draws (what is still to pay out;
+  //     negative = overpaid).
   function computeProjectSplit(txs, opts, statuses) {
     var ok = function (t) { return statuses.indexOf(t.status) !== -1; };
     var inc = sumCents(txs, function (t) { return t.type === 'income' && ok(t); });
@@ -70,7 +75,8 @@
     var laborB = sumCents(txs, function (t) { return t.type === 'draw' && ok(t) && t.partnerSlot === 'member'; });
     var net = inc - exp;
     var reserve = Math.round(Math.max(0, net) * opts.taxRate / 100);
-    var remainder = net - reserve - laborA - laborB;
+    var advance = opts.drawMode === 'advance';
+    var remainder = advance ? net - reserve : net - reserve - laborA - laborB;
     var shareA = Math.round(remainder * opts.shareA / 100);
     // When the shares cover 100 %, B gets exactly the rest, so A + B == remainder
     // to the cent (no grosz lost or invented by rounding).
@@ -81,7 +87,9 @@
       reserve: fromCents(reserve),
       remainder: fromCents(remainder),
       shareA: fromCents(shareA),
-      shareB: fromCents(shareB)
+      shareB: fromCents(shareB),
+      totalA: fromCents(advance ? shareA - laborA : shareA + laborA),
+      totalB: fromCents(advance ? shareB - laborB : shareB + laborB)
     };
   }
 
