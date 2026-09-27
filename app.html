@@ -3138,7 +3138,7 @@
       populateFilters();
       renderTxTable();
       recalcPartnerBalances();
-      $('monthlySummary').textContent = `Income: ${$('monthIncome').textContent}, Expenses: ${$('monthExpense').textContent}, Tax reserve: ${$('monthTax').textContent}, Distributable: ${$('monthDistrib').textContent}.`;
+      { const t = i18n[state.lang]; $('monthlySummary').textContent = `${t.monthlyIncome}: ${$('monthIncome').textContent}, ${t.monthlyExpenses}: ${$('monthExpense').textContent}, ${t.monthlyTax}: ${$('monthTax').textContent}, ${t.monthlyDistrib}: ${$('monthDistrib').textContent}.`; }
     }
 
     function refreshTopStatic(){
