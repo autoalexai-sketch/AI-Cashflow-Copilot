@@ -43,7 +43,7 @@
 
     <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">
       <h2 class="text-xl font-bold text-slate-100 mt-0 flex items-center gap-2"><span class="step-num">1</span>Dashboard</h2>
-      <p class="text-sm text-slate-300">Your home screen. Four numbers at the top — <strong>Total Income</strong>, <strong>Total Expenses</strong>, <strong>Tax Reserve</strong>, and <strong>Net Profit</strong> — for the current month. Below that, partner balances show, for each partner, their profit share, what they were paid for work (their withdrawals), and the total. Withdrawals count as payment for work: what is left after expenses, the tax reserve and both partners' work payments is split by share %, with a <strong>Withdraw</strong> button on each partner's card and a clickable withdrawal history showing who withdrew how much and when. A "Pending" panel lists transactions recorded but not yet marked as verified — nothing there affects your balances until you mark it paid.</p>
+      <p class="text-sm text-slate-300">Your home screen. Four numbers at the top — <strong>Total Income</strong>, <strong>Total Expenses</strong>, <strong>Tax Reserve</strong>, and <strong>Net Profit</strong> — for the current month. Below that, partner balances show, for each partner, their profit share, what they were paid, and the result. How payouts count is your choice in Settings (see <strong>Partner payouts</strong> below). Each partner's card has a <strong>Withdraw</strong> button on each partner's card and a clickable withdrawal history showing who withdrew how much and when. A "Pending" panel lists transactions recorded but not yet marked as verified — nothing there affects your balances until you mark it paid.</p>
     </div>
 
     <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">
@@ -54,7 +54,7 @@
     <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">
       <h2 class="text-xl font-bold text-slate-100 mt-0 flex items-center gap-2"><span class="step-num">3</span>Projects</h2>
       <p class="text-sm text-slate-300">Tag transactions with a project (a job, a property, a client — whatever unit makes sense for your business) to see which one is actually profitable, separate from the overall total. Tap any project card to open the full list of its transactions.</p>
-      <p class="text-sm text-slate-300"><strong class="text-slate-100">Partner split inside a project.</strong> The same window shows how the money from this job divides between you: for each partner — what they were paid for their work on it (draws tagged to this project) plus their share of what is left after the tax reserve and those payouts. Main figures count verified transactions only; the number in brackets is the forecast including pending ones. Note: a payout only counts toward a project if you selected that project when recording it.</p>
+      <p class="text-sm text-slate-300"><strong class="text-slate-100">Partner split inside a project.</strong> The same window shows how the money from this job divides between you: for each partner — their profit share, what they were paid on this job (payouts tagged to this project) and the result, counted by the payout model chosen in Settings. Main figures count verified transactions only; the number in brackets is the forecast including pending ones. Note: a payout only counts toward a project if you selected that project when recording it.</p>
     </div>
 
     <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">
@@ -69,12 +69,18 @@
 
     <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">
       <h2 class="text-xl font-bold text-slate-100 mt-0 flex items-center gap-2"><span class="step-num">6</span>Settings</h2>
-      <p class="text-sm text-slate-300">Partner names and share split, base currency, tax reserve rate, default language, dark/light theme, an optional device PIN lock, and the invite link for your partner. Settings are locked by default — tap the lock button to unlock before editing, and it re-locks the next time you open the tab, so you don't change something by accident.</p>
+      <p class="text-sm text-slate-300">Company name, partner names and share split, how partner payouts count, base currency (PLN, EUR, USD, UAH and other European currencies), tax reserve rate, default language, dark/light theme, an optional device PIN lock, and the invite link for your partner. Settings are locked by default — tap the lock button to unlock before editing, and it re-locks the next time you open the tab, so you don't change something by accident.</p>
+    </div>
+
+    <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">
+      <h2 class="text-xl font-bold text-slate-100 mt-0">Partner payouts: two ways to count</h2>
+      <p class="text-sm text-slate-300"><strong class="text-slate-100">Payment for work</strong> (default). A payout is what the partner earned for their work, on top of the profit share. The share is split from what is left after expenses, the tax reserve and both partners' payouts. The card shows <strong>Profit share + Paid for work = Total</strong>.</p>
+      <p class="text-sm text-slate-300"><strong class="text-slate-100">Advance from the share.</strong> A payout is taken out of the partner's own share. The share is split from profit after the tax reserve; the card shows <strong>Profit share − Paid out = Still to pay</strong> (a negative number means the partner was overpaid). Only the owner can switch it: Settings → <em>Partner payouts are</em>. Dashboard, projects and reports follow the choice.</p>
     </div>
 
     <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">
       <h2 class="text-xl font-bold text-slate-100 mt-0">Inviting your partner</h2>
-      <p class="text-sm text-slate-300">In Settings, generate a one-time invite link and send it to your partner. Whoever opens it and signs up joins your same shared workspace — they don't create a separate one. Only the workspace owner can generate invites.</p>
+      <p class="text-sm text-slate-300">In Settings, generate a one-time invite link, then either type your partner's e-mail and press <strong>Send by email</strong> — they get a message from invite@splitbooks.pl with a button — or copy the link and send it yourself. Whoever opens it and signs up joins your same shared workspace — they don't create a separate one. Only the workspace owner can generate invites.</p>
     </div>
 
     <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">
@@ -98,7 +104,7 @@
 
     <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">
       <h2 class="text-xl font-bold text-slate-100 mt-0 flex items-center gap-2"><span class="step-num">1</span>Panel</h2>
-      <p class="text-sm text-slate-300">Ekran główny. Cztery liczby u góry — <strong>Przychody</strong>, <strong>Koszty</strong>, <strong>Rezerwa podatkowa</strong> i <strong>Zysk netto</strong> — za bieżący miesiąc. Poniżej saldo partnerów: udział w zysku, wypłacono za pracę (wypłaty wspólnika) i razem. Wypłaty liczą się jako zapłata za pracę: to, co zostaje po kosztach, rezerwie podatkowej i wypłatach obu wspólników, dzieli się według udziałów %, a na karcie każdego wspólnika przycisk <strong>Wypłać</strong> i klikalna historia, kto i ile wypłacił. Panel "Oczekujące" pokazuje transakcje zapisane, ale jeszcze niepotwierdzone — nic tam nie wpływa na saldo, dopóki nie oznaczysz jako opłacone.</p>
+      <p class="text-sm text-slate-300">Ekran główny. Cztery liczby u góry — <strong>Przychody</strong>, <strong>Koszty</strong>, <strong>Rezerwa podatkowa</strong> i <strong>Zysk netto</strong> — za bieżący miesiąc. Poniżej saldo partnerów: udział w zysku, ile wypłacono i wynik. Jak liczyć wypłaty, wybierasz w Ustawieniach (patrz <strong>Wypłaty wspólników</strong> niżej). Na karcie każdego wspólnika przycisk <strong>Wypłać</strong> i klikalna historia, kto i ile wypłacił. Panel "Oczekujące" pokazuje transakcje zapisane, ale jeszcze niepotwierdzone — nic tam nie wpływa na saldo, dopóki nie oznaczysz jako opłacone.</p>
     </div>
 
     <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">
@@ -109,7 +115,7 @@
     <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">
       <h2 class="text-xl font-bold text-slate-100 mt-0 flex items-center gap-2"><span class="step-num">3</span>Projekty</h2>
       <p class="text-sm text-slate-300">Oznaczaj transakcje projektem (zlecenie, nieruchomość, klient — cokolwiek pasuje do Twojej firmy), żeby zobaczyć, który z nich faktycznie przynosi zysk. Kliknij kartę projektu, aby zobaczyć pełną listę jego transakcji.</p>
-      <p class="text-sm text-slate-300"><strong class="text-slate-100">Podział między wspólników w projekcie.</strong> W tym samym oknie widać, jak pieniądze z tego zlecenia dzielą się między was: dla każdego wspólnika — ile dostał za swoją pracę przy nim (wypłaty przypisane do tego projektu) plus jego część tego, co zostaje po rezerwie podatkowej i tych wypłatach. Główne kwoty liczą tylko transakcje potwierdzone; liczba w nawiasie to prognoza z oczekującymi. Uwaga: wypłata liczy się do projektu tylko wtedy, gdy przy jej zapisywaniu wybrano ten projekt.</p>
+      <p class="text-sm text-slate-300"><strong class="text-slate-100">Podział między wspólników w projekcie.</strong> W tym samym oknie widać, jak pieniądze z tego zlecenia dzielą się między was: dla każdego wspólnika — udział w zysku, ile mu wypłacono przy tym zleceniu (wypłaty przypisane do tego projektu) i wynik, liczony według sposobu wybranego w Ustawieniach. Główne kwoty liczą tylko transakcje potwierdzone; liczba w nawiasie to prognoza z oczekującymi. Uwaga: wypłata liczy się do projektu tylko wtedy, gdy przy jej zapisywaniu wybrano ten projekt.</p>
     </div>
 
     <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">
@@ -124,12 +130,18 @@
 
     <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">
       <h2 class="text-xl font-bold text-slate-100 mt-0 flex items-center gap-2"><span class="step-num">6</span>Ustawienia</h2>
-      <p class="text-sm text-slate-300">Imiona wspólników i podział udziałów, waluta bazowa, stawka rezerwy podatkowej, domyślny język, motyw jasny/ciemny, opcjonalna blokada PIN oraz link zapraszający wspólnika. Ustawienia są domyślnie zablokowane — odblokuj przyciskiem przed edycją, a przy następnym otwarciu zablokują się ponownie.</p>
+      <p class="text-sm text-slate-300">Nazwa firmy, imiona wspólników i podział udziałów, sposób liczenia wypłat wspólników, waluta bazowa (PLN, EUR, USD, UAH i inne waluty europejskie), stawka rezerwy podatkowej, domyślny język, motyw jasny/ciemny, opcjonalna blokada PIN oraz link zapraszający wspólnika. Ustawienia są domyślnie zablokowane — odblokuj przyciskiem przed edycją, a przy następnym otwarciu zablokują się ponownie.</p>
+    </div>
+
+    <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">
+      <h2 class="text-xl font-bold text-slate-100 mt-0">Wypłaty wspólników: dwa sposoby liczenia</h2>
+      <p class="text-sm text-slate-300"><strong class="text-slate-100">Wynagrodzenie za pracę</strong> (domyślnie). Wypłata to zapłata za pracę wspólnika, oprócz jego udziału w zysku. Udział liczy się od tego, co zostaje po kosztach, rezerwie podatkowej i wypłatach obu wspólników. Karta pokazuje <strong>Udział w zysku + Wypłacono za pracę = Razem</strong>.</p>
+      <p class="text-sm text-slate-300"><strong class="text-slate-100">Zaliczka z udziału.</strong> Wypłata jest pobierana z własnego udziału wspólnika. Udział liczy się od zysku po rezerwie podatkowej; karta pokazuje <strong>Udział w zysku − Wypłacono = Do wypłaty</strong> (liczba ujemna oznacza nadpłatę). Przełącza tylko właściciel: Ustawienia → <em>Wypłaty wspólników to</em>. Panel, projekty i raporty liczą według wyboru.</p>
     </div>
 
     <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">
       <h2 class="text-xl font-bold text-slate-100 mt-0">Zapraszanie wspólnika</h2>
-      <p class="text-sm text-slate-300">W Ustawieniach wygeneruj jednorazowy link zapraszający i wyślij go wspólnikowi. Osoba, która go otworzy i się zarejestruje, dołączy do tego samego wspólnego workspace. Tylko właściciel workspace może generować zaproszenia.</p>
+      <p class="text-sm text-slate-300">W Ustawieniach wygeneruj jednorazowy link zapraszający, a potem wpisz e-mail wspólnika i naciśnij <strong>Wyślij e-mailem</strong> — dostanie wiadomość od invite@splitbooks.pl z przyciskiem — albo skopiuj link i wyślij go sam. Osoba, która go otworzy i się zarejestruje, dołączy do tego samego wspólnego workspace. Tylko właściciel workspace może generować zaproszenia.</p>
     </div>
 
     <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">
@@ -153,7 +165,7 @@
 
     <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">
       <h2 class="text-xl font-bold text-slate-100 mt-0 flex items-center gap-2"><span class="step-num">1</span>Панель</h2>
-      <p class="text-sm text-slate-300">Головний екран. Чотири цифри вгорі — <strong>Дохід</strong>, <strong>Витрати</strong>, <strong>Податковий резерв</strong> і <strong>Чистий прибуток</strong> — за поточний місяць. Нижче — баланси партнерів: частка прибутку, виплачено за роботу (виплати партнера) і разом. Виплати вважаються оплатою за роботу: те, що лишається після витрат, податкового резерву й виплат обох партнерів, ділиться за частками %, а на картці кожного партнера — кнопка <strong>«Вивести»</strong> та клікабельна історія, хто скільки і коли вивів. Панель "Очікує" показує транзакції, які вже записані, але ще не підтверджені — вони не впливають на баланс, поки їх не позначено як оплачені.</p>
+      <p class="text-sm text-slate-300">Головний екран. Чотири цифри вгорі — <strong>Дохід</strong>, <strong>Витрати</strong>, <strong>Податковий резерв</strong> і <strong>Чистий прибуток</strong> — за поточний місяць. Нижче — баланси партнерів: частка прибутку, скільки виплачено і підсумок. Як рахувати виплати, обираєте в Налаштуваннях (див. <strong>Виплати партнерам</strong> нижче). На картці кожного партнера — кнопка <strong>«Вивести»</strong> та клікабельна історія, хто скільки і коли вивів. Панель "Очікує" показує транзакції, які вже записані, але ще не підтверджені — вони не впливають на баланс, поки їх не позначено як оплачені.</p>
     </div>
 
     <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">
@@ -164,7 +176,7 @@
     <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">
       <h2 class="text-xl font-bold text-slate-100 mt-0 flex items-center gap-2"><span class="step-num">3</span>Проєкти</h2>
       <p class="text-sm text-slate-300">Позначайте транзакції проєктом (замовлення, об'єкт, клієнт — що завгодно, що підходить вашому бізнесу), щоб бачити, який з них насправді приносить прибуток, окремо від загального підсумку. Натисніть на картку проєкту, щоб відкрити повний список його транзакцій.</p>
-      <p class="text-sm text-slate-300"><strong class="text-slate-100">Розподіл між партнерами в проєкті.</strong> У цьому ж вікні видно, як гроші з цього замовлення діляться між вами: для кожного партнера — скільки він отримав за свою роботу на ньому (виплати, прив'язані до цього проєкту) плюс його частка того, що лишається після податкового резерву й цих виплат. Основні суми враховують лише підтверджені транзакції; число в дужках — прогноз із очікуючими. Важливо: виплата потрапляє в розрахунок проєкту, лише якщо під час запису їй вказали цей проєкт.</p>
+      <p class="text-sm text-slate-300"><strong class="text-slate-100">Розподіл між партнерами в проєкті.</strong> У цьому ж вікні видно, як гроші з цього замовлення діляться між вами: для кожного партнера — частка прибутку, скільки йому виплачено на цьому замовленні (виплати, прив'язані до цього проєкту) і підсумок, порахований за способом, обраним у Налаштуваннях. Основні суми враховують лише підтверджені транзакції; число в дужках — прогноз із очікуючими. Важливо: виплата потрапляє в розрахунок проєкту, лише якщо під час запису їй вказали цей проєкт.</p>
     </div>
 
     <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">
@@ -179,12 +191,18 @@
 
     <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">
       <h2 class="text-xl font-bold text-slate-100 mt-0 flex items-center gap-2"><span class="step-num">6</span>Налаштування</h2>
-      <p class="text-sm text-slate-300">Імена партнерів і розподіл частки, базова валюта, ставка податкового резерву, мова за замовчуванням, темна/світла тема, опціональний PIN-код пристрою та посилання-запрошення для партнера. Налаштування заблоковані за замовчуванням — натисніть кнопку блокування, щоб розблокувати перед редагуванням; вони знову заблокуються при наступному відкритті вкладки.</p>
+      <p class="text-sm text-slate-300">Назва компанії, імена партнерів і розподіл частки, спосіб рахувати виплати партнерам, базова валюта (PLN, EUR, USD, UAH та інші європейські валюти), ставка податкового резерву, мова за замовчуванням, темна/світла тема, опціональний PIN-код пристрою та посилання-запрошення для партнера. Налаштування заблоковані за замовчуванням — натисніть кнопку блокування, щоб розблокувати перед редагуванням; вони знову заблокуються при наступному відкритті вкладки.</p>
+    </div>
+
+    <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">
+      <h2 class="text-xl font-bold text-slate-100 mt-0">Виплати партнерам: два способи рахувати</h2>
+      <p class="text-sm text-slate-300"><strong class="text-slate-100">Оплата за роботу</strong> (за замовчуванням). Виплата — це оплата роботи партнера, окремо від його частки прибутку. Частка рахується від того, що лишається після витрат, податкового резерву й виплат обох партнерів. Картка показує <strong>Частка прибутку + Виплачено за роботу = Разом</strong>.</p>
+      <p class="text-sm text-slate-300"><strong class="text-slate-100">Аванс із частки.</strong> Виплата береться з власної частки партнера. Частка рахується від прибутку після податкового резерву; картка показує <strong>Частка прибутку − Виплачено = До виплати</strong> (від’ємне число означає переплату). Перемикає лише власник: Налаштування → <em>Виплати партнерам — це</em>. Панель, проєкти й звіти рахують за вибором.</p>
     </div>
 
     <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">
       <h2 class="text-xl font-bold text-slate-100 mt-0">Запрошення партнера</h2>
-      <p class="text-sm text-slate-300">У Налаштуваннях згенеруйте одноразове посилання-запрошення і надішліть його партнеру. Той, хто відкриє його й зареєструється, приєднається до вашого спільного робочого простору — а не створить окремий. Генерувати запрошення може лише власник робочого простору.</p>
+      <p class="text-sm text-slate-300">У Налаштуваннях згенеруйте одноразове посилання-запрошення, потім впишіть e-mail партнера й натисніть <strong>Надіслати e-mail</strong> — він отримає лист від invite@splitbooks.pl з кнопкою — або скопіюйте посилання й надішліть самі. Той, хто відкриє його й зареєструється, приєднається до вашого спільного робочого простору — а не створить окремий. Генерувати запрошення може лише власник робочого простору.</p>
     </div>
 
     <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">
