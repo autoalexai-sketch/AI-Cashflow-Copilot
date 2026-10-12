@@ -103,12 +103,24 @@
     return { income: fromCents(income), cost: fromCents(cost), net: fromCents(income - cost) };
   }
 
+  // Contract of one project: the agreed amount, what has come in (verified
+  // income only, same rule as projectTotals) and what is still owed.
+  // remaining < 0 means the client paid more than agreed (extra work).
+  // Returns null when no contract amount is set, so the card shows nothing.
+  function contractStatus(contractAmount, txs) {
+    if (!contractAmount) return null;
+    var contract = toCents(contractAmount);
+    var received = sumCents(txs, function (t) { return t.type === 'income' && t.status === 'verified'; });
+    return { contract: fromCents(contract), received: fromCents(received), remaining: fromCents(contract - received) };
+  }
+
   var api = {
     signedAmount: signedAmount,
     computeTotals: computeTotals,
     accountBalance: accountBalance,
     computeProjectSplit: computeProjectSplit,
-    projectTotals: projectTotals
+    projectTotals: projectTotals,
+    contractStatus: contractStatus
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.SBCalc = api;

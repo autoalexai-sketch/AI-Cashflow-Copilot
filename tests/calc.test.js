@@ -2,7 +2,7 @@
 // No dependencies: uses Node's built-in test runner (Node 18+).
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { computeTotals, computeProjectSplit, accountBalance, signedAmount, projectTotals } = require('../calc.js');
+const { computeTotals, computeProjectSplit, accountBalance, signedAmount, projectTotals, contractStatus } = require('../calc.js');
 
 // Money is stored as floats today, so compare to the cent.
 const cents = (x) => Math.round(x * 100);
@@ -238,4 +238,41 @@ test('project split follows the draw mode and returns totals', () => {
   eqMoney(adv.shareA, 3200);            // (8000 − 1600) / 2
   eqMoney(adv.totalA, 3200 - 1000);
   eqMoney(adv.totalB, 3200);
+});
+
+// Contract amount of a project (feature 2026-10-12, "object in 10 seconds"):
+// what was agreed, what came in (verified income only) and what is still owed.
+test('contract status: no contract amount -> null (card shows nothing extra)', () => {
+  assert.equal(contractStatus(null, [tx('income', 500)]), null);
+  assert.equal(contractStatus(undefined, []), null);
+  assert.equal(contractStatus(0, []), null);
+});
+
+test('contract status: part paid -> received and remaining', () => {
+  const s = contractStatus(8000, [tx('income', 5000), tx('expense', 1200)]);
+  eqMoney(s.contract, 8000);
+  eqMoney(s.received, 5000);     // expenses do not count as received
+  eqMoney(s.remaining, 3000);
+});
+
+test('contract status: only verified income counts as received', () => {
+  const s = contractStatus(8000, [
+    tx('income', 2000),
+    tx('income', 3000, { status: 'pending' }),
+    tx('income', 1000, { status: 'rejected' })
+  ]);
+  eqMoney(s.received, 2000);
+  eqMoney(s.remaining, 6000);
+});
+
+test('contract status: paid over the contract -> remaining is negative (extra work)', () => {
+  const s = contractStatus(8000, [tx('income', 8500)]);
+  eqMoney(s.remaining, -500);
+});
+
+test('contract status: exact to the cent', () => {
+  const s = contractStatus(100.3, [tx('income', 0.1), tx('income', 0.2)]);
+  assert.equal(cents(s.received), 30);
+  assert.equal(cents(s.remaining), 10000);
+  assert.equal(s.remaining, 100);   // no float tail
 });
