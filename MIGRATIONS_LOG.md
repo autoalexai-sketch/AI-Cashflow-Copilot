@@ -25,6 +25,7 @@ sources of truth). For reference, the migrations applied so far, in order:
 Note (2026-10-12): migrations applied live between #16 and the entry below (`add_projects_table` … `organizations_draw_mode`, 27 in total) were not logged here; `supabase list_migrations` is the authoritative list.
 
 - `add_projects_contract_amount` (2026-10-12) — nullable `projects.contract_amount numeric(12,2)` with `CHECK (> 0)`. Shown on the project card as contract · received · still owed (`SBCalc.contractStatus`, verified income only). SQL: `supabase/migrations/20261012_add_projects_contract_amount.sql`. Apply before deploying the app change.
+- `transactions_partner_approval` (2026-10-12) — `transactions.approved_by/approved_at`; `approve_transaction(p_tx)` RPC (never your own row); `tx_approval_guard` trigger (clients cannot set approval; editing content clears it; single-member orgs auto-approve); existing rows backfilled as approved at `created_at`; helper `org_member_count()`. SQL: `supabase/migrations/20261012_transactions_partner_approval.sql`. Apply before deploying the app change.
 
 ## Deployment history
 

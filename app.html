@@ -346,6 +346,18 @@
           </div>
           <div id="pendingTxList" class="space-y-2"></div>
         </div>
+
+        <div id="approvalCard" class="hidden glass border border-emerald-700/40 rounded-3xl p-5 card">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h2 class="text-lg font-bold" data-i18n="approvalTitle">To approve — your partner's entries</h2>
+              <p class="text-xs text-slate-400" data-i18n="approvalSubtitle">Check what your partner recorded. Approval does not change any balance — it shows the entry was checked.</p>
+              <p id="approvalMineWaiting" class="text-xs text-amber-300 mt-1"></p>
+            </div>
+            <div class="text-xs badge px-3 py-1 rounded-xl" id="approval-count">0</div>
+          </div>
+          <div id="approvalTxList" class="space-y-2"></div>
+        </div>
       </section>
 
       <section id="view-transactions" class="xl:col-span-12 hidden grid grid-cols-1 xl:grid-cols-3 gap-6">
@@ -862,7 +874,7 @@
         monthAlreadyLocked:'This month is already locked.', monthLockedBadge:'This month is locked — no further changes are possible.', monthLockedSuccess:'Month locked.',
         monthUnlockConfirm:'Unlock the current month? Transactions dated in this month can be added and edited again.', monthUnlockedSuccess:'Month unlocked.',
         taxRateBadgeLabel:'Rate', taxRateOwnerOnlyNote:'Only the workspace owner can change this.', taxRateSaved:'Tax rate saved.',
-        newProjectTitle:'New project', newProjectNameLabel:'Project (e.g. client / address)', newProjectContractLabel:'Contract amount (optional)', newProjectContractHint:'Fill it in to see on the card how much the client still owes.', btnCreateProject:'Create', optNewProject:'+ New project…', projContract:'contract', projReceived:'received', projRemaining:'still owed', projPaidInFull:'paid in full', btnQuickExpense:'Expense with receipt', qeTitle:'Expense with receipt', qeTakePhoto:'Take a photo of the receipt', qeRetake:'Retake', qeStatusSolo:'Counted right away — you work alone, so there is nobody to verify it.', qeStatusPartner:'Your partner will see it as pending and verify it.', projectExists:'A project with this name already exists.', newCategoryPrompt:'Category name:',
+        newProjectTitle:'New project', newProjectNameLabel:'Project (e.g. client / address)', newProjectContractLabel:'Contract amount (optional)', newProjectContractHint:'Fill it in to see on the card how much the client still owes.', btnCreateProject:'Create', optNewProject:'+ New project…', projContract:'contract', projReceived:'received', projRemaining:'still owed', projPaidInFull:'paid in full', btnQuickExpense:'Expense with receipt', qeTitle:'Expense with receipt', qeTakePhoto:'Take a photo of the receipt', qeRetake:'Retake', qeStatusSolo:'Counted right away — you work alone, so there is nobody to verify it.', qeStatusPartner:'Your partner will see it as pending and verify it.', approvalTitle:'To approve — your partner\'s entries', approvalSubtitle:'Check what your partner recorded. Approval does not change any balance — it shows the entry was checked.', approvalMineWaiting:'{n} of your entries are waiting for your partner.', btnApprove:'Approve', noApprovals:'Nothing to approve — all your partner\'s entries are checked.', approvalBadge:'⏳ not approved', approvalBadgeTitle:'Not yet approved by the partner', projectExists:'A project with this name already exists.', newCategoryPrompt:'Category name:',
         deleteProjectConfirm:'Delete project "{name}"? This cannot be undone.', projectDeleted:'Project deleted.', deleteProjectTitle:'Delete project',
         footerDisclaimer:'SplitBooks is a bookkeeping and expense-tracking tool for business partners. It does not provide financial, tax, investment, or legal advice, and is not a payment processor or licensed financial institution. You are responsible for your own tax and legal compliance.',
         footerPrivacy:'Privacy Policy', footerTerms:'Terms of Use', footerPricing:'Pricing', footerHelp:'Guide', footerSupport:'Support',
@@ -913,7 +925,7 @@
         monthAlreadyLocked:'Ten miesiąc jest już zablokowany.', monthLockedBadge:'Ten miesiąc jest zablokowany — zmiany nie są już możliwe.', monthLockedSuccess:'Miesiąc zablokowany.',
         monthUnlockConfirm:'Odblokować bieżący miesiąc? Transakcje z tego miesiąca będzie można ponownie dodawać i edytować.', monthUnlockedSuccess:'Miesiąc odblokowany.',
         taxRateBadgeLabel:'Stawka', taxRateOwnerOnlyNote:'Tylko właściciel workspace może to zmienić.', taxRateSaved:'Stawka podatkowa zapisana.',
-        newProjectTitle:'Nowy projekt', newProjectNameLabel:'Projekt (np. klient / adres)', newProjectContractLabel:'Kwota umowy (opcjonalnie)', newProjectContractHint:'Wpisz ją, a na karcie zobaczysz, ile klient jeszcze jest winien.', btnCreateProject:'Utwórz', optNewProject:'+ Nowy projekt…', projContract:'umowa', projReceived:'otrzymano', projRemaining:'do zapłaty', projPaidInFull:'opłacono w całości', btnQuickExpense:'Wydatek z paragonem', qeTitle:'Wydatek z paragonem', qeTakePhoto:'Zrób zdjęcie paragonu', qeRetake:'Zrób ponownie', qeStatusSolo:'Liczony od razu — pracujesz sam, więc nie ma kto go zatwierdzać.', qeStatusPartner:'Partner zobaczy go jako oczekujący i zatwierdzi.', projectExists:'Projekt o tej nazwie już istnieje.', newCategoryPrompt:'Nazwa kategorii:',
+        newProjectTitle:'Nowy projekt', newProjectNameLabel:'Projekt (np. klient / adres)', newProjectContractLabel:'Kwota umowy (opcjonalnie)', newProjectContractHint:'Wpisz ją, a na karcie zobaczysz, ile klient jeszcze jest winien.', btnCreateProject:'Utwórz', optNewProject:'+ Nowy projekt…', projContract:'umowa', projReceived:'otrzymano', projRemaining:'do zapłaty', projPaidInFull:'opłacono w całości', btnQuickExpense:'Wydatek z paragonem', qeTitle:'Wydatek z paragonem', qeTakePhoto:'Zrób zdjęcie paragonu', qeRetake:'Zrób ponownie', qeStatusSolo:'Liczony od razu — pracujesz sam, więc nie ma kto go zatwierdzać.', qeStatusPartner:'Partner zobaczy go jako oczekujący i zatwierdzi.', approvalTitle:'Do zatwierdzenia — wpisy partnera', approvalSubtitle:'Sprawdź, co wpisał partner. Zatwierdzenie nie zmienia żadnego salda — pokazuje, że wpis został sprawdzony.', approvalMineWaiting:'Twoich wpisów czeka na partnera: {n}.', btnApprove:'Zatwierdzam', noApprovals:'Nic do zatwierdzenia — wszystkie wpisy partnera są sprawdzone.', approvalBadge:'⏳ niezatwierdzony', approvalBadgeTitle:'Partner jeszcze nie zatwierdził', projectExists:'Projekt o tej nazwie już istnieje.', newCategoryPrompt:'Nazwa kategorii:',
         deleteProjectConfirm:'Usunąć projekt "{name}"? Tej operacji nie można cofnąć.', projectDeleted:'Projekt usunięty.', deleteProjectTitle:'Usuń projekt',
         footerDisclaimer:'SplitBooks to narzędzie księgowe do śledzenia wspólnych wydatków dla wspólników. Nie świadczy usług doradztwa finansowego, podatkowego, inwestycyjnego ani prawnego i nie jest instytucją płatniczą ani licencjonowaną instytucją finansową. Użytkownik odpowiada za własne rozliczenia podatkowe i zgodność z prawem.',
         footerPrivacy:'Polityka prywatności', footerTerms:'Regulamin', footerPricing:'Cennik', footerHelp:'Poradnik', footerSupport:'Pomoc',
@@ -964,7 +976,7 @@
         monthAlreadyLocked:'Цей місяць вже заблокований.', monthLockedBadge:'Цей місяць заблоковано — зміни більше не можливі.', monthLockedSuccess:'Місяць заблоковано.',
         monthUnlockConfirm:'Розблокувати поточний місяць? Транзакції цього місяця знову можна буде додавати й редагувати.', monthUnlockedSuccess:'Місяць розблоковано.',
         taxRateBadgeLabel:'Ставка', taxRateOwnerOnlyNote:'Лише власник робочого простору може це змінити.', taxRateSaved:'Податкову ставку збережено.',
-        newProjectTitle:'Новий проєкт', newProjectNameLabel:'Проєкт (напр. клієнт / адреса об’єкта)', newProjectContractLabel:'Сума договору (необов’язково)', newProjectContractHint:'Вкажіть її — і на картці буде видно, скільки клієнт ще винен.', btnCreateProject:'Створити', optNewProject:'+ Новий проєкт…', projContract:'договір', projReceived:'отримано', projRemaining:'залишилось', projPaidInFull:'оплачено повністю', btnQuickExpense:'Витрата з чеком', qeTitle:'Витрата з чеком', qeTakePhoto:'Сфотографувати чек', qeRetake:'Переробити фото', qeStatusSolo:'Враховується одразу — ви працюєте самі, тож підтверджувати нікому.', qeStatusPartner:'Партнер побачить її як очікувану й підтвердить.', projectExists:'Проєкт з такою назвою вже існує.', newCategoryPrompt:'Назва категорії:',
+        newProjectTitle:'Новий проєкт', newProjectNameLabel:'Проєкт (напр. клієнт / адреса об’єкта)', newProjectContractLabel:'Сума договору (необов’язково)', newProjectContractHint:'Вкажіть її — і на картці буде видно, скільки клієнт ще винен.', btnCreateProject:'Створити', optNewProject:'+ Новий проєкт…', projContract:'договір', projReceived:'отримано', projRemaining:'залишилось', projPaidInFull:'оплачено повністю', btnQuickExpense:'Витрата з чеком', qeTitle:'Витрата з чеком', qeTakePhoto:'Сфотографувати чек', qeRetake:'Переробити фото', qeStatusSolo:'Враховується одразу — ви працюєте самі, тож підтверджувати нікому.', qeStatusPartner:'Партнер побачить її як очікувану й підтвердить.', approvalTitle:'На підтвердження — записи партнера', approvalSubtitle:'Перевірте, що вніс партнер. Підтвердження не змінює жодного балансу — лише показує, що запис перевірено.', approvalMineWaiting:'Ваших записів чекає на партнера: {n}.', btnApprove:'Підтверджую', noApprovals:'Нічого підтверджувати — усі записи партнера перевірено.', approvalBadge:'⏳ не підтверджено', approvalBadgeTitle:'Партнер ще не підтвердив', projectExists:'Проєкт з такою назвою вже існує.', newCategoryPrompt:'Назва категорії:',
         deleteProjectConfirm:'Видалити проєкт "{name}"? Цю дію не можна скасувати.', projectDeleted:'Проєкт видалено.', deleteProjectTitle:'Видалити проєкт',
         footerDisclaimer:'SplitBooks — інструмент для обліку та відстеження спільних витрат бізнес-партнерів. Сервіс не надає фінансових, податкових, інвестиційних чи юридичних консультацій і не є платіжною установою чи ліцензованою фінансовою організацією. Ви самостійно відповідаєте за податкову та юридичну відповідність.',
         footerPrivacy:'Політика конфіденційності', footerTerms:'Умови використання', footerPricing:'Тарифи', footerHelp:'Посібник', footerSupport:'Підтримка',
@@ -1401,25 +1413,61 @@
     // reference before the <select> is cleared, then re-appended, so they
     // keep working with refreshPartnerCategoryLabels() exactly as before.
     // Everything else comes from state.categories (per-org, Supabase-backed).
-    function populateCategorySelect(){
-      const names = state.categories.map(c => c.name).sort((a, b) => a.localeCompare(b));
-      const optionsHtml = names.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(categoryLabel(n))}</option>`).join('');
-      [
-        { selId: 'category', drawAId: 'optPartnerDrawA', drawBId: 'optPartnerDrawB' },
-        { selId: 'editCategory', drawAId: 'editOptPartnerDrawA', drawBId: 'editOptPartnerDrawB' }
-      ].forEach(({ selId, drawAId, drawBId }) => {
-        const sel = $(selId);
-        if (!sel) return;
-        const current = sel.value;
-        const drawA = $(drawAId);
-        const drawB = $(drawBId);
-        sel.innerHTML = optionsHtml;
+    // The category list follows the direction (2026-10-12): income -> income
+    // categories, expense -> expense categories, draw -> Partner Draw A/B only,
+    // transfer -> no category. Before, all of them were mixed in one list and
+    // live rows ended up as e.g. an expense filed under "Partner Draw A".
+    // keepValue: a category the edited row already has (e.g. legacy "Labor
+    // Partner") stays selectable, so opening and saving a row never changes
+    // its category silently.
+    // The Partner Draw <option> elements are taken out of the page while
+    // another direction is shown, and getElementById no longer finds them
+    // then — so they are looked up once and kept here.
+    function drawOption(id){
+      const cache = drawOption.cache || (drawOption.cache = {});
+      if (!cache[id]) cache[id] = $(id);
+      return cache[id];
+    }
+
+    function fillCategorySelect(selId, direction, drawAId, drawBId, keepValue){
+      const sel = $(selId);
+      if (!sel) return;
+      const current = keepValue !== undefined ? keepValue : sel.value;
+      const drawA = drawOption(drawAId);
+      const drawB = drawOption(drawBId);
+      // Keep the two Partner Draw <option> elements alive (refreshPartnerCategoryLabels
+      // renames them) even while they are not shown.
+      [drawA, drawB].forEach(o => { if (o && o.parentNode) o.parentNode.removeChild(o); });
+      sel.innerHTML = '';
+      if (direction === 'draw') {
         if (drawA) sel.appendChild(drawA);
         if (drawB) sel.appendChild(drawB);
-        if ([...sel.options].some(o => o.value === current)) sel.value = current;
-      });
+      } else if (direction === 'transfer') {
+        sel.innerHTML = '<option value="">—</option>';
+      } else {
+        const names = state.categories.filter(c => c.direction === direction).map(c => c.name).sort((a, b) => a.localeCompare(b));
+        sel.innerHTML = names.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(categoryLabel(n))}</option>`).join('');
+      }
+      if (current && ![...sel.options].some(o => o.value === current) && keepValue !== undefined) {
+        sel.insertAdjacentHTML('beforeend', `<option value="${escapeHtml(current)}">${escapeHtml(categoryLabel(current))}</option>`);
+      }
+      if ([...sel.options].some(o => o.value === current)) sel.value = current;
+    }
+
+    function populateCategorySelect(){
+      fillCategorySelect('category', $('direction').value, 'optPartnerDrawA', 'optPartnerDrawB');
+      fillCategorySelect('editCategory', $('editDirection').value, 'editOptPartnerDrawA', 'editOptPartnerDrawB');
       refreshPartnerCategoryLabels();
     }
+
+    $('direction').addEventListener('change', () => {
+      fillCategorySelect('category', $('direction').value, 'optPartnerDrawA', 'optPartnerDrawB');
+      refreshPartnerCategoryLabels();
+    });
+    $('editDirection').addEventListener('change', () => {
+      fillCategorySelect('editCategory', $('editDirection').value, 'editOptPartnerDrawA', 'editOptPartnerDrawB');
+      refreshPartnerCategoryLabels();
+    });
 
     function renderCategoriesList(){
       const box = $('categoriesList');
@@ -1506,8 +1554,8 @@
     function refreshPartnerCategoryLabels(){
       const aName = state.partnerA.name || 'Partner A';
       const bName = state.partnerB.name || 'Partner B';
-      ['optPartnerDrawA', 'editOptPartnerDrawA'].forEach(id => { const el = $(id); if (el) el.textContent = aName; });
-      ['optPartnerDrawB', 'editOptPartnerDrawB'].forEach(id => { const el = $(id); if (el) el.textContent = bName; });
+      ['optPartnerDrawA', 'editOptPartnerDrawA'].forEach(id => { const el = drawOption(id); if (el) el.textContent = aName; });
+      ['optPartnerDrawB', 'editOptPartnerDrawB'].forEach(id => { const el = drawOption(id); if (el) el.textContent = bName; });
     }
 
     // Settings are locked by default (see setView) so a stray tap can't
@@ -1578,7 +1626,11 @@
         category: row.category || '—',
         account: row.account || '—',
         description: row.description || '—',
-        receipt: row.receipt_path || null
+        receipt: row.receipt_path || null,
+        // Partner approval (2026-10-12, option A): set by approve_transaction()
+        // or automatically in a single-member workspace; null = not approved yet.
+        approvedAt: row.approved_at || null,
+        approvedBy: row.approved_by || null
       }));
     }
 
@@ -1869,6 +1921,7 @@
       if ($('taxRateBadgeDash')) $('taxRateBadgeDash').textContent = rateLabel;
       if ($('taxRateBadgeMonthly')) $('taxRateBadgeMonthly').textContent = rateLabel;
       renderPendingTx();
+      renderApprovals();
     }
 
     // Who a pending transaction is owed to: the partner (for draws) or
@@ -1905,6 +1958,55 @@
           </div>
         </div>`).join('');
     }
+
+    // ---- Partner approval (2026-10-12, option A) ----
+    // One partner confirms the other's entries. Separate from paid/unpaid
+    // status and from every balance: it only shows who checked what. The
+    // database enforces it (approve_transaction(): never your own row;
+    // editing an approved row clears the approval). Hidden while the
+    // workspace has a single member.
+    function hasPartner(){ return !!(state.ownerMembershipId && state.memberMembershipId); }
+
+    function approvalBadge(tx){
+      if (!hasPartner() || tx.approvedAt) return '';
+      const t = i18n[state.lang];
+      return ` <span class="ml-1 inline-block rounded-lg bg-amber-500/15 px-1.5 py-0.5 text-[10px] font-semibold text-amber-300" title="${escapeHtml(t.approvalBadgeTitle)}">${escapeHtml(t.approvalBadge)}</span>`;
+    }
+
+    function renderApprovals(){
+      const card = $('approvalCard');
+      if (!card) return;
+      if (!hasPartner()) { card.classList.add('hidden'); return; }
+      card.classList.remove('hidden');
+      const t = i18n[state.lang];
+      const toApprove = state.txs.filter(x => !x.approvedAt && x.createdByUserId !== state.user.id);
+      const mineWaiting = state.txs.filter(x => !x.approvedAt && x.createdByUserId === state.user.id).length;
+      $('approval-count').textContent = String(toApprove.length);
+      $('approvalMineWaiting').textContent = mineWaiting ? t.approvalMineWaiting.replace('{n}', mineWaiting) : '';
+      $('approvalTxList').innerHTML = toApprove.length ? toApprove.map(tx => `
+        <div class="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-slate-800 bg-slate-950/60 p-3">
+          <div class="min-w-0">
+            <div class="text-sm font-semibold truncate">${escapeHtml(tx.project)}</div>
+            <div class="text-xs text-slate-400">${escapeHtml(tx.date)} · ${typeLabel(tx.type)} · ${escapeHtml(categoryLabel(tx.category))} · ${escapeHtml(tx.creator || '')}</div>
+            ${tx.description && tx.description !== '—' ? `<div class="text-xs text-slate-500 mt-0.5 truncate">${escapeHtml(tx.description)}</div>` : ''}
+          </div>
+          <div class="flex items-center gap-2 shrink-0">
+            <div class="text-sm font-bold">${fmt(tx.amount)}</div>
+            ${tx.receipt ? `<button type="button" class="px-3 py-1.5 rounded-xl bg-slate-700 text-xs font-semibold" onclick="openReceipt('${safeOnclickArg(tx.receipt)}')">${escapeHtml(t.btnReceipt || (state.lang==='pl' ? 'Pokaż' : state.lang==='uk' ? 'Показати' : 'View'))}</button>` : ''}
+            <button type="button" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-semibold" onclick="approveTx('${tx.id}')">${escapeHtml(t.btnApprove)}</button>
+          </div>
+        </div>`).join('')
+        : `<div class="text-sm text-slate-500">${escapeHtml(t.noApprovals)}</div>`;
+    }
+
+    window.approveTx = async function(id){
+      const { error } = await supabaseClient.rpc('approve_transaction', { p_tx: id });
+      if (error) { notifyError('Could not approve transaction.', error); return; }
+      ph('capture', 'transaction_approved');
+      await loadTransactions();
+      renderTxTable();
+      recalcPartnerBalances();
+    };
 
     window.markTxPaid = async function(id){
       const { error } = await supabaseClient.from('transactions').update({ status: 'verified' }).eq('id', id);
@@ -1948,7 +2050,7 @@
           <td class="p-3">${escapeHtml(tx.project)}</td>
           <td class="p-3 font-semibold">${fmt(tx.amount)}</td>
           <td class="p-3">${typeLabel(tx.type)}</td>
-          <td class="p-3 ${txStatusClass(tx.status)}">${statusLabel(tx.status)}</td>
+          <td class="p-3 ${txStatusClass(tx.status)}">${statusLabel(tx.status)}${approvalBadge(tx)}</td>
           <td class="p-3 text-slate-400">${escapeHtml(tx.description || '—')}</td>
           <td class="p-3">
             <div class="flex gap-2">${actionButtons(tx)}</div>
@@ -1968,7 +2070,7 @@
             <div class="text-sm font-bold shrink-0">${fmt(tx.amount)}</div>
           </div>
           <div class="mt-2 flex items-center justify-between gap-2">
-            <span class="text-xs font-semibold ${txStatusClass(tx.status)}">${statusLabel(tx.status)}</span>
+            <span class="text-xs font-semibold ${txStatusClass(tx.status)}">${statusLabel(tx.status)}${approvalBadge(tx)}</span>
             <span class="text-xs text-slate-400 truncate">${escapeHtml(tx.description || '—')}</span>
           </div>
           <div class="mt-3 flex flex-wrap gap-2">${actionButtons(tx)}</div>
@@ -2282,7 +2384,8 @@
       $('editAmount').value = tx.amount;
       $('editProject').value = tx.project;
       $('editDirection').value = tx.type;
-      $('editCategory').value = tx.category;
+      fillCategorySelect('editCategory', tx.type, 'editOptPartnerDrawA', 'editOptPartnerDrawB', tx.category || '');
+      refreshPartnerCategoryLabels();
       $('editStatus').value = tx.status;
       $('editModal').classList.remove('hidden');
       $('editModal').classList.add('flex');
