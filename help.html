@@ -44,16 +44,19 @@
     <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">
       <h2 class="text-xl font-bold text-slate-100 mt-0 flex items-center gap-2"><span class="step-num">1</span>Dashboard</h2>
       <p class="text-sm text-slate-300">Your home screen. Four numbers at the top — <strong>Total Income</strong>, <strong>Total Expenses</strong>, <strong>Tax Reserve</strong>, and <strong>Net Profit</strong> — for the current month. Below that, partner balances show, for each partner, their profit share, what they were paid, and the result. How payouts count is your choice in Settings (see <strong>Partner payouts</strong> below). Each partner's card has a <strong>Withdraw</strong> button on each partner's card and a clickable withdrawal history showing who withdrew how much and when. A "Pending" panel lists transactions recorded but not yet marked as verified — nothing there affects your balances until you mark it paid.</p>
+      <p class="text-sm text-slate-300"><strong class="text-slate-100">Expense with receipt.</strong> The button at the top records a purchase in four taps: photo of the receipt, amount, project, save. It is saved as paid; category and account default to the ones you used last on this phone. Photos are shrunk before upload, so it is quick on mobile data.</p>
     </div>
 
     <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">
       <h2 class="text-xl font-bold text-slate-100 mt-0 flex items-center gap-2"><span class="step-num">2</span>Transactions</h2>
       <p class="text-sm text-slate-300">Add income, expenses, transfers, and partner draws. Each transaction gets a date, amount, account (bank / cash / tax reserve), project, category, and optional description and receipt photo. Only <strong>verified</strong> transactions count toward balances and profit — this stops a typo or a not-yet-cleared payment from throwing off your numbers.</p>
+      <p class="text-sm text-slate-300">The category list follows the direction: income categories for income, expense categories for expenses, partner names for partner payouts. Need a new project? Pick <strong>+ New project…</strong> at the end of the project list — the rest of the form stays filled in.</p>
     </div>
 
     <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">
       <h2 class="text-xl font-bold text-slate-100 mt-0 flex items-center gap-2"><span class="step-num">3</span>Projects</h2>
       <p class="text-sm text-slate-300">Tag transactions with a project (a job, a property, a client — whatever unit makes sense for your business) to see which one is actually profitable, separate from the overall total. Tap any project card to open the full list of its transactions.</p>
+      <p class="text-sm text-slate-300"><strong class="text-slate-100">Contract amount.</strong> When you create a project you can enter the agreed amount. The card then shows the contract, what came in (paid income only) and how much the client still owes — or “paid in full”.</p>
       <p class="text-sm text-slate-300"><strong class="text-slate-100">Partner split inside a project.</strong> The same window shows how the money from this job divides between you: for each partner — their profit share, what they were paid on this job (payouts tagged to this project) and the result, counted by the payout model chosen in Settings. Main figures count verified transactions only; the number in brackets is the forecast including pending ones. Note: a payout only counts toward a project if you selected that project when recording it.</p>
     </div>
 
@@ -84,6 +87,11 @@
     </div>
 
     <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">
+      <h2 class="text-xl font-bold text-slate-100 mt-0">Partner approval</h2>
+      <p class="text-sm text-slate-300">With a partner in the workspace, each of you sees the other’s new entries under <strong>To approve</strong> on the Dashboard. “Approve” means “I checked it” — it does not change any balance. You cannot approve your own entry, and editing an approved entry (amount, date, category…) sends it back for approval. Entries not approved yet show “⏳ not approved”. Working alone? Then there is nothing to approve and the card is hidden. Either partner can also mark the other’s pending entries as paid.</p>
+    </div>
+
+    <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">
       <h2 class="text-xl font-bold text-slate-100 mt-0">Owner vs. Member</h2>
       <p class="text-sm text-slate-300"><strong>Owner</strong> can edit the tax rate, lock/unlock months, approve or reject delete requests, and delete any transaction directly. <strong>Member</strong> can freely delete their own unverified transactions — deleting someone else's transaction, or one that's already verified, sends a delete request the owner has to approve. This is enforced on the database side, not just in the interface.</p>
     </div>
@@ -105,16 +113,19 @@
     <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">
       <h2 class="text-xl font-bold text-slate-100 mt-0 flex items-center gap-2"><span class="step-num">1</span>Panel</h2>
       <p class="text-sm text-slate-300">Ekran główny. Cztery liczby u góry — <strong>Przychody</strong>, <strong>Koszty</strong>, <strong>Rezerwa podatkowa</strong> i <strong>Zysk netto</strong> — za bieżący miesiąc. Poniżej saldo partnerów: udział w zysku, ile wypłacono i wynik. Jak liczyć wypłaty, wybierasz w Ustawieniach (patrz <strong>Wypłaty wspólników</strong> niżej). Na karcie każdego wspólnika przycisk <strong>Wypłać</strong> i klikalna historia, kto i ile wypłacił. Panel "Oczekujące" pokazuje transakcje zapisane, ale jeszcze niepotwierdzone — nic tam nie wpływa na saldo, dopóki nie oznaczysz jako opłacone.</p>
+      <p class="text-sm text-slate-300"><strong class="text-slate-100">Wydatek z paragonem.</strong> Przycisk na górze zapisuje zakup w czterech dotknięciach: zdjęcie paragonu, kwota, projekt, zapisz. Zapisuje się jako zapłacony; kategoria i konto podstawiają się takie, jakich ostatnio używałeś na tym telefonie. Zdjęcia są zmniejszane przed wysłaniem, więc działa szybko nawet na mobilnym internecie.</p>
     </div>
 
     <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">
       <h2 class="text-xl font-bold text-slate-100 mt-0 flex items-center gap-2"><span class="step-num">2</span>Transakcje</h2>
       <p class="text-sm text-slate-300">Dodawaj przychody, koszty, przelewy i wypłaty dla wspólników. Każda transakcja ma datę, kwotę, rachunek (bank / kasa / rezerwa podatkowa), projekt, kategorię oraz opcjonalny opis i zdjęcie paragonu. Tylko transakcje <strong>potwierdzone</strong> liczą się do salda i zysku.</p>
+      <p class="text-sm text-slate-300">Lista kategorii zależy od kierunku: kategorie przychodów dla wpływów, kategorie wydatków dla wydatków, imiona wspólników dla wypłat. Potrzebujesz nowego projektu? Wybierz <strong>+ Nowy projekt…</strong> na końcu listy projektów — reszta formularza zostaje wypełniona.</p>
     </div>
 
     <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">
       <h2 class="text-xl font-bold text-slate-100 mt-0 flex items-center gap-2"><span class="step-num">3</span>Projekty</h2>
       <p class="text-sm text-slate-300">Oznaczaj transakcje projektem (zlecenie, nieruchomość, klient — cokolwiek pasuje do Twojej firmy), żeby zobaczyć, który z nich faktycznie przynosi zysk. Kliknij kartę projektu, aby zobaczyć pełną listę jego transakcji.</p>
+      <p class="text-sm text-slate-300"><strong class="text-slate-100">Kwota umowy.</strong> Tworząc projekt, możesz wpisać uzgodnioną kwotę. Karta pokaże wtedy umowę, ile wpłynęło (tylko zapłacone przychody) i ile klient jeszcze jest winien — albo „opłacono w całości”.</p>
       <p class="text-sm text-slate-300"><strong class="text-slate-100">Podział między wspólników w projekcie.</strong> W tym samym oknie widać, jak pieniądze z tego zlecenia dzielą się między was: dla każdego wspólnika — udział w zysku, ile mu wypłacono przy tym zleceniu (wypłaty przypisane do tego projektu) i wynik, liczony według sposobu wybranego w Ustawieniach. Główne kwoty liczą tylko transakcje potwierdzone; liczba w nawiasie to prognoza z oczekującymi. Uwaga: wypłata liczy się do projektu tylko wtedy, gdy przy jej zapisywaniu wybrano ten projekt.</p>
     </div>
 
@@ -145,6 +156,11 @@
     </div>
 
     <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">
+      <h2 class="text-xl font-bold text-slate-100 mt-0">Zatwierdzanie przez wspólnika</h2>
+      <p class="text-sm text-slate-300">Jeśli w firmie jest wspólnik, każdy z was widzi nowe wpisy drugiego w sekcji <strong>Do zatwierdzenia</strong> na Panelu. „Zatwierdzam” znaczy „sprawdziłem” — nie zmienia żadnego salda. Nie możesz zatwierdzić własnego wpisu, a edycja zatwierdzonego wpisu (kwota, data, kategoria…) wysyła go ponownie do zatwierdzenia. Niezatwierdzone wpisy mają oznaczenie „⏳ niezatwierdzony”. Pracujesz sam? Wtedy nie ma czego zatwierdzać i karta jest ukryta. Każdy wspólnik może też oznaczyć oczekujące wpisy drugiego jako zapłacone.</p>
+    </div>
+
+    <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">
       <h2 class="text-xl font-bold text-slate-100 mt-0">Właściciel vs. Członek</h2>
       <p class="text-sm text-slate-300"><strong>Właściciel</strong> może zmieniać stawkę podatkową, blokować/odblokowywać miesiące, zatwierdzać lub odrzucać prośby o usunięcie oraz usuwać dowolną transakcję bezpośrednio. <strong>Członek</strong> może swobodnie usuwać własne niepotwierdzone transakcje — usunięcie cudzej lub już potwierdzonej transakcji tworzy prośbę, którą musi zatwierdzić właściciel.</p>
     </div>
@@ -166,16 +182,19 @@
     <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">
       <h2 class="text-xl font-bold text-slate-100 mt-0 flex items-center gap-2"><span class="step-num">1</span>Панель</h2>
       <p class="text-sm text-slate-300">Головний екран. Чотири цифри вгорі — <strong>Дохід</strong>, <strong>Витрати</strong>, <strong>Податковий резерв</strong> і <strong>Чистий прибуток</strong> — за поточний місяць. Нижче — баланси партнерів: частка прибутку, скільки виплачено і підсумок. Як рахувати виплати, обираєте в Налаштуваннях (див. <strong>Виплати партнерам</strong> нижче). На картці кожного партнера — кнопка <strong>«Вивести»</strong> та клікабельна історія, хто скільки і коли вивів. Панель "Очікує" показує транзакції, які вже записані, але ще не підтверджені — вони не впливають на баланс, поки їх не позначено як оплачені.</p>
+      <p class="text-sm text-slate-300"><strong class="text-slate-100">Витрата з чеком.</strong> Кнопка вгорі записує покупку за чотири дотики: фото чека, сума, проєкт, зберегти. Записується як сплачена; категорія й рахунок підставляються ті, якими ви користувалися востаннє на цьому телефоні. Фото зменшуються перед відправкою, тож працює швидко навіть на мобільному інтернеті.</p>
     </div>
 
     <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">
       <h2 class="text-xl font-bold text-slate-100 mt-0 flex items-center gap-2"><span class="step-num">2</span>Транзакції</h2>
       <p class="text-sm text-slate-300">Додавайте дохід, витрати, перекази та виплати партнерам. Кожна транзакція має дату, суму, рахунок (банк / готівка / податковий резерв), проєкт, категорію та опціонально опис і фото чека. У баланс і прибуток входять лише <strong>підтверджені</strong> транзакції — це не дає описці чи ще не проведеному платежу зіпсувати цифри.</p>
+      <p class="text-sm text-slate-300">Список категорій залежить від напрямку: категорії доходів для доходів, категорії витрат для витрат, імена партнерів для виплат. Потрібен новий проєкт? Оберіть <strong>+ Новий проєкт…</strong> наприкінці списку проєктів — решта форми лишається заповненою.</p>
     </div>
 
     <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">
       <h2 class="text-xl font-bold text-slate-100 mt-0 flex items-center gap-2"><span class="step-num">3</span>Проєкти</h2>
       <p class="text-sm text-slate-300">Позначайте транзакції проєктом (замовлення, об'єкт, клієнт — що завгодно, що підходить вашому бізнесу), щоб бачити, який з них насправді приносить прибуток, окремо від загального підсумку. Натисніть на картку проєкту, щоб відкрити повний список його транзакцій.</p>
+      <p class="text-sm text-slate-300"><strong class="text-slate-100">Сума договору.</strong> Створюючи проєкт, можна вказати узгоджену суму. Тоді картка покаже договір, скільки надійшло (лише сплачені доходи) і скільки клієнт ще винен — або «оплачено повністю».</p>
       <p class="text-sm text-slate-300"><strong class="text-slate-100">Розподіл між партнерами в проєкті.</strong> У цьому ж вікні видно, як гроші з цього замовлення діляться між вами: для кожного партнера — частка прибутку, скільки йому виплачено на цьому замовленні (виплати, прив'язані до цього проєкту) і підсумок, порахований за способом, обраним у Налаштуваннях. Основні суми враховують лише підтверджені транзакції; число в дужках — прогноз із очікуючими. Важливо: виплата потрапляє в розрахунок проєкту, лише якщо під час запису їй вказали цей проєкт.</p>
     </div>
 
@@ -203,6 +222,11 @@
     <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">
       <h2 class="text-xl font-bold text-slate-100 mt-0">Запрошення партнера</h2>
       <p class="text-sm text-slate-300">У Налаштуваннях згенеруйте одноразове посилання-запрошення, потім впишіть e-mail партнера й натисніть <strong>Надіслати e-mail</strong> — він отримає лист від invite@splitbooks.pl з кнопкою — або скопіюйте посилання й надішліть самі. Той, хто відкриє його й зареєструється, приєднається до вашого спільного робочого простору — а не створить окремий. Генерувати запрошення може лише власник робочого простору.</p>
+    </div>
+
+    <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">
+      <h2 class="text-xl font-bold text-slate-100 mt-0">Підтвердження партнером</h2>
+      <p class="text-sm text-slate-300">Якщо у компанії є партнер, кожен із вас бачить нові записи іншого в розділі <strong>На підтвердження</strong> на Панелі. «Підтверджую» означає «я перевірив» — це не змінює жодного балансу. Свій запис підтвердити не можна, а зміна підтвердженого запису (сума, дата, категорія…) повертає його на підтвердження. Непідтверджені записи мають позначку «⏳ не підтверджено». Працюєте самі? Тоді підтверджувати нічого, і картку приховано. Кожен партнер також може позначити очікувані записи іншого як сплачені.</p>
     </div>
 
     <div class="glass border border-slate-800 rounded-2xl p-5 space-y-4 mb-6">

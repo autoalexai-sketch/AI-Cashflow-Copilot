@@ -26,6 +26,7 @@ Note (2026-10-12): migrations applied live between #16 and the entry below (`add
 
 - `add_projects_contract_amount` (2026-10-12) — nullable `projects.contract_amount numeric(12,2)` with `CHECK (> 0)`. Shown on the project card as contract · received · still owed (`SBCalc.contractStatus`, verified income only). SQL: `supabase/migrations/20261012_add_projects_contract_amount.sql`. Apply before deploying the app change.
 - `transactions_partner_approval` (2026-10-12) — `transactions.approved_by/approved_at`; `approve_transaction(p_tx)` RPC (never your own row); `tx_approval_guard` trigger (clients cannot set approval; editing content clears it; single-member orgs auto-approve); existing rows backfilled as approved at `created_at`; helper `org_member_count()`. SQL: `supabase/migrations/20261012_transactions_partner_approval.sql`. Applied to prod 2026-10-12 before the app change; rules checked in a rolled-back transaction (10/10).
+- `mark_transaction_paid` (2026-10-12) — RPC that sets status pending → verified for a row of the caller's own org. Fixes "Mark as paid" by a member on the owner's row (was a silent no-op under RLS `tx_update`). Applied to prod 2026-10-12; checked in a rolled-back transaction (bug reproduced, fixed, approval untouched, foreign org refused). SQL: `supabase/migrations/20261012_mark_transaction_paid.sql`.
 
 ## Deployment history
 
