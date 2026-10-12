@@ -22,6 +22,10 @@ sources of truth). For reference, the migrations applied so far, in order:
 15. `revert_partner_names_on_organizations` — dropped `organizations.partner_a_name` / `partner_b_name` (see #13).
 16. `allow_self_update_membership_display_name` — final partner-name design: each partner edits only their own name, stored in `memberships.display_name`. Adds a second, more permissive UPDATE policy (`membership_update_self`, `USING (user_id = auth.uid())`) alongside the existing owner-only policy — Postgres RLS policies are OR'd together, so this only *adds* permission. A `BEFORE UPDATE` trigger (`enforce_membership_self_update()` / `membership_self_update_guard`) compares `OLD` vs `NEW` and blocks non-owners from changing `role`, `share_percent`, `org_id`, or `user_id`, while still allowing them to change their own `display_name`. RLS `USING`/`WITH CHECK` clauses can't compare old-vs-new column values directly, hence the trigger.
 
+Note (2026-10-12): migrations applied live between #16 and the entry below (`add_projects_table` … `organizations_draw_mode`, 27 in total) were not logged here; `supabase list_migrations` is the authoritative list.
+
+- `add_projects_contract_amount` (2026-10-12) — nullable `projects.contract_amount numeric(12,2)` with `CHECK (> 0)`. Shown on the project card as contract · received · still owed (`SBCalc.contractStatus`, verified income only). SQL: `supabase/migrations/20261012_add_projects_contract_amount.sql`. Apply before deploying the app change.
+
 ## Deployment history
 
 - Originally deployed on Netlify (Drop/manual upload flow).

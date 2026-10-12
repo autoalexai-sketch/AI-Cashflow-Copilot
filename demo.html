@@ -660,6 +660,27 @@
     </div>
   </div>
 
+  <div id="newProjectModal" class="fixed inset-0 modal-backdrop hidden items-center justify-center p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-bold" data-i18n="newProjectTitle">New project</h3>
+        <button type="button" id="closeNewProjectModal" class="px-3 py-1 rounded-xl bg-slate-800" aria-label="Close">×</button>
+      </div>
+      <form id="newProjectForm" class="grid grid-cols-1 gap-4">
+        <div>
+          <label for="newProjectName" class="text-xs text-slate-400" data-i18n="newProjectNameLabel">Project (e.g. client / address)</label>
+          <input id="newProjectName" required maxlength="120" autocomplete="off" class="input w-full rounded-2xl px-4 py-3 mt-1" placeholder="e.g. Kowalski / Floriańska 12" data-i18n-placeholder="phProject">
+        </div>
+        <div>
+          <label for="newProjectContract" class="text-xs text-slate-400" data-i18n="newProjectContractLabel">Contract amount (optional)</label>
+          <input id="newProjectContract" type="number" min="0" step="0.01" inputmode="decimal" class="input w-full rounded-2xl px-4 py-3 mt-1" placeholder="0.00">
+          <p class="text-xs text-slate-500 mt-1" data-i18n="newProjectContractHint">Fill it in to see on the card how much the client still owes.</p>
+        </div>
+        <button type="submit" class="px-5 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 font-semibold" data-i18n="btnCreateProject">Create</button>
+      </form>
+    </div>
+  </div>
+
   <div id="editModal" class="fixed inset-0 modal-backdrop hidden items-center justify-center p-4 z-50">
     <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full p-6">
       <div class="flex justify-between items-center mb-4">
@@ -790,7 +811,7 @@
         monthAlreadyLocked:'This month is already locked.', monthLockedBadge:'This month is locked — no further changes are possible.', monthLockedSuccess:'Month locked.',
         monthUnlockConfirm:'Unlock the current month? Transactions dated in this month can be added and edited again.', monthUnlockedSuccess:'Month unlocked.',
         taxRateBadgeLabel:'Rate', taxRateOwnerOnlyNote:'Only the workspace owner can change this.', taxRateSaved:'Tax rate saved.',
-        newProjectPrompt:'Project name:', projectExists:'A project with this name already exists.', newCategoryPrompt:'Category name:',
+        newProjectTitle:'New project', newProjectNameLabel:'Project (e.g. client / address)', newProjectContractLabel:'Contract amount (optional)', newProjectContractHint:'Fill it in to see on the card how much the client still owes.', btnCreateProject:'Create', optNewProject:'+ New project…', projContract:'contract', projReceived:'received', projRemaining:'still owed', projPaidInFull:'paid in full', projectExists:'A project with this name already exists.', newCategoryPrompt:'Category name:',
         deleteProjectConfirm:'Delete project "{name}"? This cannot be undone.', projectDeleted:'Project deleted.', deleteProjectTitle:'Delete project',
         footerDisclaimer:'SplitBooks is a bookkeeping and expense-tracking tool for business partners. It does not provide financial, tax, investment, or legal advice, and is not a payment processor or licensed financial institution. You are responsible for your own tax and legal compliance.',
         footerPrivacy:'Privacy Policy', footerTerms:'Terms of Use', footerPricing:'Pricing', footerHelp:'Guide', footerSupport:'Support',
@@ -840,7 +861,7 @@
         monthAlreadyLocked:'Ten miesiąc jest już zablokowany.', monthLockedBadge:'Ten miesiąc jest zablokowany — zmiany nie są już możliwe.', monthLockedSuccess:'Miesiąc zablokowany.',
         monthUnlockConfirm:'Odblokować bieżący miesiąc? Transakcje z tego miesiąca będzie można ponownie dodawać i edytować.', monthUnlockedSuccess:'Miesiąc odblokowany.',
         taxRateBadgeLabel:'Stawka', taxRateOwnerOnlyNote:'Tylko właściciel workspace może to zmienić.', taxRateSaved:'Stawka podatkowa zapisana.',
-        newProjectPrompt:'Nazwa projektu:', projectExists:'Projekt o tej nazwie już istnieje.', newCategoryPrompt:'Nazwa kategorii:',
+        newProjectTitle:'Nowy projekt', newProjectNameLabel:'Projekt (np. klient / adres)', newProjectContractLabel:'Kwota umowy (opcjonalnie)', newProjectContractHint:'Wpisz ją, a na karcie zobaczysz, ile klient jeszcze jest winien.', btnCreateProject:'Utwórz', optNewProject:'+ Nowy projekt…', projContract:'umowa', projReceived:'otrzymano', projRemaining:'do zapłaty', projPaidInFull:'opłacono w całości', projectExists:'Projekt o tej nazwie już istnieje.', newCategoryPrompt:'Nazwa kategorii:',
         deleteProjectConfirm:'Usunąć projekt "{name}"? Tej operacji nie można cofnąć.', projectDeleted:'Projekt usunięty.', deleteProjectTitle:'Usuń projekt',
         footerDisclaimer:'SplitBooks to narzędzie księgowe do śledzenia wspólnych wydatków dla wspólników. Nie świadczy usług doradztwa finansowego, podatkowego, inwestycyjnego ani prawnego i nie jest instytucją płatniczą ani licencjonowaną instytucją finansową. Użytkownik odpowiada za własne rozliczenia podatkowe i zgodność z prawem.',
         footerPrivacy:'Polityka prywatności', footerTerms:'Regulamin', footerPricing:'Cennik', footerHelp:'Poradnik', footerSupport:'Pomoc',
@@ -890,7 +911,7 @@
         monthAlreadyLocked:'Цей місяць вже заблокований.', monthLockedBadge:'Цей місяць заблоковано — зміни більше не можливі.', monthLockedSuccess:'Місяць заблоковано.',
         monthUnlockConfirm:'Розблокувати поточний місяць? Транзакції цього місяця знову можна буде додавати й редагувати.', monthUnlockedSuccess:'Місяць розблоковано.',
         taxRateBadgeLabel:'Ставка', taxRateOwnerOnlyNote:'Лише власник робочого простору може це змінити.', taxRateSaved:'Податкову ставку збережено.',
-        newProjectPrompt:'Назва проєкту:', projectExists:'Проєкт з такою назвою вже існує.', newCategoryPrompt:'Назва категорії:',
+        newProjectTitle:'Новий проєкт', newProjectNameLabel:'Проєкт (напр. клієнт / адреса об’єкта)', newProjectContractLabel:'Сума договору (необов’язково)', newProjectContractHint:'Вкажіть її — і на картці буде видно, скільки клієнт ще винен.', btnCreateProject:'Створити', optNewProject:'+ Новий проєкт…', projContract:'договір', projReceived:'отримано', projRemaining:'залишилось', projPaidInFull:'оплачено повністю', projectExists:'Проєкт з такою назвою вже існує.', newCategoryPrompt:'Назва категорії:',
         deleteProjectConfirm:'Видалити проєкт "{name}"? Цю дію не можна скасувати.', projectDeleted:'Проєкт видалено.', deleteProjectTitle:'Видалити проєкт',
         footerDisclaimer:'SplitBooks — інструмент для обліку та відстеження спільних витрат бізнес-партнерів. Сервіс не надає фінансових, податкових, інвестиційних чи юридичних консультацій і не є платіжною установою чи ліцензованою фінансовою організацією. Ви самостійно відповідаєте за податкову та юридичну відповідність.',
         footerPrivacy:'Політика конфіденційності', footerTerms:'Умови використання', footerPricing:'Тарифи', footerHelp:'Посібник', footerSupport:'Підтримка',
@@ -1206,7 +1227,7 @@
     async function loadProjects(){
       const { data, error } = await supabaseClient
         .from('projects')
-        .select('id, name')
+        .select('id, name, contract_amount')
         .eq('org_id', state.orgId)
         .order('name', { ascending: true });
       if (error) { console.warn('Could not load projects:', error.message); return; }
@@ -1241,8 +1262,13 @@
       const fromProjects = state.projects.map(p => p.name);
       const fromTxs = state.txs.map(t => t.project).filter(p => p && p !== '—');
       const names = [...new Set([...fromProjects, ...fromTxs])].sort((a, b) => a.localeCompare(b));
-      sel.innerHTML = '<option value="">—</option>' + names.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('');
+      // Last option creates a project right here, without leaving the form
+      // (feature 2026-10-12). '__new__' is never saved: the change handler
+      // puts the previous value back and opens the new-project window.
+      const newOpt = `<option value="__new__">${escapeHtml(i18n[state.lang].optNewProject || '+ New project…')}</option>`;
+      sel.innerHTML = '<option value="">—</option>' + names.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('') + newOpt;
       if (names.includes(current)) sel.value = current;
+      sel.dataset.prev = sel.value;
     }
 
     // The 7 categories that shipped before this feature existed still have
@@ -1836,11 +1862,11 @@
     function renderProjects(){
       const grid = $('projectsGrid');
       const byProject = {};
-      state.projects.forEach(p => { byProject[p.name] = { txs: [], id: p.id }; });
+      state.projects.forEach(p => { byProject[p.name] = { txs: [], id: p.id, contractAmount: p.contract_amount }; });
       state.txs.forEach(t => {
         const name = (t.project || '').trim();
         if (!name) return;
-        if (!byProject[name]) byProject[name] = { txs: [], id: null };
+        if (!byProject[name]) byProject[name] = { txs: [], id: null, contractAmount: null };
         byProject[name].txs.push(t);
       });
       // Verified only, same rule as the balances (see SBCalc.projectTotals).
@@ -1852,8 +1878,16 @@
       }
       const isOwner = state.role === 'owner';
       grid.innerHTML = names.map(name => {
-        const { income, cost, id } = byProject[name];
+        const { income, cost, id, txs, contractAmount } = byProject[name];
         const net = income - cost;
+        // Contract line (feature 2026-10-12): only when a contract amount was set.
+        const cs = SBCalc.contractStatus(contractAmount, txs);
+        const tl = i18n[state.lang];
+        const contractLine = cs
+          ? `<div class="text-xs text-slate-500 mt-1">${tl.projContract} ${fmt(cs.contract)} · ${tl.projReceived} ${fmt(cs.received)} · ${cs.remaining > 0
+              ? `<span class="text-amber-400 font-semibold">${tl.projRemaining} ${fmt(cs.remaining)}</span>`
+              : `<span class="text-emerald-400 font-semibold">${tl.projPaidInFull}</span>`}</div>`
+          : '';
         const colorClass = net > 0 ? 'text-emerald-400' : net < 0 ? 'text-rose-400' : 'text-amber-400';
         const sign = net > 0 ? '+' : '';
         const deleteBtn = (isOwner && id)
@@ -1867,6 +1901,7 @@
           </div>
           <div class="${colorClass} text-xl font-black mt-1">${sign}${fmt(net)}</div>
           <div class="text-xs text-slate-500 mt-2">${i18n[state.lang].projSummaryIncome} ${fmt(income)} · ${i18n[state.lang].projSummaryCost} ${fmt(cost)}</div>
+          ${contractLine}
         </div>`;
       }).join('');
     }
@@ -2068,6 +2103,7 @@
       $('tx-list-sub').textContent = state.lang === 'pl' ? 'najnowsze na górze' : state.lang === 'uk' ? 'новіші зверху' : 'latest first';
       populateFilters();
       populateCategorySelect();
+      populateProjectSelect();
       populateCurrencySelect();
       recalcPartnerBalances();
       renderTxTable();
@@ -2387,7 +2423,7 @@
     function clearTxForm(){
       $('date').value = new Date().toISOString().slice(0,10);
       $('amount').value = '';
-      $('project').value = '';
+      $('project').value = ''; $('project').dataset.prev = '';
       $('description').value = '';
       $('receipt').value = '';
       $('status').value = 'pending';
@@ -2879,10 +2915,53 @@
       recalcPartnerBalances();
     });
 
-    $('btnNewProject').addEventListener('click', async () => {
-      const name = (prompt(i18n[state.lang].newProjectPrompt || 'Project name:') || '').trim();
+    // New project window (feature 2026-10-12, "object in 10 seconds").
+    // Opened from the Projects tab or from "+ New project…" in the transaction
+    // form; in the second case the new project is selected in the form and the
+    // rest of the form is left as the user filled it.
+    let newProjectFromTxForm = false;
+    function openNewProjectModal(fromTxForm){
+      newProjectFromTxForm = fromTxForm;
+      $('newProjectForm').reset();
+      $('newProjectModal').classList.remove('hidden');
+      $('newProjectModal').classList.add('flex');
+      $('newProjectName').focus();
+    }
+
+    $('btnNewProject').addEventListener('click', () => openNewProjectModal(false));
+    $('closeNewProjectModal').addEventListener('click', () => closeModal('newProjectModal'));
+
+    $('project').addEventListener('change', (e) => {
+      const sel = e.target;
+      if (sel.value === '__new__') {
+        sel.value = sel.dataset.prev || '';
+        openNewProjectModal(true);
+        return;
+      }
+      sel.dataset.prev = sel.value;
+    });
+
+    $('newProjectForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = $('newProjectName').value.trim();
       if (!name) return;
-      const { error } = await supabaseClient.from('projects').insert({ org_id: state.orgId, name, created_by: state.user.id });
+      const contractRaw = $('newProjectContract').value;
+      const contractAmount = contractRaw === '' ? null : Number(contractRaw);
+      // LOCAL PREVIEW ONLY (/demo): no real Supabase user, keep the project in
+      // memory so the window can be tried out, same as the demo's withdrawals.
+      if (state.previewMode) {
+        if (state.projects.some(p => p.name === name)) { alert(i18n[state.lang].projectExists || 'A project with this name already exists.'); return; }
+        state.projects.push({ id: 'preview-' + Date.now(), name, contract_amount: contractAmount || null });
+        state.projects.sort((x, y) => x.name.localeCompare(y.name));
+        closeModal('newProjectModal');
+        populateProjectSelect();
+        if (newProjectFromTxForm) { $('project').value = name; $('project').dataset.prev = name; }
+        renderProjects();
+        return;
+      }
+      const { error } = await supabaseClient.from('projects').insert({
+        org_id: state.orgId, name, created_by: state.user.id, contract_amount: contractAmount || null
+      });
       if (error) {
         const msg = error.code === '23505'
           ? (i18n[state.lang].projectExists || 'A project with this name already exists.')
@@ -2891,9 +2970,12 @@
         notifyError('Could not create project.', error);
         return;
       }
-      ph('capture', 'project_created');
+      // No amounts to PostHog — only the fact of the action.
+      ph('capture', 'project_created', { source: newProjectFromTxForm ? 'tx_form' : 'projects_tab', has_contract: !!contractAmount });
+      closeModal('newProjectModal');
       await loadProjects();
       populateProjectSelect();
+      if (newProjectFromTxForm) { $('project').value = name; $('project').dataset.prev = name; }
       renderProjects();
     });
 
@@ -2991,7 +3073,7 @@
     ];
     state.projects = [
       { id: 'p1', name: 'Kowalski — czyszczenie kostki' },
-      { id: 'p2', name: 'Nowak — remont łazienki' }
+      { id: 'p2', name: 'Nowak — remont łazienki', contract_amount: 9000 }
     ];
     state.txs = [
       { id: 't1', date: '2026-07-02', project: 'Kowalski / Floriańska 12', amount: 3200, type: 'income', status: 'verified', creator: 'demo@local.test', createdByUserId: 'demo', partnerSlot: 'owner', category: 'Income', account: 'Bank', description: 'Zaliczka od klienta', receipt: null },
