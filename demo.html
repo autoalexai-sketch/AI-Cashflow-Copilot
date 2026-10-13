@@ -3271,7 +3271,7 @@
         state.projects.sort((x, y) => x.name.localeCompare(y.name));
         closeModal('newProjectModal');
         populateProjectSelect();
-        if (newProjectFromTxForm) { $('project').value = name; $('project').dataset.prev = name; }
+        if (newProjectTarget) { $(newProjectTarget).value = name; $(newProjectTarget).dataset.prev = name; }
         renderProjects();
         return;
       }
