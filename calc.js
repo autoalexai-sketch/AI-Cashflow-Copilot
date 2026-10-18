@@ -122,6 +122,12 @@
     return { shareA: shareA, shareB: shareB };
   }
 
+  // True if any non-rejected "Partner Draw B" row exists. Such draws are
+  // subtracted in the totals even in a solo org, so partner B must stay visible.
+  function hasMemberDraws(txs) {
+    return txs.some(function (t) { return t.type === 'draw' && t.partnerSlot === 'member' && t.status !== 'rejected'; });
+  }
+
   var api = {
     signedAmount: signedAmount,
     computeTotals: computeTotals,
@@ -129,7 +135,8 @@
     computeProjectSplit: computeProjectSplit,
     projectTotals: projectTotals,
     contractStatus: contractStatus,
-    effectiveShares: effectiveShares
+    effectiveShares: effectiveShares,
+    hasMemberDraws: hasMemberDraws
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.SBCalc = api;

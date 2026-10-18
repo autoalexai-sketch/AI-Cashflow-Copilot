@@ -1055,6 +1055,7 @@
       orgId:null,
       role:null,
       myMembershipId:null,
+      membersLoaded:false, // true after a successful loadMembers(); solo mode needs it
       partnerA:{name:'Partner A', share:50, earned:4650, withdrawn:2000},
       partnerB:{name:'Partner B', share:50, earned:4650, withdrawn:1100},
       currency:'PLN',
@@ -1333,6 +1334,7 @@
       const owner = data.find(m => m.role === 'owner');
       const member = data.find(m => m.role !== 'owner');
       if (mine) state.myMembershipId = mine.id;
+      state.membersLoaded = true;
       state.ownerMembershipId = owner ? owner.id : null;
       state.memberMembershipId = member ? member.id : null;
       // Shares live on the membership rows, so both partners see the same
@@ -1354,9 +1356,16 @@
     // 100 % (SBCalc.effectiveShares) and nothing about "Partner B" is shown.
     // The stored shares stay untouched - the invite offers 100 - partnerA.share.
     function applySoloMode(){
-      const solo = !hasPartner();
-      ['partnerBCard', 'setNameBField', 'shareBField'].forEach(id => $(id).classList.toggle('hidden', solo));
+      const hide = !showPartnerB();
+      ['partnerBCard', 'setNameBField', 'shareBField'].forEach(id => $(id).classList.toggle('hidden', hide));
     }
+
+    // Solo only once the members loaded fine; if that query failed we behave
+    // as before solo mode (stored shares, partner B visible).
+    function isSolo(){ return state.membersLoaded && !hasPartner(); }
+    // Solo VIEW: solo and no "Partner Draw B" rows. Those draws are still
+    // subtracted in the totals, so partner B stays visible while any exist.
+    function showPartnerB(){ return !(isSolo() && !SBCalc.hasMemberDraws(state.txs)); }
 
     // Realtime sync: without this, a transaction created by one partner only
     // appeared for the other after a manual page reload (loadTransactions()
@@ -1497,7 +1506,7 @@
       sel.innerHTML = '';
       if (direction === 'draw') {
         if (drawA) sel.appendChild(drawA);
-        if (drawB && hasPartner()) sel.appendChild(drawB);
+        if (drawB && !isSolo()) sel.appendChild(drawB);
       } else if (direction === 'transfer') {
         sel.innerHTML = '<option value="">—</option>';
       } else {
@@ -1688,6 +1697,7 @@
         approvedAt: row.approved_at || null,
         approvedBy: row.approved_by || null
       }));
+      applySoloMode();
     }
 
     function receiptFileName(path){
@@ -1941,7 +1951,7 @@
       // stays out of every total below until the user explicitly marks it
       // verified (see markTxPaid()). 'rejected' never counts.
       // Money logic lives in calc.js (unit-tested in tests/calc.test.js).
-      const eff = SBCalc.effectiveShares(state.partnerA.share, state.partnerB.share, hasPartner());
+      const eff = SBCalc.effectiveShares(state.partnerA.share, state.partnerB.share, !isSolo());
       const totals = SBCalc.computeTotals(state.txs, { taxRate: state.taxRate, shareA: eff.shareA, shareB: eff.shareB, drawMode: state.drawMode });
       const { income, expenses, net, reserve, distributable } = totals;
       // Partner card: profit share (still to pay out) · paid for work (draws) · total.
@@ -1957,7 +1967,7 @@
       $('partnerAwithdrawn').textContent = fmt(A.labor);
       $('partnerBwithdrawn').textContent = fmt(B.labor);
       applyDrawModeLabels();
-      $('split-ratio').textContent = hasPartner() ? eff.shareA + ' / ' + eff.shareB : eff.shareA + '%';
+      $('split-ratio').textContent = showPartnerB() ? eff.shareA + ' / ' + eff.shareB : eff.shareA + '%';
       $('shareDisplay').textContent = state.partnerA.share + ' / ' + state.partnerB.share;
       $('m-income').textContent = fmt(income);
       $('m-expense').textContent = fmt(expenses);
@@ -2219,7 +2229,7 @@
       // depends on the draw mode (see calc.js computeProjectSplit). Main figures
       // use verified transactions only; the parenthesised forecast adds
       // pending ones. Mirrors the accounting in recalcPartnerBalances().
-      const eff = SBCalc.effectiveShares(state.partnerA.share, state.partnerB.share, hasPartner());
+      const eff = SBCalc.effectiveShares(state.partnerA.share, state.partnerB.share, !isSolo());
       const splitFor = (statuses) => SBCalc.computeProjectSplit(txs,
         { taxRate: state.taxRate, shareA: eff.shareA, shareB: eff.shareB, drawMode: state.drawMode }, statuses);
       const sv = splitFor(['verified']);
@@ -2239,7 +2249,7 @@
         <div class="text-xs text-slate-400 font-semibold mb-2">${t.projSplitTitle}</div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
           ${partnerRow(state.partnerA.name, eff.shareA, sv.laborA, sf.laborA, sv.shareA, sf.shareA, sv.totalA, sf.totalA)}
-          ${hasPartner() ? partnerRow(state.partnerB.name, eff.shareB, sv.laborB, sf.laborB, sv.shareB, sf.shareB, sv.totalB, sf.totalB) : ''}
+          ${showPartnerB() ? partnerRow(state.partnerB.name, eff.shareB, sv.laborB, sf.laborB, sv.shareB, sf.shareB, sv.totalB, sf.totalB) : ''}
         </div>
         <div class="text-[11px] text-slate-500 mt-2">${t.monthlyTax}: ${pair(sv.reserve, sf.reserve)} · ${t.projSplitForecastNote}</div>`;
       const list = $('projectTxModalList');
@@ -3034,7 +3044,7 @@
         taxRate: state.taxRate,
         distributable: $('monthDistrib').textContent,
         partnerA: { name: state.partnerA.name, earned: $('partnerAearned').textContent, withdrawn: $('partnerAwithdrawn').textContent, remaining: $('partnerAremaining').textContent },
-        partnerB: !hasPartner() ? null : { name: state.partnerB.name, earned: $('partnerBearned').textContent, withdrawn: $('partnerBwithdrawn').textContent, remaining: $('partnerBremaining').textContent },
+        partnerB: !showPartnerB() ? null : { name: state.partnerB.name, earned: $('partnerBearned').textContent, withdrawn: $('partnerBwithdrawn').textContent, remaining: $('partnerBremaining').textContent },
         txs: state.txs.map(t => [t.date, t.project || '—', fmt(t.amount), typeLabel(t.type), statusLabel(t.status)])
       };
     }
@@ -3583,7 +3593,7 @@
     function refreshTopStatic(){
       $('partnerAName').textContent = state.partnerA.name;
       $('partnerBName').textContent = state.partnerB.name;
-      $('partnerAshare').textContent = SBCalc.effectiveShares(state.partnerA.share, state.partnerB.share, hasPartner()).shareA + '%';
+      $('partnerAshare').textContent = SBCalc.effectiveShares(state.partnerA.share, state.partnerB.share, !isSolo()).shareA + '%';
       $('partnerBshare').textContent = state.partnerB.share + '%';
       applySoloMode();
     }

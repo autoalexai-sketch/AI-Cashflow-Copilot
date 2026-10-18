@@ -2,7 +2,7 @@
 // No dependencies: uses Node's built-in test runner (Node 18+).
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { computeTotals, computeProjectSplit, accountBalance, signedAmount, projectTotals, contractStatus, effectiveShares } = require('../calc.js');
+const { computeTotals, computeProjectSplit, accountBalance, signedAmount, projectTotals, contractStatus, effectiveShares, hasMemberDraws } = require('../calc.js');
 
 // Money is stored as floats today, so compare to the cent.
 const cents = (x) => Math.round(x * 100);
@@ -297,4 +297,26 @@ test('solo totals: owner gets the whole share, partner B gets 0', () => {
   eqMoney(t.partnerA.total, 720);
   eqMoney(t.partnerB.share, 0);
   eqMoney(t.partnerB.total, 0);
+});
+
+// Solo org that still has "Partner Draw B" rows: they are subtracted in the
+// totals, so the UI must keep showing partner B (see showPartnerB in app.html).
+test('hasMemberDraws: verified member draw -> true', () => {
+  assert.equal(hasMemberDraws([tx('draw', 50, { partnerSlot: 'member' })]), true);
+});
+
+test('hasMemberDraws: pending member draw -> true', () => {
+  assert.equal(hasMemberDraws([tx('draw', 50, { partnerSlot: 'member', status: 'pending' })]), true);
+});
+
+test('hasMemberDraws: rejected-only member draw -> false', () => {
+  assert.equal(hasMemberDraws([tx('draw', 50, { partnerSlot: 'member', status: 'rejected' })]), false);
+});
+
+test('hasMemberDraws: owner draws and non-draw member rows only -> false', () => {
+  assert.equal(hasMemberDraws([tx('draw', 50), tx('income', 100, { partnerSlot: 'member' })]), false);
+});
+
+test('hasMemberDraws: empty list -> false', () => {
+  assert.equal(hasMemberDraws([]), false);
 });
