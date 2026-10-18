@@ -2,7 +2,7 @@
 // No dependencies: uses Node's built-in test runner (Node 18+).
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { computeTotals, computeProjectSplit, accountBalance, signedAmount, projectTotals, contractStatus } = require('../calc.js');
+const { computeTotals, computeProjectSplit, accountBalance, signedAmount, projectTotals, contractStatus, effectiveShares } = require('../calc.js');
 
 // Money is stored as floats today, so compare to the cent.
 const cents = (x) => Math.round(x * 100);
@@ -275,4 +275,26 @@ test('contract status: exact to the cent', () => {
   assert.equal(cents(s.received), 30);
   assert.equal(cents(s.remaining), 10000);
   assert.equal(s.remaining, 100);   // no float tail
+});
+
+// Solo mode: until a partner accepts the invite, the owner keeps 100 % of the
+// profit. The stored shares (e.g. 50/50, which the invite offers) are kept.
+test('effectiveShares: solo org -> owner 100 %, partner B 0 %', () => {
+  assert.deepEqual(effectiveShares(50, 50, false), { shareA: 100, shareB: 0 });
+});
+
+test('effectiveShares: with a partner -> stored shares unchanged', () => {
+  assert.deepEqual(effectiveShares(70, 30, true), { shareA: 70, shareB: 30 });
+});
+
+test('solo totals: owner gets the whole share, partner B gets 0', () => {
+  const s = effectiveShares(50, 50, false);
+  const t = computeTotals([tx('income', 1000), tx('expense', 200)],
+    { taxRate: 10, shareA: s.shareA, shareB: s.shareB, drawMode: 'labor' });
+  eqMoney(t.reserve, 80);              // 10 % of 800
+  eqMoney(t.distributable, 720);
+  eqMoney(t.partnerA.share, 720);
+  eqMoney(t.partnerA.total, 720);
+  eqMoney(t.partnerB.share, 0);
+  eqMoney(t.partnerB.total, 0);
 });
