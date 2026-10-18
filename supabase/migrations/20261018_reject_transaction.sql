@@ -34,8 +34,40 @@ begin
   update public.transactions
      set status = 'rejected'
    where id = p_tx and approved_at is null and status <> 'rejected';
+  -- Never report success for a no-op (row approved or rejected meanwhile).
+  if not found then
+    raise exception 'Transaction is already approved or rejected' using errcode = 'P0001';
+  end if;
 end;
 $$;
 
 revoke all on function public.reject_transaction(uuid) from public, anon;
 grant execute on function public.reject_transaction(uuid) to authenticated;
+
+-- approve_transaction(): a rejected row can no longer be approved (otherwise a
+-- later status flip back to verified would carry a stale approval).
+create or replace function public.approve_transaction(p_tx uuid)
+returns void
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_org uuid;
+  v_creator uuid;
+begin
+  select org_id, created_by_user_id into v_org, v_creator
+  from public.transactions where id = p_tx;
+
+  if not found or not public.is_org_member(v_org) then
+    raise exception 'Transaction not found' using errcode = 'P0002';
+  end if;
+  if v_creator = auth.uid() then
+    raise exception 'You cannot approve your own transaction' using errcode = '42501';
+  end if;
+
+  update public.transactions
+     set approved_by = auth.uid(), approved_at = now()
+   where id = p_tx and approved_at is null and status <> 'rejected';
+end;
+$$;
