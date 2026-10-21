@@ -2225,6 +2225,12 @@
     $('submitWithdraw').addEventListener('click', async () => {
       const amount = Number($('withdrawAmount').value || 0);
       if (!amount || amount <= 0) return;
+      // Double-click guard (audit 2026-10-20): a second click before the
+      // insert returns would record a second verified draw.
+      const btn = $('submitWithdraw');
+      if (btn.disabled) return;
+      btn.disabled = true;
+      try {
       const category = withdrawSlot === 'owner' ? 'Partner Draw A' : 'Partner Draw B';
       const date = new Date().toISOString().slice(0,10);
       const account = $('withdrawAccount').value;
@@ -2272,6 +2278,9 @@
         closeModal('withdrawModal');
       } catch (err) {
         notifyError('Could not record withdrawal.', err);
+      }
+      } finally {
+        btn.disabled = false;
       }
     });
 
@@ -2820,6 +2829,12 @@
     $('saveTx').addEventListener('click', async () => {
       const amount = Number($('amount').value || 0);
       if (!amount || amount <= 0) return;
+      // Double-click guard (audit 2026-10-20): a second click before the
+      // insert returns would save a duplicate row (and upload the receipt twice).
+      const btn = $('saveTx');
+      if (btn.disabled) return;
+      btn.disabled = true;
+      try {
 
       let receiptPath = null;
       const file = await compressReceipt($('receipt').files[0]);
@@ -2853,6 +2868,9 @@
       renderTxTable();
       recalcPartnerBalances();
       clearTxForm();
+      } finally {
+        btn.disabled = false;
+      }
     });
 
     $('resetTx').addEventListener('click', clearTxForm);
