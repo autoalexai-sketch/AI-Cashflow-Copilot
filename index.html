@@ -62,6 +62,15 @@
   .btn { display: inline-block; text-decoration: none; font-weight: 700; border-radius: 12px; padding: 11px 20px; font-size: 15px; white-space: nowrap; }
   .btn-primary { background: #4338ca; color: #fff; }
   .btn-ghost { background: #fffefb; color: #2a2a26; border: 1px solid #ddd8cb; }
+  .cookie-banner { position: fixed; inset: auto 0 0 0; z-index: 40; padding: 16px; }
+  .cookie-banner.hidden { display: none; }
+  .cookie-banner-card { max-width: 640px; margin: 0 auto; background: #fffefb; border: 1px solid #e6e1d5; border-radius: 16px; padding: 18px 20px; box-shadow: 0 14px 40px rgba(40,36,28,.16); }
+  .cookie-banner-card p { margin: 0 0 12px; font-size: 14px; color: #4a453b; }
+  .cookie-banner-card a { color: #4338ca; text-decoration: underline; }
+  .cookie-banner-actions { display: flex; gap: 10px; justify-content: flex-end; }
+  .cookie-banner-actions button { border-radius: 10px; padding: 8px 16px; font-size: 13px; font-weight: 700; cursor: pointer; border: 1px solid #ddd8cb; }
+  .cookie-banner-actions .cb-reject { background: #fffefb; color: #2a2a26; }
+  .cookie-banner-actions .cb-accept { background: #4338ca; color: #fff; border-color: #4338ca; }
   .btn-sm { padding: 8px 14px; font-size: 14px; }
 
   .hero { padding: 62px 0 46px; }
@@ -161,7 +170,8 @@
   }
 </style>
   <!-- PostHog (EU-hosted product analytics) — see privacy.html for disclosure.
-       Project token is a write-only public key, safe to embed client-side. -->
+       Project token is a write-only public key, safe to embed client-side.
+       Loaded only after cookie consent — see the consent banner in <body>. -->
   <script>
     !function(t,e){var o,n,p,r;e.__SV||(window.posthog && window.posthog.__loaded)||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init os ds Ie us vs ss ls capture calculateEventProperties register register_once register_for_session unregister unregister_for_session ws getFeatureFlag getFeatureFlagPayload getFeatureFlagResult isFeatureEnabled reloadFeatureFlags updateFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey displaySurvey cancelPendingSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException startExceptionAutocapture stopExceptionAutocapture loadToolbar get_property getSessionProperty bs ps createPersonProfile setInternalOrTestUser ys es $s opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing get_explicit_consent_status is_capturing clear_opt_in_out_capturing cs debug M gs getPageViewId captureTraceFeedback captureTraceMetric Qr".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
     // posthog.init() is what actually downloads array.js (~6 s of main-thread
@@ -169,20 +179,28 @@
     // never showed up in profiles). The inline snippet above only installs a
     // stub that queues calls, so init can safely wait until the page is loaded
     // and the browser is idle: nothing is lost, the queue flushes on arrival.
-    function initPostHogWhenIdle(){
-      const start = () => { posthog.init('phc_mraT3w4Zk57A9qqLysCweuZ6GzNugBHgoK5QDyDKsJTn', {
+    var sbPostHogStarted = false;
+    function sbStartPostHog(){
+      if (sbPostHogStarted) return;
+      sbPostHogStarted = true;
+      posthog.init('phc_mraT3w4Zk57A9qqLysCweuZ6GzNugBHgoK5QDyDKsJTn', {
         api_host: 'https://eu.i.posthog.com',
         defaults: '2026-01-30',
         capture_performance: false
       });
-      };
+    }
+    function initPostHogWhenIdle(){
       const schedule = () => (window.requestIdleCallback
-        ? requestIdleCallback(start, { timeout: 5000 })
-        : setTimeout(start, 2500));
+        ? requestIdleCallback(sbStartPostHog, { timeout: 5000 })
+        : setTimeout(sbStartPostHog, 2500));
       if (document.readyState === 'complete') schedule();
       else window.addEventListener('load', schedule, { once: true });
     }
-    initPostHogWhenIdle();
+    // Consent gate (GDPR/ePrivacy): without prior "accepted" consent, PostHog
+    // is never scheduled — array.js isn't even downloaded. See cookie banner.
+    try {
+      if (localStorage.getItem('sb_cookie_consent') === 'accepted') initPostHogWhenIdle();
+    } catch (e) {}
   </script>
   <script>
     // Landing CTA tracking: one delegated listener covers every button that
@@ -655,17 +673,28 @@
     <a href="/help" data-t="fHelp">Pomoc</a>
     <a href="/privacy" data-t="fPrivacy">Prywatność</a>
     <a href="/terms" data-t="fTerms">Regulamin</a>
+    <a href="#" id="sbCookieSettingsLink" data-t="fCookieSettings">Ustawienia cookie</a>
     <a href="mailto:support@ai-consilium.com">support@ai-consilium.com</a>
     <p style="margin-top:14px;font-size:13px;color:#8a8477">© 2026 SplitBooks</p>
   </div>
 </footer>
 
+<div id="sbCookieBanner" class="cookie-banner hidden">
+  <div class="cookie-banner-card">
+    <p><span data-t="cookieText">We use PostHog (EU-hosted) for basic product analytics — to see which features are used. We never send transaction amounts or receipt photos.</span> <a href="/privacy" data-t="fPrivacy">Privacy</a>.</p>
+    <div class="cookie-banner-actions">
+      <button type="button" id="sbCookieReject" class="cb-reject" data-t="cookieReject">Reject</button>
+      <button type="button" id="sbCookieAccept" class="cb-accept" data-t="cookieAccept">Accept</button>
+    </div>
+  </div>
+</div>
+
 <script>
 (function () {
   var UI = {
-    pl: { navLogin: 'Zaloguj się', finalH: 'Zobacz, zanim się zarejestrujesz', finalP: 'Demo z gotowymi danymi — otwiera się od razu, bez maila.', finalBtn1: 'Zobacz przewodnik', finalBtn2: 'Załóż konto', fPricing: 'Cennik', fHelp: 'Pomoc', fPrivacy: 'Prywatność', fTerms: 'Regulamin' },
-    uk: { navLogin: 'Увійти', finalH: 'Подивіться, перш ніж реєструватись', finalP: 'Демо з готовими даними — відкривається одразу, без пошти.', finalBtn1: 'Подивитись екскурсію', finalBtn2: 'Створити акаунт', fPricing: 'Ціни', fHelp: 'Допомога', fPrivacy: 'Приватність', fTerms: 'Умови' },
-    en: { navLogin: 'Log in', finalH: 'Take a look before you sign up', finalP: 'Demo with sample data — opens instantly, no email needed.', finalBtn1: 'Take the tour', finalBtn2: 'Create account', fPricing: 'Pricing', fHelp: 'Help', fPrivacy: 'Privacy', fTerms: 'Terms' }
+    pl: { navLogin: 'Zaloguj się', finalH: 'Zobacz, zanim się zarejestrujesz', finalP: 'Demo z gotowymi danymi — otwiera się od razu, bez maila.', finalBtn1: 'Zobacz przewodnik', finalBtn2: 'Załóż konto', fPricing: 'Cennik', fHelp: 'Pomoc', fPrivacy: 'Prywatność', fTerms: 'Regulamin', fCookieSettings: 'Ustawienia cookie', cookieText: 'Używamy PostHog (hosting w UE) do podstawowej analizy produktu — widzimy, które funkcje są używane. Nigdy nie przekazujemy kwot transakcji ani zdjęć paragonów.', cookieAccept: 'Akceptuj', cookieReject: 'Odrzuć' },
+    uk: { navLogin: 'Увійти', finalH: 'Подивіться, перш ніж реєструватись', finalP: 'Демо з готовими даними — відкривається одразу, без пошти.', finalBtn1: 'Подивитись екскурсію', finalBtn2: 'Створити акаунт', fPricing: 'Ціни', fHelp: 'Допомога', fPrivacy: 'Приватність', fTerms: 'Умови', fCookieSettings: 'Налаштування cookie', cookieText: 'Ми використовуємо PostHog (хостинг у ЄС) для базової аналітики продукту — бачимо, якими функціями користуються. Суми транзакцій і фото чеків ніколи не передаються.', cookieAccept: 'Прийняти', cookieReject: 'Відхилити' },
+    en: { navLogin: 'Log in', finalH: 'Take a look before you sign up', finalP: 'Demo with sample data — opens instantly, no email needed.', finalBtn1: 'Take the tour', finalBtn2: 'Create account', fPricing: 'Pricing', fHelp: 'Help', fPrivacy: 'Privacy', fTerms: 'Terms', fCookieSettings: 'Cookie settings', cookieText: 'We use PostHog (EU-hosted) for basic product analytics — to see which features are used. We never send transaction amounts or receipt photos.', cookieAccept: 'Accept', cookieReject: 'Reject' }
   };
 
   function pick() {
@@ -711,6 +740,34 @@
     }
   } catch (e) {}
 })();
+</script>
+
+<script>
+  (function () {
+    function getConsent() { try { return localStorage.getItem('sb_cookie_consent'); } catch (e) { return null; } }
+    function setConsent(v) { try { localStorage.setItem('sb_cookie_consent', v); } catch (e) {} }
+    var banner = document.getElementById('sbCookieBanner');
+    function showBanner() { if (banner) banner.classList.remove('hidden'); }
+    function hideBanner() { if (banner) banner.classList.add('hidden'); }
+    if (!getConsent()) showBanner();
+    var acceptBtn = document.getElementById('sbCookieAccept');
+    var rejectBtn = document.getElementById('sbCookieReject');
+    var settingsLink = document.getElementById('sbCookieSettingsLink');
+    if (acceptBtn) acceptBtn.addEventListener('click', function () {
+      setConsent('accepted');
+      hideBanner();
+      if (typeof initPostHogWhenIdle === 'function') initPostHogWhenIdle();
+    });
+    if (rejectBtn) rejectBtn.addEventListener('click', function () {
+      setConsent('rejected');
+      hideBanner();
+      try { if (window.posthog && typeof posthog.opt_out_capturing === 'function') posthog.opt_out_capturing(); } catch (e) {}
+    });
+    if (settingsLink) settingsLink.addEventListener('click', function (e) {
+      e.preventDefault();
+      showBanner();
+    });
+  })();
 </script>
 </body>
 </html>
