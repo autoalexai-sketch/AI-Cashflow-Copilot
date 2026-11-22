@@ -36,7 +36,7 @@
     var verified = function (t) { return t.status === 'verified'; };
     var income = sumCents(txs, function (t) { return t.type === 'income' && verified(t); });
     var expenses = sumCents(txs, function (t) { return t.type === 'expense' && verified(t); });
-    var split = computeSplitByPeriods(txs, opts, ['verified'], opts.sharePeriods);
+    var split = computeSplitByPeriods(txs, opts, ['verified'], opts.sharePeriods, opts.taxPeriods);
     return {
       income: fromCents(income),
       expenses: fromCents(expenses),
@@ -93,31 +93,44 @@
     };
   }
 
-  // Partner split when the shares changed over time (table share_periods).
-  // periods: [{ from: 'YYYY-MM-DD', shareA }], shareB = 100 - shareA.
-  // Each transaction belongs to the last period starting on or before its
-  // date (earlier dates fall into the first period). Each period is split
-  // with its own shares by computeProjectSplit and the results are summed,
-  // so a change of shares never re-splits money from before its start date.
-  // Note: the tax reserve is then counted per period (on that period's net).
-  // With no periods, the old single split over the whole history is used.
+  // Partner split when the shares or the tax rate changed over time
+  // (tables share_periods and tax_periods).
+  //   sharePeriods: [{ from: 'YYYY-MM-DD', shareA }], shareB = 100 - shareA
+  //   taxPeriods:   [{ from: 'YYYY-MM-DD', taxRate }]
+  // The history is cut at every start date of either list. Each piece is
+  // split by computeProjectSplit with the shares and rate in force on its
+  // start date, and the results are summed, so a change never re-counts
+  // money from before its start date. A transaction belongs to the last
+  // piece starting on or before its date (earlier dates: the first piece).
+  // A missing or empty list means opts.shareA/shareB or opts.taxRate apply
+  // everywhere. With neither list it is the old single split.
+  // Note: the tax reserve is then counted per piece (on that piece's net).
   var SPLIT_KEYS = ['laborA', 'laborB', 'reserve', 'remainder', 'shareA', 'shareB', 'totalA', 'totalB'];
-  function computeSplitByPeriods(txs, opts, statuses, periods) {
-    if (!periods || periods.length === 0) return computeProjectSplit(txs, opts, statuses);
-    var ps = periods.slice().sort(function (a, b) { return a.from < b.from ? -1 : a.from > b.from ? 1 : 0; });
-    var groups = ps.map(function () { return []; });
+  function byFrom(a, b) { return a.from < b.from ? -1 : a.from > b.from ? 1 : 0; }
+  function inForce(list, date) {
+    var hit = list[0];
+    for (var k = 1; k < list.length; k++) if (list[k].from <= date) hit = list[k];
+    return hit;
+  }
+  function computeSplitByPeriods(txs, opts, statuses, sharePeriods, taxPeriods) {
+    var sp = (sharePeriods || []).slice().sort(byFrom);
+    var tp = (taxPeriods || []).slice().sort(byFrom);
+    if (sp.length === 0 && tp.length === 0) return computeProjectSplit(txs, opts, statuses);
+    var starts = sp.concat(tp).map(function (p) { return p.from; }).sort();
+    starts = starts.filter(function (d, i) { return i === 0 || d !== starts[i - 1]; });
+    var groups = starts.map(function () { return []; });
     txs.forEach(function (t) {
-      var i = 0;
-      for (var k = 1; k < ps.length; k++) if (String(t.date || '') >= ps[k].from) i = k;
+      var d = String(t.date || ''), i = 0;
+      for (var k = 1; k < starts.length; k++) if (d >= starts[k]) i = k;
       groups[i].push(t);
     });
     var sum = {};
     SPLIT_KEYS.forEach(function (key) { sum[key] = 0; });
-    ps.forEach(function (p, i) {
-      var shareA = Number(p.shareA);
-      var r = computeProjectSplit(groups[i], {
-        taxRate: opts.taxRate, drawMode: opts.drawMode, shareA: shareA, shareB: 100 - shareA
-      }, statuses);
+    starts.forEach(function (from, i) {
+      var o = { taxRate: opts.taxRate, drawMode: opts.drawMode, shareA: opts.shareA, shareB: opts.shareB };
+      if (sp.length) { o.shareA = Number(inForce(sp, from).shareA); o.shareB = 100 - o.shareA; }
+      if (tp.length) o.taxRate = Number(inForce(tp, from).taxRate);
+      var r = computeProjectSplit(groups[i], o, statuses);
       SPLIT_KEYS.forEach(function (key) { sum[key] += toCents(r[key]); });
     });
     SPLIT_KEYS.forEach(function (key) { sum[key] = fromCents(sum[key]); });
