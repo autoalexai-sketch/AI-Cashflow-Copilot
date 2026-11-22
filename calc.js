@@ -36,7 +36,7 @@
     var verified = function (t) { return t.status === 'verified'; };
     var income = sumCents(txs, function (t) { return t.type === 'income' && verified(t); });
     var expenses = sumCents(txs, function (t) { return t.type === 'expense' && verified(t); });
-    var split = computeProjectSplit(txs, opts, ['verified']);
+    var split = computeSplitByPeriods(txs, opts, ['verified'], opts.sharePeriods);
     return {
       income: fromCents(income),
       expenses: fromCents(expenses),
@@ -93,6 +93,37 @@
     };
   }
 
+  // Partner split when the shares changed over time (table share_periods).
+  // periods: [{ from: 'YYYY-MM-DD', shareA }], shareB = 100 - shareA.
+  // Each transaction belongs to the last period starting on or before its
+  // date (earlier dates fall into the first period). Each period is split
+  // with its own shares by computeProjectSplit and the results are summed,
+  // so a change of shares never re-splits money from before its start date.
+  // Note: the tax reserve is then counted per period (on that period's net).
+  // With no periods, the old single split over the whole history is used.
+  var SPLIT_KEYS = ['laborA', 'laborB', 'reserve', 'remainder', 'shareA', 'shareB', 'totalA', 'totalB'];
+  function computeSplitByPeriods(txs, opts, statuses, periods) {
+    if (!periods || periods.length === 0) return computeProjectSplit(txs, opts, statuses);
+    var ps = periods.slice().sort(function (a, b) { return a.from < b.from ? -1 : a.from > b.from ? 1 : 0; });
+    var groups = ps.map(function () { return []; });
+    txs.forEach(function (t) {
+      var i = 0;
+      for (var k = 1; k < ps.length; k++) if (String(t.date || '') >= ps[k].from) i = k;
+      groups[i].push(t);
+    });
+    var sum = {};
+    SPLIT_KEYS.forEach(function (key) { sum[key] = 0; });
+    ps.forEach(function (p, i) {
+      var shareA = Number(p.shareA);
+      var r = computeProjectSplit(groups[i], {
+        taxRate: opts.taxRate, drawMode: opts.drawMode, shareA: shareA, shareB: 100 - shareA
+      }, statuses);
+      SPLIT_KEYS.forEach(function (key) { sum[key] += toCents(r[key]); });
+    });
+    SPLIT_KEYS.forEach(function (key) { sum[key] = fromCents(sum[key]); });
+    return sum;
+  }
+
   // Income and cost of a set of transactions (e.g. one project) for the
   // project cards, the project modal and the project export. Verified only,
   // same rule as every balance: pending is not money yet, rejected never is.
@@ -133,6 +164,7 @@
     computeTotals: computeTotals,
     accountBalance: accountBalance,
     computeProjectSplit: computeProjectSplit,
+    computeSplitByPeriods: computeSplitByPeriods,
     projectTotals: projectTotals,
     contractStatus: contractStatus,
     effectiveShares: effectiveShares,

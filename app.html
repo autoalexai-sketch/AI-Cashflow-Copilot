@@ -601,7 +601,10 @@
             <div id="setNameBField"><label class="text-xs text-slate-400" data-i18n="partnerBNameLabel">Partner B name</label><input id="setNameB" class="input w-full rounded-2xl px-4 py-3 mt-1" value="Partner B"></div>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div><label class="text-xs text-slate-400" data-i18n="shareALabel">Share A %</label><input id="shareA" type="range" min="0" max="100" value="50" class="w-full"></div>
+            <div><label class="text-xs text-slate-400" data-i18n="shareALabel">Share A %</label><input id="shareA" type="range" min="0" max="100" value="50" class="w-full">
+              <label class="text-xs text-slate-400 block mt-2" data-i18n="shareFromLabel">New shares apply from</label><input id="shareFrom" type="date" class="input rounded-2xl px-3 py-2 mt-1 text-sm">
+              <p class="text-[11px] text-slate-500 mt-1" data-i18n="shareFromHint">Earlier months keep the shares that applied then.</p>
+              <p id="shareHistory" class="text-[11px] text-slate-400 mt-1 hidden"></p></div>
             <div id="shareBField"><label class="text-xs text-slate-400" data-i18n="shareBLabel">Share B %</label><div id="shareDisplay" class="text-2xl font-black text-indigo-400 mt-2">50 / 50</div></div>
           </div>
           <div class="pt-2 border-t border-slate-800 mt-2">
@@ -904,7 +907,7 @@
         btnSaveTx:'Save transaction', btnReset:'Reset', btnNewProject:'+ New project', btnExportPdf:'Export PDF', btnExportExcel:'Export Excel', btnExportPdfByProject:'Export PDF by project', btnExportExcelByProject:'Export Excel by project', grandTotalLabel:'Grand total', btnSendReport:'Send to partners', btnLockMonth:'Lock month', btnUnlockMonth:'Unlock month',
         projectsTitle:'Projects', projectsSubtitle:'See which object is profitable and which one eats margin.', noProjects:'No projects yet', receiptsTitle:'Receipts', noReceipts:'No receipts yet', receiptLoading:'Loading…',
         monthlyTitle:'Monthly close', monthlySubtitle:'Export the report as PDF or Excel, send it to both partners, then lock the month.', monthlyIncome:'Income', monthlyExpenses:'Expenses', monthlyTax:'Tax reserve', monthlyDistrib:'Distributable',
-        settingsPartnerTitle:'Partner settings', settingsOrgTitle:'Organization settings', partnerANameLabel:'Partner A name', partnerBNameLabel:'Partner B name', shareALabel:'Share A %', shareBLabel:'Share B %',
+        settingsPartnerTitle:'Partner settings', settingsOrgTitle:'Organization settings', partnerANameLabel:'Partner A name', partnerBNameLabel:'Partner B name', shareALabel:'Share A %', shareBLabel:'Share B %', shareFromLabel:'New shares apply from', shareFromHint:'Earlier months keep the shares that applied then.', shareHistoryLabel:'Share history:', shareHistoryStart:'at first', shareHistoryFrom:'from', shareLockedMonth:'Shares cannot change inside a locked month. Pick a date after the last locked month.',
         drawModeLabel:'Partner payouts are', drawModeLabor:'Payment for work (on top of the profit share)', drawModeAdvance:'An advance from the profit share', drawModeHintLabor:'Each payout is paid for the partner\'s work. It is added to their profit share: Profit share + Paid for work = Total.', drawModeHintAdvance:'Payouts are taken from the partner\'s own profit share: Profit share − Paid out = Still to pay.', projSplitPaid:'Paid out', partnerToPayLabel:'Still to pay', projSplitToPay:'Still to pay for project', orgNameLabel:'Organization name', orgNamePlaceholder:'e.g. your company name', inviteSessionExpired:'Your session has expired. Log out and log in again, then retry.', baseCurrencyLabel:'Base currency', taxRateLabel:'Tax reserve rate', defaultLangLabel:'Default language', storageModeLabel:'Storage mode', storageModeValue:'Synced to your account (Supabase)',
         filterProject:'Filter by project', filterStatus:'Filter by status', taxReserveCalc:'Tax reserve from income', receiptModalTitle:'Receipt preview', editTransactionTitle:'Edit transaction', btnSaveChanges:'Save changes', btnDeleteTx:'Delete',
         settingsSecurityTitle:'Security & sync', themeTitle:'Appearance', themeDesc:'Switch between dark and light theme on this device.', pinTitle:'Device PIN lock', pinDesc:'Optional 4-digit code for this device only. Local convenience lock, not a substitute for account security.',
@@ -955,7 +958,7 @@
         btnSaveTx:'Zapisz transakcję', btnReset:'Reset', btnNewProject:'+ Nowy projekt', btnExportPdf:'Eksportuj PDF', btnExportExcel:'Eksportuj Excel', btnExportPdfByProject:'Eksportuj PDF według projektów', btnExportExcelByProject:'Eksportuj Excel według projektów', grandTotalLabel:'Razem', btnSendReport:'Wyślij do partnerów', btnLockMonth:'Zablokuj miesiąc', btnUnlockMonth:'Odblokuj miesiąc',
         projectsTitle:'Projekty', projectsSubtitle:'Zobacz, które zlecenie jest rentowne, a które zjada marżę.', noProjects:'Brak projektów', receiptsTitle:'Paragony', noReceipts:'Brak paragonów', receiptLoading:'Ładowanie…',
         monthlyTitle:'Zamknięcie miesiąca', monthlySubtitle:'Wyeksportuj raport do PDF lub Excela, wyślij do partnerów i zablokuj miesiąc.', monthlyIncome:'Przychody', monthlyExpenses:'Koszty', monthlyTax:'Rezerwa podatkowa', monthlyDistrib:'Do podziału',
-        settingsPartnerTitle:'Ustawienia partnerów', settingsOrgTitle:'Ustawienia organizacji', partnerANameLabel:'Nazwa partnera A', partnerBNameLabel:'Nazwa partnera B', shareALabel:'Udział A %', shareBLabel:'Udział B %',
+        settingsPartnerTitle:'Ustawienia partnerów', settingsOrgTitle:'Ustawienia organizacji', partnerANameLabel:'Nazwa partnera A', partnerBNameLabel:'Nazwa partnera B', shareALabel:'Udział A %', shareBLabel:'Udział B %', shareFromLabel:'Nowe udziały obowiązują od', shareFromHint:'Wcześniejsze miesiące zachowują udziały, które wtedy obowiązywały.', shareHistoryLabel:'Historia udziałów:', shareHistoryStart:'na początku', shareHistoryFrom:'od', shareLockedMonth:'Nie można zmienić udziałów w zamkniętym miesiącu. Wybierz datę po ostatnim zamkniętym miesiącu.',
         drawModeLabel:'Wypłaty wspólników to', drawModeLabor:'Wynagrodzenie za pracę (oprócz udziału w zysku)', drawModeAdvance:'Zaliczka z udziału w zysku', drawModeHintLabor:'Każda wypłata to zapłata za pracę wspólnika. Dodaje się do jego udziału: Udział w zysku + Wypłacono za pracę = Razem.', drawModeHintAdvance:'Wypłaty są pobierane z własnego udziału wspólnika: Udział w zysku − Wypłacono = Do wypłaty.', projSplitPaid:'Wypłacono', partnerToPayLabel:'Do wypłaty', projSplitToPay:'Do wypłaty za projekt', orgNameLabel:'Nazwa organizacji', orgNamePlaceholder:'np. nazwa Twojej firmy', inviteSessionExpired:'Sesja wygasła. Wyloguj się i zaloguj ponownie, potem spróbuj jeszcze raz.', baseCurrencyLabel:'Waluta bazowa', taxRateLabel:'Stawka rezerwy podatkowej', defaultLangLabel:'Język domyślny', storageModeLabel:'Tryb zapisu', storageModeValue:'Synchronizowane z Twoim kontem (Supabase)',
         filterProject:'Filtruj po projekcie', filterStatus:'Filtruj po statusie', taxReserveCalc:'Rezerwa podatkowa z przychodu', receiptModalTitle:'Podgląd paragonu', editTransactionTitle:'Edytuj transakcję', btnSaveChanges:'Zapisz zmiany', btnDeleteTx:'Usuń',
         settingsSecurityTitle:'Bezpieczeństwo i synchronizacja', themeTitle:'Wygląd', themeDesc:'Przełącz między ciemnym a jasnym motywem na tym urządzeniu.', pinTitle:'Blokada PIN urządzenia', pinDesc:'Opcjonalny 4-cyfrowy kod tylko dla tego urządzenia. Lokalna wygoda, nie zabezpieczenie konta.',
@@ -1006,7 +1009,7 @@
         btnSaveTx:'Зберегти транзакцію', btnReset:'Скинути', btnNewProject:'+ Новий проєкт', btnExportPdf:'Експортувати PDF', btnExportExcel:'Експортувати Excel', btnExportPdfByProject:'Експортувати PDF за проєктами', btnExportExcelByProject:'Експортувати Excel за проєктами', grandTotalLabel:'Загалом', btnSendReport:'Надіслати партнерам', btnLockMonth:'Заблокувати місяць', btnUnlockMonth:'Розблокувати місяць',
         projectsTitle:'Проєкти', projectsSubtitle:'Дивіться, який об’єкт прибутковий, а який з’їдає маржу.', noProjects:'Ще немає проєктів', receiptsTitle:'Чеки', noReceipts:'Ще немає чеків', receiptLoading:'Завантаження…',
         monthlyTitle:'Закриття місяця', monthlySubtitle:'Експортуйте звіт у PDF або Excel, надішліть партнерам і заблокуйте місяць.', monthlyIncome:'Дохід', monthlyExpenses:'Витрати', monthlyTax:'Податковий резерв', monthlyDistrib:'До розподілу',
-        settingsPartnerTitle:'Налаштування партнерів', settingsOrgTitle:'Налаштування організації', partnerANameLabel:'Ім’я партнера A', partnerBNameLabel:'Ім’я партнера B', shareALabel:'Частка A %', shareBLabel:'Частка B %',
+        settingsPartnerTitle:'Налаштування партнерів', settingsOrgTitle:'Налаштування організації', partnerANameLabel:'Ім’я партнера A', partnerBNameLabel:'Ім’я партнера B', shareALabel:'Частка A %', shareBLabel:'Частка B %', shareFromLabel:'Нові частки діють з', shareFromHint:'Попередні місяці зберігають частки, що діяли тоді.', shareHistoryLabel:'Історія часток:', shareHistoryStart:'спочатку', shareHistoryFrom:'з', shareLockedMonth:'Частки не можна змінити всередині закритого місяця. Оберіть дату після останнього закритого місяця.',
         drawModeLabel:'Виплати партнерам — це', drawModeLabor:'Оплата за роботу (крім частки прибутку)', drawModeAdvance:'Аванс із частки прибутку', drawModeHintLabor:'Кожна виплата — це оплата роботи партнера. Вона додається до його частки: Частка прибутку + Виплачено за роботу = Разом.', drawModeHintAdvance:'Виплати беруться з власної частки партнера: Частка прибутку − Виплачено = До виплати.', projSplitPaid:'Виплачено', partnerToPayLabel:'До виплати', projSplitToPay:'До виплати за проєктом', orgNameLabel:'Назва організації', orgNamePlaceholder:'напр. назва вашої компанії', inviteSessionExpired:'Сесія завершилась. Вийдіть і увійдіть знову, потім повторіть.', baseCurrencyLabel:'Базова валюта', taxRateLabel:'Ставка податкового резерву', defaultLangLabel:'Мова за замовчуванням', storageModeLabel:'Режим збереження', storageModeValue:'Синхронізовано з вашим акаунтом (Supabase)',
         filterProject:'Фільтр за проєктом', filterStatus:'Фільтр за статусом', taxReserveCalc:'Податковий резерв з доходу', receiptModalTitle:'Перегляд чека', editTransactionTitle:'Редагувати транзакцію', btnSaveChanges:'Зберегти зміни', btnDeleteTx:'Видалити',
         settingsSecurityTitle:'Безпека та синхронізація', themeTitle:'Вигляд', themeDesc:'Перемикайте темну та світлу тему на цьому пристрої.', pinTitle:'PIN-блокування пристрою', pinDesc:'Необов’язковий 4-значний код лише для цього пристрою. Локальна зручність, не захист акаунта.',
@@ -1056,6 +1059,7 @@
       role:null,
       myMembershipId:null,
       membersLoaded:false, // true after a successful loadMembers(); solo mode needs it
+      sharePeriods:[], // share_periods rows: [{from, shareA}] - shares from a date (see calc.js computeSplitByPeriods)
       partnerA:{name:'Partner A', share:50, earned:4650, withdrawn:2000},
       partnerB:{name:'Partner B', share:50, earned:4650, withdrawn:1100},
       currency:'PLN',
@@ -1189,6 +1193,7 @@
         await Promise.all([
           loadTaxRate(),
           loadMembers(),
+          loadSharePeriods(),
           loadTransactions(),
           loadProjects(),
           loadCategories(),
@@ -1324,6 +1329,34 @@
     // shared org-level field. Owner's row maps to the "Partner A" slot in the
     // UI, the other member's row maps to "Partner B" (matches partnerSlotFor()
     // used elsewhere for balance attribution).
+    // History of partner shares (share_periods). Empty for orgs that never
+    // changed shares: then memberships.share_percent applies to everything.
+    async function loadSharePeriods(){
+      const { data, error } = await supabaseClient
+        .from('share_periods')
+        .select('effective_from, share_a')
+        .eq('org_id', state.orgId)
+        .order('effective_from', { ascending: true });
+      if (error) { console.warn('Could not load share history:', error.message); state.sharePeriods = []; return; }
+      state.sharePeriods = (data || []).map(r => ({ from: r.effective_from, shareA: Number(r.share_a) }));
+      renderShareHistory();
+    }
+
+    // Periods used for money: none while solo (the owner keeps 100 %).
+    function activeSharePeriods(){ return isSolo() ? null : state.sharePeriods; }
+
+    function renderShareHistory(){
+      const box = $('shareHistory');
+      if (!box) return;
+      const t = i18n[state.lang];
+      const ps = state.sharePeriods;
+      if (!ps || ps.length < 2) { box.textContent = ''; box.classList.add('hidden'); return; }
+      box.classList.remove('hidden');
+      box.textContent = t.shareHistoryLabel + ' ' + ps.map((p, i) =>
+        (i === 0 ? t.shareHistoryStart : t.shareHistoryFrom + ' ' + p.from) + ': ' + p.shareA + ' / ' + (100 - p.shareA)
+      ).join(' · ');
+    }
+
     async function loadMembers(){
       const { data, error } = await supabaseClient
         .from('memberships')
@@ -1635,7 +1668,7 @@
         $(id).disabled = locked;
       });
       // Shares and currency are organization-wide: owner only.
-      ['shareA','currency','orgName','drawMode'].forEach(id => { $(id).disabled = locked || state.role !== 'owner'; });
+      ['shareA','shareFrom','currency','orgName','drawMode'].forEach(id => { $(id).disabled = locked || state.role !== 'owner'; });
       refreshTaxRateUI();
       refreshPartnerNameUI();
       const btn = $('btnSettingsLock');
@@ -1952,7 +1985,7 @@
       // verified (see markTxPaid()). 'rejected' never counts.
       // Money logic lives in calc.js (unit-tested in tests/calc.test.js).
       const eff = SBCalc.effectiveShares(state.partnerA.share, state.partnerB.share, !isSolo());
-      const totals = SBCalc.computeTotals(state.txs, { taxRate: state.taxRate, shareA: eff.shareA, shareB: eff.shareB, drawMode: state.drawMode });
+      const totals = SBCalc.computeTotals(state.txs, { taxRate: state.taxRate, shareA: eff.shareA, shareB: eff.shareB, drawMode: state.drawMode, sharePeriods: activeSharePeriods() });
       const { income, expenses, net, reserve, distributable } = totals;
       // Partner card: profit share (still to pay out) · paid for work (draws) · total.
       const A = totals.partnerA, B = totals.partnerB;
@@ -2251,8 +2284,8 @@
       // use verified transactions only; the parenthesised forecast adds
       // pending ones. Mirrors the accounting in recalcPartnerBalances().
       const eff = SBCalc.effectiveShares(state.partnerA.share, state.partnerB.share, !isSolo());
-      const splitFor = (statuses) => SBCalc.computeProjectSplit(txs,
-        { taxRate: state.taxRate, shareA: eff.shareA, shareB: eff.shareB, drawMode: state.drawMode }, statuses);
+      const splitFor = (statuses) => SBCalc.computeSplitByPeriods(txs,
+        { taxRate: state.taxRate, shareA: eff.shareA, shareB: eff.shareB, drawMode: state.drawMode }, statuses, activeSharePeriods());
       const sv = splitFor(['verified']);
       const sf = splitFor(['verified', 'pending']);
       const pair = (a, b) => fmt(a) + (Math.abs(b - a) > 0.005 ? ` <span class="text-slate-500 font-normal">(${fmt(b)})</span>` : '');
@@ -2967,21 +3000,28 @@
     $('filterProject').addEventListener('change', renderTxTable);
     $('filterStatus').addEventListener('change', renderTxTable);
 
+    // Dragging only shows the new numbers; money is recalculated after the
+    // change is saved with its start date (past periods keep their shares).
     $('shareA').addEventListener('input', e => {
-      state.partnerA.share = Number(e.target.value);
-      state.partnerB.share = 100 - state.partnerA.share;
-      recalcPartnerBalances();
+      const a = Number(e.target.value);
+      $('shareDisplay').textContent = a + ' / ' + (100 - a);
     });
 
-    // Saved when the slider is released. Only the owner may change shares
-    // (RLS membership_update + membership_self_update_guard trigger).
+    // Saved when the slider is released: set_partner_shares() records the
+    // change from the chosen date (not inside a locked month) and updates
+    // memberships.share_percent. Owner only; a direct UPDATE is refused.
     $('shareA').addEventListener('change', async () => {
-      if (state.role !== 'owner' || !state.ownerMembershipId) return;
-      const updates = [supabaseClient.from('memberships').update({ share_percent: state.partnerA.share }).eq('id', state.ownerMembershipId)];
-      if (state.memberMembershipId) updates.push(supabaseClient.from('memberships').update({ share_percent: state.partnerB.share }).eq('id', state.memberMembershipId));
-      const results = await Promise.all(updates);
-      const failed = results.find(r => r.error);
-      if (failed) notifyError('Could not save partner shares.', failed.error);
+      if (state.role !== 'owner' || !state.orgId) return;
+      const a = Number($('shareA').value);
+      const from = $('shareFrom').value || new Date().toISOString().slice(0,10);
+      const { error } = await supabaseClient.rpc('set_partner_shares', { p_org: state.orgId, p_share_a: a, p_from: from });
+      if (error) {
+        const t = i18n[state.lang];
+        if (String(error.message || '').includes('SHARES_LOCKED_MONTH')) alert(t.shareLockedMonth);
+        else notifyError('Could not save partner shares.', error);
+      }
+      await Promise.all([loadMembers(), loadSharePeriods()]);
+      refreshUI();
     });
 
     $('setNameA').addEventListener('input', e => {
@@ -3603,6 +3643,8 @@
       renderMonthLockUI();
       refreshTaxRateUI();
       refreshPartnerNameUI();
+      renderShareHistory();
+      if (!$('shareFrom').value) $('shareFrom').value = new Date().toISOString().slice(0,10);
       renderCategoriesList();
       renderPreview();
       populateFilters();
