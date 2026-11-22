@@ -114,13 +114,29 @@
     return { contract: fromCents(contract), received: fromCents(received), remaining: fromCents(contract - received) };
   }
 
+  // Shares actually used for display and money while the organisation is
+  // solo (no partner has accepted the invite yet): the owner keeps 100 %.
+  // The stored shares stay as they are (the invite offers 100 - shareA).
+  function effectiveShares(shareA, shareB, hasPartner) {
+    if (!hasPartner) return { shareA: 100, shareB: 0 };
+    return { shareA: shareA, shareB: shareB };
+  }
+
+  // True if any non-rejected "Partner Draw B" row exists. Such draws are
+  // subtracted in the totals even in a solo org, so partner B must stay visible.
+  function hasMemberDraws(txs) {
+    return txs.some(function (t) { return t.type === 'draw' && t.partnerSlot === 'member' && t.status !== 'rejected'; });
+  }
+
   var api = {
     signedAmount: signedAmount,
     computeTotals: computeTotals,
     accountBalance: accountBalance,
     computeProjectSplit: computeProjectSplit,
     projectTotals: projectTotals,
-    contractStatus: contractStatus
+    contractStatus: contractStatus,
+    effectiveShares: effectiveShares,
+    hasMemberDraws: hasMemberDraws
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.SBCalc = api;
