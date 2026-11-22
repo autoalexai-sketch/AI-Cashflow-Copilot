@@ -137,6 +137,55 @@
     return sum;
   }
 
+  // "Why this result" for one month ('YYYY-MM') against the month before.
+  // Profit = verified income - verified expenses (draws are payouts, not a
+  // cost of the business). Income is grouped by project, expenses by
+  // category (each falls back to the other, then '—'). Reasons are the
+  // groups whose amount changed, biggest effect on profit first, at most 3.
+  // Returns null when neither month has a verified income or expense.
+  function prevYearMonth(ym) {
+    var y = Number(ym.slice(0, 4)), m = Number(ym.slice(5, 7)) - 1;
+    if (m === 0) { y -= 1; m = 12; }
+    return y + '-' + (m < 10 ? '0' : '') + m;
+  }
+  function explainMonth(txs, month) {
+    var prev = prevYearMonth(month);
+    var named = function (v) { return v && v !== '—' ? v : ''; };
+    var cur = {}, old = {}, curProfit = 0, oldProfit = 0, curN = 0, oldN = 0;
+    txs.forEach(function (t) {
+      if (t.status !== 'verified' || (t.type !== 'income' && t.type !== 'expense')) return;
+      var ym = String(t.date || '').slice(0, 7);
+      if (ym !== month && ym !== prev) return;
+      var label = t.type === 'income'
+        ? (named(t.project) || named(t.category) || '—')
+        : (named(t.category) || named(t.project) || '—');
+      var key = t.type + '|' + label;
+      var c = toCents(t.amount), signed = t.type === 'income' ? c : -c;
+      var bucket = ym === month ? cur : old;
+      bucket[key] = (bucket[key] || 0) + c;
+      if (ym === month) { curProfit += signed; curN++; } else { oldProfit += signed; oldN++; }
+    });
+    if (curN === 0 && oldN === 0) return null;
+    var keys = Object.keys(cur).concat(Object.keys(old).filter(function (k) { return !(k in cur); }));
+    var reasons = keys.map(function (k) {
+      var kind = k.slice(0, k.indexOf('|')), label = k.slice(k.indexOf('|') + 1);
+      var change = (cur[k] || 0) - (old[k] || 0);
+      return { kind: kind, label: label, change: change, impact: kind === 'income' ? change : -change };
+    }).filter(function (r) { return r.change !== 0; });
+    reasons.sort(function (a, b) { return Math.abs(b.impact) - Math.abs(a.impact) || (a.label < b.label ? -1 : 1); });
+    return {
+      month: month,
+      prevMonth: prev,
+      prevEmpty: oldN === 0,
+      profit: fromCents(curProfit),
+      prevProfit: fromCents(oldProfit),
+      delta: fromCents(curProfit - oldProfit),
+      reasons: reasons.slice(0, 3).map(function (r) {
+        return { kind: r.kind, label: r.label, change: fromCents(r.change), impact: fromCents(r.impact) };
+      })
+    };
+  }
+
   // Income and cost of a set of transactions (e.g. one project) for the
   // project cards, the project modal and the project export. Verified only,
   // same rule as every balance: pending is not money yet, rejected never is.
@@ -178,6 +227,7 @@
     accountBalance: accountBalance,
     computeProjectSplit: computeProjectSplit,
     computeSplitByPeriods: computeSplitByPeriods,
+    explainMonth: explainMonth,
     projectTotals: projectTotals,
     contractStatus: contractStatus,
     effectiveShares: effectiveShares,
