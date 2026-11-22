@@ -590,7 +590,7 @@
           <div class="rounded-2xl bg-slate-950/60 border border-slate-800 p-4"><div class="text-xs text-slate-400" data-i18n="monthlyDistrib">Distributable</div><div class="text-2xl font-black text-sky-400 mt-1" id="monthDistrib">7,036 PLN</div></div>
         </div>
         <div class="mt-4 rounded-2xl border border-slate-800 bg-slate-950/60 p-4 text-sm text-slate-300" id="monthlySummary"></div>
-        <div id="monthExplain" class="hidden mt-3 rounded-2xl border border-sky-800/40 bg-sky-500/5 p-4 text-sm text-slate-300"></div>
+        <div id="monthExplain" class="hidden mt-3 rounded-2xl border border-slate-800 bg-slate-950/60 p-4 text-sm text-slate-300"></div>
         <div id="monthLockedBadge" class="hidden mt-3 rounded-2xl border border-amber-700/40 bg-amber-500/10 p-3 text-sm text-amber-400" data-i18n="monthLockedBadge">This month is locked — no further changes are possible.</div>
       </section>
 
@@ -2087,7 +2087,7 @@
         : `<li>• ${t.explainExpense} · ${escapeHtml(x.label === '—' ? t.explainNoLabel : short(x.label))}: <b>${signed(x.change)}</b></li>`
       ).join('');
       box.innerHTML = `<div class="text-xs text-sky-300 font-semibold mb-1">${t.explainTitle} — ${escapeHtml(monthName(month))}${month === today ? ' ' + t.explainInProgress : ''}</div>
-        <div class="mb-1">${escapeHtml(head)}</div>${lines ? `<ul class="text-slate-400 space-y-0.5">${lines}</ul>` : ''}`;
+        <div class="mb-1 font-semibold text-slate-200">${escapeHtml(head)}</div>${lines ? `<ul class="text-slate-400 space-y-0.5">${lines}</ul>` : ''}`;
       box.classList.remove('hidden');
     }
 

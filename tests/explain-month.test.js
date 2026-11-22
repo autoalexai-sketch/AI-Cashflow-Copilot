@@ -94,3 +94,10 @@ test('latestDataMonth: last month with verified income or expense', () => {
   assert.equal(latestDataMonth([...oct, tx('income', 5, '2026-12-01', { status: 'pending' }), tx('draw', 5, '2026-12-02')]), '2026-10');
   assert.equal(latestDataMonth([]), null);
 });
+
+test('app.html: the explanation box does not use a bg-sky-5* class (light theme paints its text white)', () => {
+  const html = require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'app.html'), 'utf8');
+  const box = html.match(/<div id="monthExplain" class="([^"]*)"/);
+  assert.ok(box, 'monthExplain box present');
+  assert.doesNotMatch(box[1], /bg-sky-[567]/);
+});
