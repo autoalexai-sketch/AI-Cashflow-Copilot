@@ -30,3 +30,9 @@ test('ekipy: listed in sitemap and .html redirects to clean URL', () => {
   const redirects = fs.readFileSync(path.join(root, '_redirects'), 'utf8');
   assert.match(redirects, /^\/ekipy\.html\s+\/ekipy\s+301$/m);
 });
+
+test('ekipy: offers a free Excel transfer by email, with how the file is used', () => {
+  assert.match(html, /Masz wszystko w Excelu\?/);
+  assert.match(html, /href="mailto:support@ai-consilium\.com\?subject=/);
+  assert.match(html, /tylko do przeniesienia danych/);
+});
