@@ -28,9 +28,23 @@ test('profit change and its biggest reasons, largest impact first', () => {
   assert.equal(cents(r.delta), cents(-1250));
   assert.deepEqual(r.reasons.map(x => [x.kind, x.label, cents(x.change), cents(x.impact)]), [
     ['expense', 'Materiały', cents(900), cents(-900)],
-    ['income', 'Kowalski', cents(-300), cents(-300)],
+    ['income', '', cents(-300), cents(-300)],
     ['expense', 'Paliwo', cents(50), cents(-50)],
   ]);
+});
+
+test('income is one line with the number of jobs, not one line per project', () => {
+  const r = explainMonth([
+    tx('income', 8400, '2026-06-03', { project: 'Osiek' }),
+    tx('income', 4860, '2026-06-08', { project: 'Modlnica' }),
+    tx('income', 4500, '2026-07-07', { project: 'Łamana' }),
+  ], '2026-07');
+  assert.equal(r.reasons.length, 1);
+  const inc = r.reasons[0];
+  assert.equal(inc.kind, 'income');
+  assert.equal(cents(inc.change), cents(4500 - 13260));
+  assert.equal(inc.jobs, 1);
+  assert.equal(inc.prevJobs, 2);
 });
 
 test('at most 3 reasons', () => {
@@ -72,4 +86,11 @@ test('unchanged lines are left out', () => {
   const r = explainMonth([tx('income', 100, '2026-10-01'), tx('income', 100, '2026-11-01')], '2026-11');
   assert.equal(r.reasons.length, 0);
   assert.equal(cents(r.delta), 0);
+});
+
+test('latestDataMonth: last month with verified income or expense', () => {
+  const { latestDataMonth } = require('../calc.js');
+  assert.equal(latestDataMonth([...oct, ...nov]), '2026-11');
+  assert.equal(latestDataMonth([...oct, tx('income', 5, '2026-12-01', { status: 'pending' }), tx('draw', 5, '2026-12-02')]), '2026-10');
+  assert.equal(latestDataMonth([]), null);
 });

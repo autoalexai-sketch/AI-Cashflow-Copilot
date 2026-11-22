@@ -139,38 +139,50 @@
 
   // "Why this result" for one month ('YYYY-MM') against the month before.
   // Profit = verified income - verified expenses (draws are payouts, not a
-  // cost of the business). Income is grouped by project, expenses by
-  // category (each falls back to the other, then '—'). Reasons are the
-  // groups whose amount changed, biggest effect on profit first, at most 3.
-  // Returns null when neither month has a verified income or expense.
+  // cost of the business). Income is one line (jobs change every month for
+  // crews, so per-project lines would be noise) with the number of jobs
+  // (distinct projects with income); expenses are grouped by category
+  // (fallback: project, then '—'). Reasons = lines that changed, biggest
+  // effect on profit first, at most 3. Null when both months are empty.
   function prevYearMonth(ym) {
     var y = Number(ym.slice(0, 4)), m = Number(ym.slice(5, 7)) - 1;
     if (m === 0) { y -= 1; m = 12; }
     return y + '-' + (m < 10 ? '0' : '') + m;
   }
+  // Latest 'YYYY-MM' with a verified income or expense, or null.
+  function latestDataMonth(txs) {
+    var best = null;
+    txs.forEach(function (t) {
+      if (t.status !== 'verified' || (t.type !== 'income' && t.type !== 'expense')) return;
+      var ym = String(t.date || '').slice(0, 7);
+      if (ym.length === 7 && (best === null || ym > best)) best = ym;
+    });
+    return best;
+  }
   function explainMonth(txs, month) {
     var prev = prevYearMonth(month);
     var named = function (v) { return v && v !== '—' ? v : ''; };
-    var cur = {}, old = {}, curProfit = 0, oldProfit = 0, curN = 0, oldN = 0;
+    var cur = {}, old = {}, jobs = { cur: {}, old: {} }, curProfit = 0, oldProfit = 0, curN = 0, oldN = 0;
     txs.forEach(function (t) {
       if (t.status !== 'verified' || (t.type !== 'income' && t.type !== 'expense')) return;
       var ym = String(t.date || '').slice(0, 7);
       if (ym !== month && ym !== prev) return;
-      var label = t.type === 'income'
-        ? (named(t.project) || named(t.category) || '—')
-        : (named(t.category) || named(t.project) || '—');
-      var key = t.type + '|' + label;
-      var c = toCents(t.amount), signed = t.type === 'income' ? c : -c;
-      var bucket = ym === month ? cur : old;
+      var isCur = ym === month;
+      var key = t.type === 'income' ? 'income|' : 'expense|' + (named(t.category) || named(t.project) || '—');
+      var c = toCents(t.amount);
+      var bucket = isCur ? cur : old;
       bucket[key] = (bucket[key] || 0) + c;
-      if (ym === month) { curProfit += signed; curN++; } else { oldProfit += signed; oldN++; }
+      if (t.type === 'income') (isCur ? jobs.cur : jobs.old)[named(t.project) || ('#' + (isCur ? curN : oldN))] = true;
+      if (isCur) { curProfit += t.type === 'income' ? c : -c; curN++; } else { oldProfit += t.type === 'income' ? c : -c; oldN++; }
     });
     if (curN === 0 && oldN === 0) return null;
     var keys = Object.keys(cur).concat(Object.keys(old).filter(function (k) { return !(k in cur); }));
     var reasons = keys.map(function (k) {
       var kind = k.slice(0, k.indexOf('|')), label = k.slice(k.indexOf('|') + 1);
       var change = (cur[k] || 0) - (old[k] || 0);
-      return { kind: kind, label: label, change: change, impact: kind === 'income' ? change : -change };
+      var r = { kind: kind, label: label, change: change, impact: kind === 'income' ? change : -change };
+      if (kind === 'income') { r.jobs = Object.keys(jobs.cur).length; r.prevJobs = Object.keys(jobs.old).length; }
+      return r;
     }).filter(function (r) { return r.change !== 0; });
     reasons.sort(function (a, b) { return Math.abs(b.impact) - Math.abs(a.impact) || (a.label < b.label ? -1 : 1); });
     return {
@@ -181,7 +193,9 @@
       prevProfit: fromCents(oldProfit),
       delta: fromCents(curProfit - oldProfit),
       reasons: reasons.slice(0, 3).map(function (r) {
-        return { kind: r.kind, label: r.label, change: fromCents(r.change), impact: fromCents(r.impact) };
+        var o = { kind: r.kind, label: r.label, change: fromCents(r.change), impact: fromCents(r.impact) };
+        if (r.kind === 'income') { o.jobs = r.jobs; o.prevJobs = r.prevJobs; }
+        return o;
       })
     };
   }
@@ -228,6 +242,7 @@
     computeProjectSplit: computeProjectSplit,
     computeSplitByPeriods: computeSplitByPeriods,
     explainMonth: explainMonth,
+    latestDataMonth: latestDataMonth,
     projectTotals: projectTotals,
     contractStatus: contractStatus,
     effectiveShares: effectiveShares,
