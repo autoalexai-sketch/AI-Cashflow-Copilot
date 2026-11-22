@@ -59,7 +59,7 @@
   <link rel="preconnect" href="https://cdn.tailwindcss.com" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.106.2/dist/umd/supabase.js" integrity="sha384-m/8UHFJHeU6nrCKP2hBnAseuvAKUmLF+8e5bWos5CJL023vuxX7kiVL5t8yjsJhV" crossorigin="anonymous"></script>
-  <script src="/calc.js"></script>
+  <script src="/calc.js?v=b2f2a2a2"></script>
   <style>
     html, body { background:#020617; }
     .glass { background: rgba(15,23,42,.72); backdrop-filter: blur(12px); }
@@ -2061,7 +2061,7 @@
     // changes first (SBCalc.explainMonth, plain arithmetic, verified only).
     function renderMonthExplain(){
       const box = $('monthExplain');
-      if (!box) return;
+      if (!box || typeof SBCalc.explainMonth !== 'function') return;
       // This month vs last; if both are empty (no verified entries lately),
       // explain the latest month that has data instead of hiding the block.
       const today = currentYearMonth();
