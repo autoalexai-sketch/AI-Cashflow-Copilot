@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="ru" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>SplitBooks — Back-office</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts@3.49.1/dist/apexcharts.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" defer></script>
+<script>
+tailwind.config = { darkMode:'class', theme:{ extend:{
+  fontFamily:{ sans:['Outfit','ui-sans-serif','system-ui','sans-serif'] },
+  colors:{
+    brand:{50:'#ECF3FF',100:'#DDE9FF',300:'#9CB9FF',400:'#7592FF',500:'#465FFF',600:'#3641F5'},
+    gray:{50:'#F9FAFB',100:'#F2F4F7',200:'#E4E7EC',300:'#D0D5DD',400:'#98A2B3',500:'#667085',600:'#475467',700:'#344054',800:'#1D2939',900:'#101828',950:'#0C111D'},
+    success:{50:'#ECFDF3',500:'#12B76A',600:'#039855',700:'#027A48'},
+    error:{50:'#FEF3F2',500:'#F04438',600:'#D92D20',700:'#B42318'},
+    warning:{50:'#FFFAEB',500:'#F79009',600:'#DC6803',700:'#B54708'},
+    violet:{50:'#F4F3FF',500:'#7A5AF8',600:'#6938EF'}
+  }}}}
+</script>
+<style>
+  body{font-family:'Outfit',sans-serif;-webkit-font-smoothing:antialiased}
+  .shadow-xs{box-shadow:0 1px 2px 0 rgba(16,24,40,.05)}
+  ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:#344054;border-radius:9999px}
+  .view{display:none}.view.active{display:block}
+  .nav-item.active{background:rgba(70,95,255,.12);color:#7592FF}
+  .mono{font-variant-numeric:tabular-nums}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body class="bg-gray-900 text-gray-200">
+
+<!-- ==================== ВХОД ==================== -->
+<div id="gate" class="flex min-h-screen items-center justify-center p-4">
+  <div class="w-full max-w-sm">
+    <div class="mb-8 flex items-center gap-3">
+      <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-gray-900">
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M12 4v16M6 8h4M14 16h4"/></svg>
+      </div>
+      <div>
+        <p class="font-semibold leading-tight text-white/90">SplitBooks</p>
+        <p class="text-[11px] font-medium text-error-500">Back-office</p>
+      </div>
+    </div>
+    <div class="rounded-2xl border border-gray-800 bg-white/[0.03] p-6">
+      <h1 class="mb-1 text-lg font-semibold text-white/90">Вход</h1>
+      <p class="mb-5 text-sm text-gray-400">Тот же аккаунт, что и в приложении. Доступ открыт только тем, кто есть в списке администраторов.</p>
+      <label class="mb-1.5 block text-xs font-medium text-gray-400">E-mail</label>
+      <input id="in-email" type="email" autocomplete="username" class="mb-4 h-11 w-full rounded-lg border border-gray-800 bg-transparent px-3 text-sm text-white placeholder:text-gray-600 focus:border-brand-500 focus:outline-none" placeholder="you@example.com">
+      <label class="mb-1.5 block text-xs font-medium text-gray-400">Пароль</label>
+      <input id="in-pass" type="password" autocomplete="current-password" class="mb-5 h-11 w-full rounded-lg border border-gray-800 bg-transparent px-3 text-sm text-white focus:border-brand-500 focus:outline-none">
+      <div id="cf-turnstile" class="mb-4 flex justify-center"></div>
+      <button id="btn-login" class="h-11 w-full rounded-lg bg-brand-500 text-sm font-medium text-white transition hover:bg-brand-600 disabled:opacity-50">Войти</button>
+      <p id="gate-msg" class="mt-4 hidden rounded-lg bg-error-500/10 px-3 py-2.5 text-xs leading-relaxed text-error-500"></p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== ПАНЕЛЬ ==================== -->
+<div id="shell" class="hidden">
+<div class="flex min-h-screen">
+
+  <aside id="sidebar" class="fixed z-40 h-screen w-[260px] shrink-0 -translate-x-full border-r border-gray-800 bg-gray-950 transition-transform duration-300 lg:sticky lg:top-0 lg:translate-x-0">
+    <div class="flex items-center gap-3 px-6 py-6">
+      <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-gray-900">
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M12 4v16M6 8h4M14 16h4"/></svg>
+      </div>
+      <div>
+        <p class="text-sm font-semibold leading-tight text-white/90">SplitBooks</p>
+        <p class="text-[11px] font-medium text-error-500">Back-office</p>
+      </div>
+    </div>
+    <nav class="px-4"><ul class="space-y-1" id="nav"></ul></nav>
+  </aside>
+  <div id="backdrop" onclick="closeSidebar()" class="fixed inset-0 z-30 hidden bg-gray-900/60 lg:hidden"></div>
+
+  <div class="flex min-w-0 flex-1 flex-col">
+    <header class="sticky top-0 z-20 border-b border-gray-800 bg-gray-900/90 backdrop-blur">
+      <div class="flex items-center justify-between gap-3 px-4 py-3 lg:px-6">
+        <button onclick="toggleSidebar()" class="rounded-lg border border-gray-800 p-2 text-gray-400 lg:hidden" aria-label="Меню">
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <div class="flex flex-1 items-center gap-3">
+          <span id="fresh" class="text-xs text-gray-500"></span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="loadAll()" class="h-9 rounded-lg border border-gray-800 px-3 text-xs font-medium text-gray-300 transition hover:bg-white/5">Обновить</button>
+          <span id="who" class="hidden text-xs text-gray-400 sm:block"></span>
+          <button onclick="logout()" class="h-9 rounded-lg border border-gray-800 px-3 text-xs font-medium text-gray-400 transition hover:bg-white/5">Выйти</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="mx-auto w-full max-w-[1400px] flex-1 p-4 lg:p-6">
+
+      <!-- ОБЗОР -->
+      <section id="v-overview" class="view active space-y-5">
+        <div>
+          <h1 class="text-xl font-semibold text-white/90">Обзор</h1>
+          <p class="mt-1 text-sm text-gray-400">Живые данные из Supabase · тестовые организации не входят в метрики</p>
+        </div>
+        <div id="kpi" class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5"></div>
+        <div class="grid grid-cols-1 gap-4 xl:grid-cols-5">
+          <div class="rounded-2xl border border-gray-800 bg-white/[0.03] p-5 xl:col-span-3">
+            <h3 class="text-base font-semibold text-white/90">Регистрации по неделям</h3>
+            <p class="mb-4 text-xs text-gray-400">Накопительно и приросты</p>
+            <div id="ch-growth"></div>
+          </div>
+          <div class="rounded-2xl border border-gray-800 bg-white/[0.03] p-5 xl:col-span-2">
+            <h3 class="text-base font-semibold text-white/90">Воронка</h3>
+            <p class="mb-4 text-xs text-gray-400">Каждый шаг — доля от предыдущего</p>
+            <div id="funnel"></div>
+          </div>
+        </div>
+        <div class="rounded-2xl border border-gray-800 bg-white/[0.03] p-5">
+          <h3 class="text-base font-semibold text-white/90">Посетители сайта · 30 дней</h3>
+          <p class="mb-4 text-xs text-gray-400">Cloudflare Web Analytics, без cookie · Cloudflare считает выборочно, числа — оценка · включая наши собственные заходы</p>
+          <div id="visits"><p class="text-sm text-gray-500">загружаю…</p></div>
+          <div id="ch-visits" class="mt-4"></div>
+        </div>
+        <div class="rounded-2xl border border-gray-800 bg-white/[0.03] p-5">
+          <h3 class="text-base font-semibold text-white/90">Состояние организаций</h3>
+          <p class="mb-4 text-xs text-gray-400">Пара, которая реально пишет вдвоём, — единственное подтверждение обещания с лендинга</p>
+          <div id="states" class="grid grid-cols-1 gap-3 sm:grid-cols-3 xl:grid-cols-5"></div>
+        </div>
+      </section>
+
+      <!-- ПОЛЬЗОВАТЕЛИ -->
+      <section id="v-users" class="view space-y-5">
+        <div class="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h1 class="text-xl font-semibold text-white/90">Пользователи</h1>
+            <p id="users-sub" class="mt-1 text-sm text-gray-400">—</p>
+          </div>
+          <div class="flex rounded-lg bg-gray-800 p-1" id="u-filters"></div>
+        </div>
+        <div class="overflow-x-auto rounded-2xl border border-gray-800 bg-white/[0.03]">
+          <table class="w-full min-w-[860px] text-sm">
+            <thead class="bg-white/[0.02] text-left text-[11px] font-medium uppercase tracking-wider text-gray-400">
+              <tr><th class="px-5 py-3">Пользователь</th><th class="px-5 py-3">Организация</th><th class="px-5 py-3">Роль</th><th class="px-5 py-3">Регистрация</th><th class="px-5 py-3">Последняя запись</th><th class="px-5 py-3 text-right">Транзакций</th><th class="px-5 py-3">Состояние</th></tr>
+            </thead>
+            <tbody id="u-body" class="divide-y divide-gray-800"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ОРГАНИЗАЦИИ -->
+      <section id="v-orgs" class="view space-y-5">
+        <div>
+          <h1 class="text-xl font-semibold text-white/90">Организации</h1>
+          <p id="orgs-sub" class="mt-1 text-sm text-gray-400">—</p>
+        </div>
+        <div class="overflow-x-auto rounded-2xl border border-gray-800 bg-white/[0.03]">
+          <table class="w-full min-w-[900px] text-sm">
+            <thead class="bg-white/[0.02] text-left text-[11px] font-medium uppercase tracking-wider text-gray-400">
+              <tr><th class="px-5 py-3">Организация</th><th class="px-5 py-3 text-right">Людей</th><th class="px-5 py-3 text-right">Пишут</th><th class="px-5 py-3 text-right">Транзакций</th><th class="px-5 py-3 text-right">Оборот (подтв.)</th><th class="px-5 py-3 text-right">Ждут / откл.</th><th class="px-5 py-3 text-right">Чеки</th><th class="px-5 py-3 text-right">Закрыто мес.</th><th class="px-5 py-3">Состояние</th></tr>
+            </thead>
+            <tbody id="o-body" class="divide-y divide-gray-800"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- РЕСУРСЫ -->
+      <section id="v-scale" class="view space-y-5">
+        <div>
+          <h1 class="text-xl font-semibold text-white/90">Ресурсы и масштаб</h1>
+          <p class="mt-1 text-sm text-gray-400">Где упрётся текущий тариф Supabase</p>
+        </div>
+        <div id="limits" class="grid grid-cols-1 gap-4 md:grid-cols-3"></div>
+        <div class="rounded-2xl border border-gray-800 bg-white/[0.03] p-5">
+          <h3 class="text-base font-semibold text-white/90">Хранилище по организациям</h3>
+          <p class="mb-4 text-xs text-gray-400">Фото чеков — единственная статья, растущая сама по себе</p>
+          <div class="overflow-x-auto">
+            <table class="w-full min-w-[520px] text-sm">
+              <thead class="text-left text-[11px] font-medium uppercase tracking-wider text-gray-400">
+                <tr><th class="py-2">Организация</th><th class="py-2 text-right">Файлов</th><th class="py-2 text-right">Объём</th><th class="py-2 text-right">Последняя загрузка</th></tr>
+              </thead>
+              <tbody id="s-body" class="divide-y divide-gray-800"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+    <footer class="border-t border-gray-800 px-6 py-4 text-xs text-gray-500">
+      Каждое обращение к чужим данным записывается в <code class="text-gray-400">admin_audit_log</code>.
+    </footer>
+  </div>
+</div>
+</div>
+
+<script>
+/* ============ КОНФИГУРАЦИЯ ============ */
+// Публичный anon-ключ — тот же, что в самом приложении. Не секрет:
+// он ограничен политиками RLS. Права администратора дают не ключ,
+// а строка в таблице admin_users, которую проверяет Edge Function.
+const SUPABASE_URL  = 'https://kblistiovwfcbkxwmtqj.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtibGlzdGlvdndmY2JreHdtdHFqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTU1MjMzOTEsImV4cCI6MjExMTA5OTM5MX0.KR5XOsxXXgcQha82HPtkUqjzbfZ62p-wyQ96NgQpWsE';
+const API = SUPABASE_URL + '/functions/v1/admin-api';
+
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+let DATA = {};
+
+/* ============ ВХОД ============ */
+const $ = id => document.getElementById(id);
+
+function gateError(msg){
+  const el = $('gate-msg'); el.textContent = msg; el.classList.remove('hidden');
+}
+
+// Turnstile. Supabase Auth настроен на проверку captcha, поэтому вход
+// без токена отклоняется. Виджет тот же, что в приложении: у проекта
+// Supabase один секретный ключ, отдельный виджет для панели невозможен.
+// Отсюда требование к хосту — см. TURNSTILE в README.
+const TURNSTILE_SITEKEY = '0x4AAAAAADwsM0GGrGwJpZ7O';
+let tsWidget = null;
+
+function mountTurnstile(){
+  if (!window.turnstile) return setTimeout(mountTurnstile, 200);
+  tsWidget = window.turnstile.render('#cf-turnstile', {
+    sitekey: TURNSTILE_SITEKEY,
+    theme: 'dark',
+    'error-callback': () => gateError(
+      'Turnstile не принял этот адрес. Панель нужно открывать по http://localhost:8080, ' +
+      'а хост localhost — добавить в список виджета в Cloudflare. Инструкция в README.'
+    )
+  });
+}
+mountTurnstile();
+
+$('btn-login').onclick = async () => {
+  const btn = $('btn-login');
+  const captchaToken = tsWidget !== null ? window.turnstile.getResponse(tsWidget) : '';
+  if (!captchaToken) return gateError('Проверка Turnstile ещё не пройдена — подождите пару секунд и повторите.');
+
+  btn.disabled = true; btn.textContent = 'Проверяю…';
+  $('gate-msg').classList.add('hidden');
+  const { error } = await sb.auth.signInWithPassword({
+    email: $('in-email').value.trim(),
+    password: $('in-pass').value,
+    options: { captchaToken }
+  });
+  btn.disabled = false; btn.textContent = 'Войти';
+  // Токен Turnstile одноразовый: после любой попытки виджет надо сбросить.
+  if (tsWidget !== null) window.turnstile.reset(tsWidget);
+  if (error) return gateError('Не удалось войти: ' + error.message);
+  start();
+};
+$('in-pass').addEventListener('keydown', e => { if (e.key === 'Enter') $('btn-login').click(); });
+
+// scope 'local': выход из панели не должен выкидывать из приложения
+// на этом и других устройствах (по умолчанию signOut() закрывает все сессии).
+async function logout(){ await sb.auth.signOut({ scope: 'local' }); location.reload(); }
+
+/* ============ ЗАПРОСЫ К API ============ */
+async function api(path){
+  const { data:{ session } } = await sb.auth.getSession();
+  if (!session) throw new Error('нет сессии');
+  const r = await fetch(API + '/' + path, {
+    headers: { Authorization: 'Bearer ' + session.access_token }
+  });
+  if (r.status === 403) throw new Error('FORBIDDEN');
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  return (await r.json()).data;
+}
+
+async function start(){
+  try {
+    const summary = await api('summary');
+    $('gate').classList.add('hidden');
+    $('shell').classList.remove('hidden');
+    const { data:{ user } } = await sb.auth.getUser();
+    $('who').textContent = user.email;
+    DATA.summary = summary;
+    await loadAll();
+  } catch (e) {
+    if (e.message === 'FORBIDDEN') {
+      gateError('Вход выполнен, но этот аккаунт не в списке администраторов. Добавьте его в таблицу admin_users — инструкция в README, шаг 1.');
+      await sb.auth.signOut({ scope: 'local' });
+    } else {
+      gateError('Не удалось получить данные: ' + e.message + '. Проверьте, что Edge Function admin-api задеплоена.');
+    }
+  }
+}
+
+async function loadAll(){
+  $('fresh').textContent = 'загружаю…';
+  const [summary, funnel, users, orgs, storage] = await Promise.all([
+    api('summary'), api('funnel'), api('users'), api('orgs'), api('storage')
+  ]);
+  DATA = {
+    summary: summary[0] || summary,
+    funnel:  funnel[0]  || funnel,
+    users, orgs, storage
+  };
+  render();
+  $('fresh').textContent = 'обновлено ' + new Date().toLocaleTimeString('ru-RU');
+  loadVisits(); // отдельно: сбой Cloudflare не должен ломать остальную панель
+}
+
+/* ============ ПОСЕТИТЕЛИ (Cloudflare) ============ */
+const PAGES = [['/', 'Главная'], ['/demo', 'Демо'], ['/app', 'Приложение'], ['/ekipy', '/ekipy']];
+const normPath = p => (p || '/').replace(/\.html$/, '').replace(/(.)\/$/, '$1');
+
+async function loadVisits(){
+  try {
+    const { data:{ session } } = await sb.auth.getSession();
+    const r = await fetch(API + '/visits', { headers: { Authorization: 'Bearer ' + session.access_token } });
+    const body = await r.json();
+    if (body.error === 'no_token') throw new Error('нет токена Cloudflare (секрет CF_ANALYTICS_TOKEN)');
+    if (!r.ok || !body.data) throw new Error('Cloudflare ответил ошибкой');
+    renderVisits(body.data);
+  } catch (e) {
+    $('visits').innerHTML = `<p class="text-sm text-gray-500">Не удалось загрузить: ${esc(e.message)}</p>`;
+  }
+}
+
+function renderVisits(v){
+  const rows = v.rows.filter(r => !String(r.host).startsWith('admin.'));
+  const since7 = new Date(Date.now() - 6*86400000).toISOString().slice(0,10);
+  // Cloudflare: «визит» = вход на сайт снаружи; переход с главной на /demo визитом
+  // не считается. Поэтому по страницам показываем просмотры, а сверху — визиты.
+  const sum = (path, from) => rows
+    .filter(r => normPath(r.path) === path && r.date >= from)
+    .reduce((a, r) => a + r.views, 0);
+  const total = rows.reduce((a, r) => a + r.visits, 0);
+
+  const signups = DATA.users.filter(u => u.signed_up_at && u.signed_up_at.slice(0,10) >= v.from).length;
+  const demo30 = sum('/demo', v.from);
+
+  $('visits').innerHTML = `<div class="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
+    ${PAGES.map(([p, t]) => `<div class="rounded-xl bg-white/[0.03] p-4">
+      <p class="text-xs text-gray-400">${t}</p>
+      <p class="mt-1 text-xl font-semibold text-white/90">${N(sum(p, v.from))}</p>
+      <p class="text-[11px] text-gray-500">просмотров · за 7 дней: ${N(sum(p, since7))}</p></div>`).join('')}
+    <div class="rounded-xl bg-white/[0.03] p-4">
+      <p class="text-xs text-gray-400">Все страницы</p>
+      <p class="mt-1 text-xl font-semibold text-white/90">${N(total)}</p>
+      <p class="text-[11px] text-gray-500">визитов (входов на сайт) за 30 дней</p></div>
+    <div class="rounded-xl bg-white/[0.03] p-4">
+      <p class="text-xs text-gray-400">Демо → регистрация</p>
+      <p class="mt-1 text-xl font-semibold text-white/90">${demo30 ? pct(signups, demo30) : '—'}</p>
+      <p class="text-[11px] text-gray-500">${N(signups)} рег. / ${N(demo30)} просмотров демо</p></div>
+  </div>`;
+
+  // График по дням: все визиты и демо.
+  const days = [];
+  for (let d = new Date(v.from); d.toISOString().slice(0,10) <= v.to; d.setDate(d.getDate()+1)) days.push(d.toISOString().slice(0,10));
+  const perDay = filter => days.map(day => rows.filter(r => r.date === day && filter(r)).reduce((a, r) => a + r.visits, 0));
+  const perDayViews = filter => days.map(day => rows.filter(r => r.date === day && filter(r)).reduce((a, r) => a + r.views, 0));
+
+  if (window._visits) window._visits.destroy();
+  window._visits = new ApexCharts($('ch-visits'), {
+    chart:{ type:'bar', height:220, fontFamily:'Outfit, sans-serif', toolbar:{show:false}, zoom:{enabled:false} },
+    series:[
+      { name:'Все визиты', data: perDay(() => true) },
+      { name:'Просмотры демо', data: perDayViews(r => normPath(r.path) === '/demo') }
+    ],
+    colors:['#465FFF','#12B76A'],
+    plotOptions:{ bar:{ columnWidth:'60%', borderRadius:2 } },
+    dataLabels:{ enabled:false },
+    grid:{ borderColor:'#1D2939', strokeDashArray:4, xaxis:{lines:{show:false}} },
+    xaxis:{ categories: days.map(d => d.slice(8,10) + '.' + d.slice(5,7)), axisBorder:{show:false}, axisTicks:{show:false},
+            labels:{ rotate:0, hideOverlappingLabels:true, style:{colors:'#667085',fontSize:'11px'} } },
+    yaxis:{ labels:{ style:{colors:'#667085',fontSize:'12px'} } },
+    legend:{ position:'top', horizontalAlign:'right', labels:{colors:'#667085'} },
+    tooltip:{ theme:'dark' }
+  });
+  window._visits.render();
+}
+
+/* ============ ФОРМАТИРОВАНИЕ ============ */
+const N   = v => Number(v || 0).toLocaleString('ru-RU');
+const MB  = v => Number(v || 0) < 1024 ? Number(v||0).toFixed(1) + ' МБ' : (v/1024).toFixed(2) + ' ГБ';
+const DAY = d => d ? new Date(d).toLocaleDateString('ru-RU', {day:'2-digit', month:'2-digit', yy:'2-digit', year:'2-digit'}) : '—';
+const AGO = d => {
+  if (!d) return '—';
+  const h = (Date.now() - new Date(d)) / 3600000;
+  if (h < 1)  return 'только что';
+  if (h < 24) return Math.floor(h) + ' ч назад';
+  return Math.floor(h/24) + ' д назад';
+};
+
+/* ============ НАВИГАЦИЯ ============ */
+const NAV = [
+  {id:'overview', t:'Обзор',         ic:'M3 12l9-9 9 9M5 10v10h14V10'},
+  {id:'users',    t:'Пользователи',  ic:'M17 20v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2M9.5 7a3.5 3.5 0 11-7 0 3.5 3.5 0 017 0z'},
+  {id:'orgs',     t:'Организации',   ic:'M3 7h6l2 2h10v10H3z'},
+  {id:'scale',    t:'Ресурсы',       ic:'M3 12h4l3 8 4-16 3 8h4'}
+];
+$('nav').innerHTML = NAV.map((x,i)=>`<li><button onclick="go('${x.id}')" data-nav="${x.id}"
+  class="nav-item ${i===0?'active':''} flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-400 transition hover:bg-white/5">
+  <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="${x.ic}"/></svg>
+  <span class="flex-1 text-left">${x.t}</span></button></li>`).join('');
+
+function go(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  $('v-'+id).classList.add('active');
+  document.querySelectorAll('[data-nav]').forEach(b=>b.classList.toggle('active', b.dataset.nav===id));
+  if (innerWidth < 1024) closeSidebar();
+  scrollTo({top:0, behavior:'smooth'});
+}
+function toggleSidebar(){
+  const s = $('sidebar');
+  s.classList.contains('-translate-x-full')
+    ? (s.classList.remove('-translate-x-full'), $('backdrop').classList.remove('hidden'))
+    : closeSidebar();
+}
+function closeSidebar(){
+  $('sidebar').classList.add('-translate-x-full');
+  $('backdrop').classList.add('hidden');
+}
+
+/* ============ ОТРИСОВКА ============ */
+const STATES = {
+  paired_active:  {t:'Пара пишет',        c:'success', d:'оба партнёра за 30 дней'},
+  paired_dormant: {t:'Пара затихла',      c:'warning', d:'оба писали, но не сейчас'},
+  single_writer:  {t:'Пишет один',        c:'warning', d:'партнёр вошёл и молчит'},
+  solo:           {t:'Партнёр не принял', c:'error',   d:'один участник в организации'},
+  empty:          {t:'Пусто',             c:'gray',    d:'ни одной транзакции'}
+};
+const ACT = {
+  active:  {t:'Активен',    c:'success'},
+  slowing: {t:'Замедлился', c:'warning'},
+  idle:    {t:'Затих',      c:'warning'},
+  ghost:   {t:'Без записей',c:'error'}
+};
+const chip = (t,c) => `<span class="whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] font-medium ${
+  c==='gray' ? 'bg-white/10 text-gray-400' : `bg-${c}-500/15 text-${c}-500`}">${t}</span>`;
+
+function render(){
+  const s = DATA.summary, f = DATA.funnel;
+
+  /* KPI — то, ради чего это всё */
+  $('kpi').innerHTML = [
+    {t:'Пользователей',   v:N(s.users_total),        sub:`+${N(s.users_new_7d)} за неделю`, c:'brand'},
+    {t:'Организаций',     v:N(s.orgs_total),         sub:`${N(s.orgs_empty)} без единой записи`, c:'violet'},
+    {t:'Пар работают',    v:N(s.orgs_paired_active), sub:pct(s.orgs_paired_active, s.orgs_total)+' от всех', c:'success'},
+    {t:'Транзакций',      v:N(s.tx_total),           sub:`+${N(s.tx_7d)} за неделю`, c:'brand'},
+    {t:'Оборот (подтв.)', v:N(Math.round(s.turnover_income||0)), sub:`+${N(Math.round(s.turnover_income_pending||0))} не подтв. · ждут ${N(s.tx_awaiting_approval||0)} · откл. ${N(s.tx_rejected||0)}`, c:'warning'}
+  ].map(k=>`<div class="rounded-2xl border border-gray-800 bg-white/[0.03] p-5">
+    <p class="text-sm text-gray-400">${k.t}</p>
+    <h4 class="mono mt-1 text-3xl font-bold text-white/90">${k.v}</h4>
+    <p class="mt-1.5 text-xs text-${k.c}-500">${k.sub}</p></div>`).join('');
+
+  /* Воронка */
+  const steps = [
+    ['Зарегистрировались', f.signed_up],
+    ['Создали организацию', f.orgs_created],
+    ['Первая транзакция', f.first_transaction],
+    ['Партнёр присоединился', f.partner_joined],
+    ['Оба записали', f.both_wrote],
+    ['Закрыли месяц', f.closed_month]
+  ];
+  const top = Math.max(1, steps[0][1]);
+  let worst = 1, worstIdx = -1;
+  steps.forEach(([,v],i)=>{ if(i>0){ const r=v/Math.max(1,steps[i-1][1]); if(r<worst){worst=r;worstIdx=i;} }});
+  $('funnel').innerHTML = steps.map(([t,v],i)=>{
+    const rel = i===0 ? 100 : Math.round(v/Math.max(1,steps[i-1][1])*100);
+    const bad = i===worstIdx;
+    return `<div class="mb-3">
+      <div class="mb-1 flex items-baseline justify-between gap-2">
+        <span class="text-xs font-medium text-gray-300">${t}</span>
+        <span class="mono text-xs text-gray-400">${N(v)}${i?` · <span class="${bad?'font-semibold text-error-500':'text-gray-500'}">${rel} %</span>`:''}</span>
+      </div>
+      <div class="h-2.5 w-full overflow-hidden rounded-full bg-gray-800">
+        <div class="h-full rounded-full ${bad?'bg-error-500':'bg-brand-500'}" style="width:${Math.max(3, v/top*100)}%"></div>
+      </div></div>`;
+  }).join('') + (worstIdx>0
+    ? `<p class="mt-4 rounded-lg bg-white/[0.03] p-3 text-xs leading-relaxed text-gray-400">
+        Самая большая потеря — переход к шагу «${steps[worstIdx][0]}»: доходит ${Math.round(worst*100)} %.
+        Чинить имеет смысл сначала его.</p>`
+    : '');
+
+  /* Состояния организаций */
+  const byState = {};
+  DATA.orgs.filter(o => !o.is_test).forEach(o => byState[o.health_state] = (byState[o.health_state]||0)+1);
+  $('states').innerHTML = Object.entries(STATES).map(([k,v])=>`
+    <div class="rounded-xl border border-gray-800 p-4">
+      <div class="mb-2">${chip(v.t, v.c)}</div>
+      <p class="mono text-2xl font-bold text-white/90">${N(byState[k]||0)}</p>
+      <p class="mt-1 text-xs text-gray-500">${v.d}</p>
+    </div>`).join('');
+
+  /* График регистраций */
+  drawGrowth();
+
+  /* Пользователи */
+  TEST_ORGS = new Set(DATA.orgs.filter(o => o.is_test).map(o => o.org_id));
+  $('users-sub').textContent = `${N(DATA.users.length)} аккаунтов`;
+  renderUsers(DATA.users);
+
+  /* Организации */
+  $('orgs-sub').textContent = `${N(DATA.orgs.length)} организаций, из них тестовых ${N(DATA.orgs.filter(o=>o.is_test).length)} · оборот — только подтверждённые записи, как в приложении`;
+  $('o-body').innerHTML = DATA.orgs.length ? DATA.orgs.map(o=>{
+    const st = STATES[o.health_state] || {t:o.health_state, c:'gray'};
+    return `<tr class="hover:bg-white/[0.02]">
+      <td class="px-5 py-3.5"><p class="font-medium text-white/90">${esc(o.org_name)}${o.is_test ? ' ' + chip('тест','gray') : ''}</p>
+        <p class="text-xs text-gray-500">${AGO(o.org_created_at)} создана</p></td>
+      <td class="mono px-5 py-3.5 text-right text-gray-300">${o.members_total}</td>
+      <td class="mono px-5 py-3.5 text-right text-gray-300">${o.contributors_total}</td>
+      <td class="mono px-5 py-3.5 text-right text-gray-300">${N(o.tx_total)}</td>
+      <td class="mono px-5 py-3.5 text-right text-gray-300">${N(Math.round(o.income_total))} ${esc(o.currency||'')}${Number(o.income_pending) ? `<p class="text-xs text-gray-500">+${N(Math.round(o.income_pending))} не подтв.</p>` : ''}</td>
+      <td class="mono px-5 py-3.5 text-right text-gray-400">${N(o.tx_awaiting_approval||0)} / ${N(o.tx_rejected||0)}</td>
+      <td class="mono px-5 py-3.5 text-right text-gray-500">${N(o.tx_with_receipt)}</td>
+      <td class="mono px-5 py-3.5 text-right text-gray-500">${o.months_closed}</td>
+      <td class="px-5 py-3.5">${chip(st.t, st.c)}</td></tr>`;
+  }).join('') : empty(9, 'Организаций пока нет.');
+
+  /* Ресурсы */
+  renderScale();
+}
+
+let TEST_ORGS = new Set();
+function renderUsers(list){
+  $('u-body').innerHTML = list.length ? list.map(u=>{
+    const a = ACT[u.activity_state] || {t:u.activity_state, c:'gray'};
+    return `<tr class="hover:bg-white/[0.02]">
+      <td class="px-5 py-3.5"><p class="font-medium text-white/90">${esc(u.display_name || u.email)}</p>
+        <p class="text-xs text-gray-500">${esc(u.email)}</p></td>
+      <td class="px-5 py-3.5 text-gray-300">${u.org_name ? esc(u.org_name) : '<span class="text-gray-600">нет</span>'}${TEST_ORGS.has(u.org_id) ? ' ' + chip('тест','gray') : ''}</td>
+      <td class="px-5 py-3.5 text-xs text-gray-400">${u.role || '—'}</td>
+      <td class="mono px-5 py-3.5 text-xs text-gray-400">${DAY(u.signed_up_at)}</td>
+      <td class="px-5 py-3.5 text-xs text-gray-400">${AGO(u.last_tx_at)}</td>
+      <td class="mono px-5 py-3.5 text-right text-gray-300">${N(u.tx_count)}</td>
+      <td class="px-5 py-3.5">${chip(a.t, a.c)}</td></tr>`;
+  }).join('') : empty(7, 'В этой выборке никого нет.');
+}
+
+$('u-filters').innerHTML = ['Все','Активные','Затихшие','Без записей']
+  .map((t,i)=>`<button onclick="fu(this)" class="rounded-md px-3 py-1.5 text-xs font-medium ${i===0?'bg-gray-700 text-white':'text-gray-400'}">${t}</button>`).join('');
+function fu(b){
+  [...b.parentElement.children].forEach(x=>x.className='rounded-md px-3 py-1.5 text-xs font-medium text-gray-400');
+  b.className='rounded-md px-3 py-1.5 text-xs font-medium bg-gray-700 text-white';
+  const m = {'Все':null,'Активные':['active'],'Затихшие':['idle','slowing'],'Без записей':['ghost']}[b.textContent];
+  renderUsers(m ? DATA.users.filter(u=>m.includes(u.activity_state)) : DATA.users);
+}
+
+function renderScale(){
+  const s = DATA.summary;
+  const mb = Number(s.storage_mb || 0);
+  // Лимиты бесплатного тарифа Supabase. При переходе на Pro — поправить здесь.
+  const lim = [
+    {t:'Хранилище чеков', now:mb,               max:1024,  unit:'МБ', fmt:MB},
+    {t:'Пользователей',   now:s.users_total,    max:50000, unit:'',   fmt:N},
+    {t:'Транзакций',      now:s.tx_total,       max:null,  unit:'',   fmt:N}
+  ];
+  $('limits').innerHTML = lim.map(l=>{
+    const p = l.max ? Math.min(100, l.now / l.max * 100) : null;
+    const c = p === null ? 'brand' : p > 75 ? 'error' : p > 40 ? 'warning' : 'success';
+    return `<div class="rounded-2xl border border-gray-800 bg-white/[0.03] p-5">
+      <p class="text-sm text-gray-400">${l.t}</p>
+      <h4 class="mono mt-1 text-2xl font-bold text-white/90">${l.fmt(l.now)}</h4>
+      ${p === null
+        ? `<p class="mt-3 text-xs text-gray-500">Лимита по строкам нет — упирается в размер базы</p>`
+        : `<div class="mt-3 h-2 w-full overflow-hidden rounded-full bg-gray-800">
+             <div class="h-full rounded-full bg-${c}-500" style="width:${p}%"></div></div>
+           <p class="mt-2 text-xs text-gray-500">${p.toFixed(1)} % от лимита бесплатного тарифа</p>`}
+    </div>`;
+  }).join('');
+
+  $('s-body').innerHTML = DATA.storage.length ? DATA.storage.map(r=>`<tr>
+    <td class="py-2.5 text-gray-300">${r.org_name ? esc(r.org_name) : '<span class="text-gray-600">удалённая организация</span>'}</td>
+    <td class="mono py-2.5 text-right text-gray-400">${N(r.files)}</td>
+    <td class="mono py-2.5 text-right text-gray-300">${MB(r.mb)}</td>
+    <td class="py-2.5 text-right text-xs text-gray-500">${AGO(r.last_upload_at)}</td></tr>`).join('')
+    : empty(4, 'Чеки ещё не загружали.');
+}
+
+function drawGrowth(){
+  const byWeek = {};
+  DATA.users.forEach(u=>{
+    const d = new Date(u.signed_up_at);
+    d.setDate(d.getDate() - ((d.getDay()+6) % 7)); // понедельник
+    byWeek[d.toISOString().slice(0,10)] = (byWeek[d.toISOString().slice(0,10)]||0) + 1;
+  });
+  const weeks = Object.keys(byWeek).sort();
+  let acc = 0;
+  const cum = weeks.map(w => acc += byWeek[w]);
+  const labels = weeks.map(w => new Date(w).toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit'}));
+
+  if (window._growth) window._growth.destroy();
+  window._growth = new ApexCharts($('ch-growth'), {
+    chart:{ type:'line', height:300, fontFamily:'Outfit, sans-serif', toolbar:{show:false}, zoom:{enabled:false} },
+    series:[
+      { name:'Всего', type:'area', data:cum },
+      { name:'Новых за неделю', type:'column', data:weeks.map(w=>byWeek[w]) }
+    ],
+    colors:['#465FFF','#475467'],
+    stroke:{ curve:'smooth', width:[2,0] },
+    fill:{ type:['gradient','solid'], gradient:{ opacityFrom:.3, opacityTo:0, stops:[0,90] } },
+    plotOptions:{ bar:{ columnWidth:'45%', borderRadius:3 } },
+    dataLabels:{ enabled:false },
+    grid:{ borderColor:'#1D2939', strokeDashArray:4, xaxis:{lines:{show:false}} },
+    xaxis:{ categories:labels, axisBorder:{show:false}, axisTicks:{show:false}, labels:{style:{colors:'#667085',fontSize:'11px'}} },
+    yaxis:{ labels:{ style:{colors:'#667085',fontSize:'12px'} } },
+    legend:{ position:'top', horizontalAlign:'right', labels:{colors:'#667085'}, markers:{radius:4} },
+    tooltip:{ theme:'dark' },
+    noData:{ text:'Пока нет регистраций', style:{color:'#667085'} }
+  });
+  window._growth.render();
+}
+
+/* ============ ХЕЛПЕРЫ ============ */
+const pct = (a,b) => b ? Math.round(a/b*100) + ' %' : '0 %';
+const empty = (cols,msg) => `<tr><td colspan="${cols}" class="px-5 py-12 text-center text-sm text-gray-500">${msg}</td></tr>`;
+function esc(s){
+  return String(s ?? '').replace(/[&<>"']/g, c => (
+    {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]
+  ));
+}
+
+/* ============ СТАРТ ============ */
+sb.auth.getSession().then(({ data:{ session } }) => { if (session) start(); });
+</script>
+</body>
+</html>
